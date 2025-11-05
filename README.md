@@ -22,7 +22,7 @@
 
 | Name     | Description | Contributor |
 |-----------|--------------|--------------|
-| Sprint 1 | [Index](/app/frontend/fe-nabdtwinapp/index.html) | Amr |
+| Sprint 1 | [tsconfig](/app/frontend/fe-nabdtwinapp/tsconfig.json) | Amr |
 
 ---
 
