@@ -6,7 +6,7 @@
 
 | Name     | Description | Contributor |
 |-----------|--------------|--------------|
-| Sprint 1 | [Index](/app/frontend/fe-nabdtwinapp/index.html) | Ali |
+| Sprint 1 | [Index](/app/frontend/fe-nabdtwinapp/package.json) | Ali |
 
 ---
 
