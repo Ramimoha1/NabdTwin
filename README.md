@@ -6,4 +6,4 @@
 
 | Name     | Description | Contributor |
 |-----------|--------------|--------------|
-| Sprint 1 | [Index](/tree/main/app/frontend/fe-nabdtwinapp/index.html) | Ammar |
+| Sprint 1 | [Index](/app/frontend/fe-nabdtwinapp/index.html) | Ammar |
