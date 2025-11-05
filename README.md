@@ -1,4 +1,4 @@
-<img width="719" height="502" alt="image" src="https://github.com/user-attachments/assets/819aad47-3bd4-4e84-9aca-4b5dafdad315" /># Nabd Twin
+# Nabd Twin
 
 # Project Files
 
