@@ -39,3 +39,16 @@
 | Name     | Description | Contributor |
 |-----------|--------------|--------------|
 | Sprint 1 | [Index](/app/frontend/fe-nabdtwinapp/index.html) | Rami |
+
+
+---
+
+## How to Run Locally
+
+### Backend (Strapi)
+```bash
+cd nabdtwin-backend
+npm install
+npm run develop
+# Backend runs on http://localhost:1337 (or PORT in .env)
+
