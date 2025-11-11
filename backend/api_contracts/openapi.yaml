@@ -17,7 +17,7 @@ paths:
                   kpis:
                     type: array
                     items:
-                      type: object
+                      type: object # ඞ
                       properties:
                         code: { type: string }   # e.g., TASK_COMPLETION
                         label: { type: string }
