@@ -1,4 +1,4 @@
-import {Route , createBrowserRouter , createRoutesFromElements , RouterProvider} from 'react-router-dom'
+import {Route , createBrowserRouter , createRoutesFromElements } from 'react-router-dom'
 import LoginPage from "../pages/LoginPage.tsx";
 
 const router = createBrowserRouter(
