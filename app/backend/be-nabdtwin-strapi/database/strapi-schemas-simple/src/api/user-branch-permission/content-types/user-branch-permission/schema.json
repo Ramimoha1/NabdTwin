@@ -1,0 +1,28 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_branch_permissions",
+  "info": {
+    "singularName": "user-branch-permission",
+    "pluralName": "user-branch-permissions",
+    "displayName": "User Branch Permission",
+    "description": "Schema for the user_branch_permissions table. Relationships must be added manually."
+  },
+  "options": {
+    "draftAndPublish": false,
+    "timestamps": true
+  },
+  "attributes": {
+    "user_id": {
+      "type": "string"
+    },
+    "branch_id": {
+      "type": "string"
+    },
+    "granted_at": {
+      "type": "datetime"
+    },
+    "granted_by": {
+      "type": "string"
+    }
+  }
+}

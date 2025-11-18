@@ -1,0 +1,46 @@
+{
+  "kind": "collectionType",
+  "collectionName": "employee_kpis",
+  "info": {
+    "singularName": "employee-kpi",
+    "pluralName": "employee-kpis",
+    "displayName": "Employee Kpi",
+    "description": "Schema for the employee_kpis table. Relationships must be added manually."
+  },
+  "options": {
+    "draftAndPublish": false,
+    "timestamps": true
+  },
+  "attributes": {
+    "employee_id": {
+      "type": "string"
+    },
+    "date": {
+      "type": "date"
+    },
+    "tasks_completed": {
+      "type": "integer"
+    },
+    "tasks_total": {
+      "type": "integer"
+    },
+    "attendance_rate": {
+      "type": "decimal",
+      "precision": 5,
+      "scale": 2
+    },
+    "performance_score": {
+      "type": "decimal",
+      "precision": 5,
+      "scale": 2
+    },
+    "productivity_score": {
+      "type": "decimal",
+      "precision": 5,
+      "scale": 2
+    },
+    "projects_completed": {
+      "type": "integer"
+    }
+  }
+}

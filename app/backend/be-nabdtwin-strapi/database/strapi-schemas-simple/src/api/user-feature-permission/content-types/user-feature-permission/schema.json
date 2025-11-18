@@ -1,0 +1,28 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_feature_permissions",
+  "info": {
+    "singularName": "user-feature-permission",
+    "pluralName": "user-feature-permissions",
+    "displayName": "User Feature Permission",
+    "description": "Schema for the user_feature_permissions table. Relationships must be added manually."
+  },
+  "options": {
+    "draftAndPublish": false,
+    "timestamps": true
+  },
+  "attributes": {
+    "user_id": {
+      "type": "string"
+    },
+    "permission_id": {
+      "type": "string"
+    },
+    "granted_at": {
+      "type": "datetime"
+    },
+    "granted_by": {
+      "type": "string"
+    }
+  }
+}

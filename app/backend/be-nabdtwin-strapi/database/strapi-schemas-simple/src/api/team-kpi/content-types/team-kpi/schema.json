@@ -1,0 +1,38 @@
+{
+  "kind": "collectionType",
+  "collectionName": "team_kpis",
+  "info": {
+    "singularName": "team-kpi",
+    "pluralName": "team-kpis",
+    "displayName": "Team Kpi",
+    "description": "Schema for the team_kpis table. Relationships must be added manually."
+  },
+  "options": {
+    "draftAndPublish": false,
+    "timestamps": true
+  },
+  "attributes": {
+    "team_id": {
+      "type": "string"
+    },
+    "date": {
+      "type": "date"
+    },
+    "tasks_completed": {
+      "type": "integer"
+    },
+    "tasks_total": {
+      "type": "integer"
+    },
+    "avg_performance_score": {
+      "type": "decimal",
+      "precision": 5,
+      "scale": 2
+    },
+    "productivity_score": {
+      "type": "decimal",
+      "precision": 5,
+      "scale": 2
+    }
+  }
+}
