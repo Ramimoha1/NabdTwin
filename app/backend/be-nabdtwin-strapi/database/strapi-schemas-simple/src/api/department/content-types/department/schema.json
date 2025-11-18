@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "departments",
+  "info": {
+    "singularName": "department",
+    "pluralName": "departments",
+    "displayName": "Department",
+    "description": "Schema for the departments table. Relationships must be added manually."
+  },
+  "options": {
+    "draftAndPublish": false,
+    "timestamps": true
+  },
+  "attributes": {
+    "organization_id": {
+      "type": "string"
+    },
+    "branch_id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string",
+      "maxLength": 255,
+      "required": true
+    },
+    "code": {
+      "type": "string",
+      "maxLength": 50
+    },
+    "description": {
+      "type": "text"
+    },
+    "head_employee_id": {
+      "type": "string"
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "workspace_kpis",
+  "info": {
+    "singularName": "workspace-kpi",
+    "pluralName": "workspace-kpis",
+    "displayName": "Workspace Kpi",
+    "description": "Schema for the workspace_kpis table. Relationships must be added manually."
+  },
+  "options": {
+    "draftAndPublish": false,
+    "timestamps": true
+  },
+  "attributes": {
+    "workspace_id": {
+      "type": "string"
+    },
+    "date": {
+      "type": "date"
+    },
+    "utilization_rate": {
+      "type": "decimal",
+      "precision": 5,
+      "scale": 2
+    },
+    "productivity_score": {
+      "type": "decimal",
+      "precision": 5,
+      "scale": 2
+    },
+    "collaboration_score": {
+      "type": "decimal",
+      "precision": 5,
+      "scale": 2
+    }
+  }
+}

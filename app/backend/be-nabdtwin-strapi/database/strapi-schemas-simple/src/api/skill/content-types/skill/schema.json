@@ -1,0 +1,29 @@
+{
+  "kind": "collectionType",
+  "collectionName": "skills",
+  "info": {
+    "singularName": "skill",
+    "pluralName": "skills",
+    "displayName": "Skill",
+    "description": "Schema for the skills table. Relationships must be added manually."
+  },
+  "options": {
+    "draftAndPublish": false,
+    "timestamps": true
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "maxLength": 100,
+      "required": true,
+      "unique": true
+    },
+    "category": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "description": {
+      "type": "text"
+    }
+  }
+}
