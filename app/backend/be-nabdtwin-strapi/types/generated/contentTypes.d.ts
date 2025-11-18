@@ -467,6 +467,1189 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiAlertAlert extends Struct.CollectionTypeSchema {
+  collectionName: 'alerts';
+  info: {
+    description: 'Schema for the alerts table. Relationships must be added manually.';
+    displayName: 'Alert';
+    pluralName: 'alerts';
+    singularName: 'alert';
+  };
+  options: {
+    draftAndPublish: false;
+    timestamps: true;
+  };
+  attributes: {
+    branch_id: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    department_id: Schema.Attribute.String;
+    description: Schema.Attribute.Text;
+    employee_id: Schema.Attribute.String;
+    is_resolved: Schema.Attribute.Boolean;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::alert.alert'> &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    resolved_at: Schema.Attribute.DateTime;
+    resolved_by: Schema.Attribute.String;
+    severity: Schema.Attribute.Enumeration<['critical', 'warning', 'info']> &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 20;
+      }>;
+    team_id: Schema.Attribute.String;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiAttendanceRecordAttendanceRecord
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'attendance_records';
+  info: {
+    description: 'Schema for the attendance_records table. Relationships must be added manually.';
+    displayName: 'Attendance Record';
+    pluralName: 'attendance-records';
+    singularName: 'attendance-record';
+  };
+  options: {
+    draftAndPublish: false;
+    timestamps: true;
+  };
+  attributes: {
+    check_in_time: Schema.Attribute.DateTime;
+    check_out_time: Schema.Attribute.DateTime;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    date: Schema.Attribute.Date;
+    employee_id: Schema.Attribute.String;
+    hours_worked: Schema.Attribute.Decimal;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::attendance-record.attendance-record'
+    > &
+      Schema.Attribute.Private;
+    notes: Schema.Attribute.Text;
+    publishedAt: Schema.Attribute.DateTime;
+    status: Schema.Attribute.Enumeration<
+      ['present', 'absent', 'late', 'on-leave', 'sick-leave', 'holiday']
+    > &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 20;
+      }>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiAuditLogAuditLog extends Struct.CollectionTypeSchema {
+  collectionName: 'audit_log';
+  info: {
+    description: 'Schema for the audit_log table. Relationships must be added manually.';
+    displayName: 'Audit Log';
+    pluralName: 'audit-logs';
+    singularName: 'audit-log';
+  };
+  options: {
+    draftAndPublish: false;
+    timestamps: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    ip_address: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::audit-log.audit-log'
+    > &
+      Schema.Attribute.Private;
+    new_values: Schema.Attribute.JSON;
+    old_values: Schema.Attribute.JSON;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    user_agent: Schema.Attribute.Text;
+    user_id: Schema.Attribute.String;
+  };
+}
+
+export interface ApiBranchKpiBranchKpi extends Struct.CollectionTypeSchema {
+  collectionName: 'branch_kpis';
+  info: {
+    description: 'Schema for the branch_kpis table. Relationships must be added manually.';
+    displayName: 'Branch Kpi';
+    pluralName: 'branch-kpis';
+    singularName: 'branch-kpi';
+  };
+  options: {
+    draftAndPublish: false;
+    timestamps: true;
+  };
+  attributes: {
+    branch_id: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    date: Schema.Attribute.Date;
+    employee_count: Schema.Attribute.Integer;
+    growth_rate: Schema.Attribute.Decimal;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::branch-kpi.branch-kpi'
+    > &
+      Schema.Attribute.Private;
+    performance_rating: Schema.Attribute.Enumeration<
+      ['excellent', 'good', 'average', 'poor']
+    > &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 20;
+      }>;
+    productivity_score: Schema.Attribute.Decimal;
+    publishedAt: Schema.Attribute.DateTime;
+    revenue: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<'0'>;
+    revenue_target: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<'0'>;
+    satisfaction_score: Schema.Attribute.Decimal;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiBranchBranch extends Struct.CollectionTypeSchema {
+  collectionName: 'branches';
+  info: {
+    description: 'Schema for the branches table. Relationships must be added manually.';
+    displayName: 'Branch';
+    pluralName: 'branches';
+    singularName: 'branch';
+  };
+  options: {
+    draftAndPublish: false;
+    timestamps: true;
+  };
+  attributes: {
+    address: Schema.Attribute.Text;
+    city: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }>;
+    code: Schema.Attribute.String &
+      Schema.Attribute.Unique &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }>;
+    country: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    latitude: Schema.Attribute.Decimal;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::branch.branch'
+    > &
+      Schema.Attribute.Private;
+    longitude: Schema.Attribute.Decimal;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    organization_id: Schema.Attribute.String;
+    postal_code: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 20;
+      }>;
+    publishedAt: Schema.Attribute.DateTime;
+    status: Schema.Attribute.Enumeration<
+      ['active', 'inactive', 'maintenance']
+    > &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 20;
+      }> &
+      Schema.Attribute.DefaultTo<'active'>;
+    total_employees: Schema.Attribute.Integer;
+    total_floors: Schema.Attribute.Integer;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiDashboardDashboard extends Struct.CollectionTypeSchema {
+  collectionName: 'dashboards';
+  info: {
+    description: 'Schema for the dashboards table. Relationships must be added manually.';
+    displayName: 'Dashboard';
+    pluralName: 'dashboards';
+    singularName: 'dashboard';
+  };
+  options: {
+    draftAndPublish: false;
+    timestamps: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
+    layout: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::dashboard.dashboard'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    user_id: Schema.Attribute.String;
+  };
+}
+
+export interface ApiDepartmentKpiDepartmentKpi
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'department_kpis';
+  info: {
+    description: 'Schema for the department_kpis table. Relationships must be added manually.';
+    displayName: 'Department Kpi';
+    pluralName: 'department-kpis';
+    singularName: 'department-kpi';
+  };
+  options: {
+    draftAndPublish: false;
+    timestamps: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    date: Schema.Attribute.Date;
+    department_id: Schema.Attribute.String;
+    efficiency_score: Schema.Attribute.Decimal;
+    employee_count: Schema.Attribute.Integer;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::department-kpi.department-kpi'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    revenue: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<'0'>;
+    revenue_target: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<'0'>;
+    satisfaction_score: Schema.Attribute.Decimal;
+    tasks_completed: Schema.Attribute.Integer;
+    tasks_total: Schema.Attribute.Integer;
+    team_count: Schema.Attribute.Integer;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiDepartmentDepartment extends Struct.CollectionTypeSchema {
+  collectionName: 'departments';
+  info: {
+    description: 'Schema for the departments table. Relationships must be added manually.';
+    displayName: 'Department';
+    pluralName: 'departments';
+    singularName: 'department';
+  };
+  options: {
+    draftAndPublish: false;
+    timestamps: true;
+  };
+  attributes: {
+    branch_id: Schema.Attribute.String;
+    code: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
+    head_employee_id: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::department.department'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    organization_id: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiEmployeeKpiEmployeeKpi extends Struct.CollectionTypeSchema {
+  collectionName: 'employee_kpis';
+  info: {
+    description: 'Schema for the employee_kpis table. Relationships must be added manually.';
+    displayName: 'Employee Kpi';
+    pluralName: 'employee-kpis';
+    singularName: 'employee-kpi';
+  };
+  options: {
+    draftAndPublish: false;
+    timestamps: true;
+  };
+  attributes: {
+    attendance_rate: Schema.Attribute.Decimal;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    date: Schema.Attribute.Date;
+    employee_id: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::employee-kpi.employee-kpi'
+    > &
+      Schema.Attribute.Private;
+    performance_score: Schema.Attribute.Decimal;
+    productivity_score: Schema.Attribute.Decimal;
+    projects_completed: Schema.Attribute.Integer;
+    publishedAt: Schema.Attribute.DateTime;
+    tasks_completed: Schema.Attribute.Integer;
+    tasks_total: Schema.Attribute.Integer;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiEmployeeSkillEmployeeSkill
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'employee_skills';
+  info: {
+    description: 'Schema for the employee_skills table. Relationships must be added manually.';
+    displayName: 'Employee Skill';
+    pluralName: 'employee-skills';
+    singularName: 'employee-skill';
+  };
+  options: {
+    draftAndPublish: false;
+    timestamps: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    employee_id: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::employee-skill.employee-skill'
+    > &
+      Schema.Attribute.Private;
+    proficiency_level: Schema.Attribute.Enumeration<
+      ['beginner', 'intermediate', 'advanced', 'expert']
+    > &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 20;
+      }>;
+    publishedAt: Schema.Attribute.DateTime;
+    skill_id: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    years_of_experience: Schema.Attribute.Decimal;
+  };
+}
+
+export interface ApiEmployeeEmployee extends Struct.CollectionTypeSchema {
+  collectionName: 'employees';
+  info: {
+    description: 'Schema for the employees table. Relationships must be added manually.';
+    displayName: 'Employee';
+    pluralName: 'employees';
+    singularName: 'employee';
+  };
+  options: {
+    draftAndPublish: false;
+    timestamps: true;
+  };
+  attributes: {
+    avatar_url: Schema.Attribute.Text;
+    branch_id: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    currency: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 3;
+      }> &
+      Schema.Attribute.DefaultTo<'USD'>;
+    date_of_birth: Schema.Attribute.Date;
+    department_id: Schema.Attribute.String;
+    email: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    employee_number: Schema.Attribute.String &
+      Schema.Attribute.Unique &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }>;
+    employment_status: Schema.Attribute.Enumeration<
+      ['active', 'inactive', 'on-leave', 'terminated']
+    > &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 20;
+      }> &
+      Schema.Attribute.DefaultTo<'active'>;
+    first_name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }>;
+    gender: Schema.Attribute.Enumeration<
+      ['male', 'female', 'other', 'prefer_not_to_say']
+    > &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 20;
+      }>;
+    hire_date: Schema.Attribute.Date;
+    last_name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::employee.employee'
+    > &
+      Schema.Attribute.Private;
+    organization_id: Schema.Attribute.String;
+    phone: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }>;
+    position_z: Schema.Attribute.Decimal;
+    publishedAt: Schema.Attribute.DateTime;
+    supervisor_id: Schema.Attribute.String;
+    team_id: Schema.Attribute.String;
+    termination_date: Schema.Attribute.Date;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    workspace_id: Schema.Attribute.String;
+  };
+}
+
+export interface ApiFloorKpiFloorKpi extends Struct.CollectionTypeSchema {
+  collectionName: 'floor_kpis';
+  info: {
+    description: 'Schema for the floor_kpis table. Relationships must be added manually.';
+    displayName: 'Floor Kpi';
+    pluralName: 'floor-kpis';
+    singularName: 'floor-kpi';
+  };
+  options: {
+    draftAndPublish: false;
+    timestamps: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    date: Schema.Attribute.Date;
+    floor_id: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::floor-kpi.floor-kpi'
+    > &
+      Schema.Attribute.Private;
+    occupancy_rate: Schema.Attribute.Decimal;
+    productivity_score: Schema.Attribute.Decimal;
+    publishedAt: Schema.Attribute.DateTime;
+    satisfaction_score: Schema.Attribute.Decimal;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiFloorFloor extends Struct.CollectionTypeSchema {
+  collectionName: 'floors';
+  info: {
+    description: 'Schema for the floors table. Relationships must be added manually.';
+    displayName: 'Floor';
+    pluralName: 'floors';
+    singularName: 'floor';
+  };
+  options: {
+    draftAndPublish: false;
+    timestamps: true;
+  };
+  attributes: {
+    branch_id: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
+    floor_number: Schema.Attribute.Integer;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::floor.floor'> &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiInsightInsight extends Struct.CollectionTypeSchema {
+  collectionName: 'insights';
+  info: {
+    description: 'Schema for the insights table. Relationships must be added manually.';
+    displayName: 'Insight';
+    pluralName: 'insights';
+    singularName: 'insight';
+  };
+  options: {
+    draftAndPublish: false;
+    timestamps: true;
+  };
+  attributes: {
+    branch_id: Schema.Attribute.String;
+    created_by: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::insight.insight'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiOrganizationOrganization
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'organizations';
+  info: {
+    description: 'Schema for the organizations table. Relationships must be added manually.';
+    displayName: 'Organization';
+    pluralName: 'organizations';
+    singularName: 'organization';
+  };
+  options: {
+    draftAndPublish: false;
+    timestamps: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
+    industry: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::organization.organization'
+    > &
+      Schema.Attribute.Private;
+    logo_url: Schema.Attribute.Text;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiPermissionPermission extends Struct.CollectionTypeSchema {
+  collectionName: 'permissions';
+  info: {
+    description: 'Schema for the permissions table. Relationships must be added manually.';
+    displayName: 'Permission';
+    pluralName: 'permissions';
+    singularName: 'permission';
+  };
+  options: {
+    draftAndPublish: false;
+    timestamps: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::permission.permission'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }>;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiProjectProject extends Struct.CollectionTypeSchema {
+  collectionName: 'projects';
+  info: {
+    description: 'Schema for the projects table. Relationships must be added manually.';
+    displayName: 'Project';
+    pluralName: 'projects';
+    singularName: 'project';
+  };
+  options: {
+    draftAndPublish: false;
+    timestamps: true;
+  };
+  attributes: {
+    actual_cost: Schema.Attribute.Decimal;
+    budget: Schema.Attribute.Decimal;
+    created_by: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    department_id: Schema.Attribute.String;
+    description: Schema.Attribute.Text;
+    end_date: Schema.Attribute.Date;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::project.project'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    organization_id: Schema.Attribute.String;
+    priority: Schema.Attribute.Enumeration<
+      ['low', 'medium', 'high', 'critical']
+    > &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 20;
+      }>;
+    progress_percentage: Schema.Attribute.Decimal;
+    publishedAt: Schema.Attribute.DateTime;
+    start_date: Schema.Attribute.Date;
+    status: Schema.Attribute.Enumeration<
+      ['planning', 'active', 'on-hold', 'completed', 'cancelled']
+    > &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }>;
+    team_id: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiReportReport extends Struct.CollectionTypeSchema {
+  collectionName: 'reports';
+  info: {
+    description: 'Schema for the reports table. Relationships must be added manually.';
+    displayName: 'Report';
+    pluralName: 'reports';
+    singularName: 'report';
+  };
+  options: {
+    draftAndPublish: false;
+    timestamps: true;
+  };
+  attributes: {
+    branch_id: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    date_to: Schema.Attribute.Date;
+    department_id: Schema.Attribute.String;
+    description: Schema.Attribute.Text;
+    employee_id: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::report.report'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    report_data: Schema.Attribute.String;
+    scope: Schema.Attribute.Enumeration<
+      ['organization', 'branch', 'department', 'team', 'employee']
+    > &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }>;
+    team_id: Schema.Attribute.String;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    type: Schema.Attribute.Enumeration<
+      ['performance', 'attendance', 'project', 'kpi', 'financial', 'custom']
+    > &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiSkillSkill extends Struct.CollectionTypeSchema {
+  collectionName: 'skills';
+  info: {
+    description: 'Schema for the skills table. Relationships must be added manually.';
+    displayName: 'Skill';
+    pluralName: 'skills';
+    singularName: 'skill';
+  };
+  options: {
+    draftAndPublish: false;
+    timestamps: true;
+  };
+  attributes: {
+    category: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::skill.skill'> &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }>;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiTaskTask extends Struct.CollectionTypeSchema {
+  collectionName: 'tasks';
+  info: {
+    description: 'Schema for the tasks table. Relationships must be added manually.';
+    displayName: 'Task';
+    pluralName: 'tasks';
+    singularName: 'task';
+  };
+  options: {
+    draftAndPublish: false;
+    timestamps: true;
+  };
+  attributes: {
+    actual_hours: Schema.Attribute.Decimal;
+    assigned_to: Schema.Attribute.String;
+    completed_date: Schema.Attribute.Date;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
+    due_date: Schema.Attribute.Date;
+    estimated_hours: Schema.Attribute.Decimal;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::task.task'> &
+      Schema.Attribute.Private;
+    priority: Schema.Attribute.Enumeration<
+      ['low', 'medium', 'high', 'critical']
+    > &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 20;
+      }>;
+    project_id: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    status: Schema.Attribute.Enumeration<
+      ['todo', 'in-progress', 'review', 'completed', 'cancelled']
+    > &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiTeamKpiTeamKpi extends Struct.CollectionTypeSchema {
+  collectionName: 'team_kpis';
+  info: {
+    description: 'Schema for the team_kpis table. Relationships must be added manually.';
+    displayName: 'Team Kpi';
+    pluralName: 'team-kpis';
+    singularName: 'team-kpi';
+  };
+  options: {
+    draftAndPublish: false;
+    timestamps: true;
+  };
+  attributes: {
+    avg_performance_score: Schema.Attribute.Decimal;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    date: Schema.Attribute.Date;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::team-kpi.team-kpi'
+    > &
+      Schema.Attribute.Private;
+    productivity_score: Schema.Attribute.Decimal;
+    publishedAt: Schema.Attribute.DateTime;
+    tasks_completed: Schema.Attribute.Integer;
+    tasks_total: Schema.Attribute.Integer;
+    team_id: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiTeamTeam extends Struct.CollectionTypeSchema {
+  collectionName: 'teams';
+  info: {
+    description: 'Schema for the teams table. Relationships must be added manually.';
+    displayName: 'Team';
+    pluralName: 'teams';
+    singularName: 'team';
+  };
+  options: {
+    draftAndPublish: false;
+    timestamps: true;
+  };
+  attributes: {
+    branch_id: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    department_id: Schema.Attribute.String;
+    description: Schema.Attribute.Text;
+    leader_employee_id: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::team.team'> &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiUserAlertStatusUserAlertStatus
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'user_alert_status';
+  info: {
+    description: 'Schema for the user_alert_status table. Relationships must be added manually.';
+    displayName: 'User Alert Status';
+    pluralName: 'user-alert-statuses';
+    singularName: 'user-alert-status';
+  };
+  options: {
+    draftAndPublish: false;
+    timestamps: true;
+  };
+  attributes: {
+    alert_id: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    is_read: Schema.Attribute.Boolean;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::user-alert-status.user-alert-status'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    read_at: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    user_id: Schema.Attribute.String;
+  };
+}
+
+export interface ApiUserBranchPermissionUserBranchPermission
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'user_branch_permissions';
+  info: {
+    description: 'Schema for the user_branch_permissions table. Relationships must be added manually.';
+    displayName: 'User Branch Permission';
+    pluralName: 'user-branch-permissions';
+    singularName: 'user-branch-permission';
+  };
+  options: {
+    draftAndPublish: false;
+    timestamps: true;
+  };
+  attributes: {
+    branch_id: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    granted_at: Schema.Attribute.DateTime;
+    granted_by: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::user-branch-permission.user-branch-permission'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    user_id: Schema.Attribute.String;
+  };
+}
+
+export interface ApiUserFeaturePermissionUserFeaturePermission
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'user_feature_permissions';
+  info: {
+    description: 'Schema for the user_feature_permissions table. Relationships must be added manually.';
+    displayName: 'User Feature Permission';
+    pluralName: 'user-feature-permissions';
+    singularName: 'user-feature-permission';
+  };
+  options: {
+    draftAndPublish: false;
+    timestamps: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    granted_at: Schema.Attribute.DateTime;
+    granted_by: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::user-feature-permission.user-feature-permission'
+    > &
+      Schema.Attribute.Private;
+    permission_id: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    user_id: Schema.Attribute.String;
+  };
+}
+
+export interface ApiUserUser extends Struct.CollectionTypeSchema {
+  collectionName: 'users';
+  info: {
+    description: 'Schema for the users table. Relationships must be added manually.';
+    displayName: 'User';
+    pluralName: 'users';
+    singularName: 'user';
+  };
+  options: {
+    draftAndPublish: false;
+    timestamps: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    email: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    employee_id: Schema.Attribute.String;
+    is_active: Schema.Attribute.Boolean;
+    last_login: Schema.Attribute.DateTime;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::user.user'> &
+      Schema.Attribute.Private;
+    password_hash: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    publishedAt: Schema.Attribute.DateTime;
+    role: Schema.Attribute.Enumeration<['admin', 'normal']> &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 20;
+      }>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    username: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }>;
+  };
+}
+
+export interface ApiWorkspaceKpiWorkspaceKpi
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'workspace_kpis';
+  info: {
+    description: 'Schema for the workspace_kpis table. Relationships must be added manually.';
+    displayName: 'Workspace Kpi';
+    pluralName: 'workspace-kpis';
+    singularName: 'workspace-kpi';
+  };
+  options: {
+    draftAndPublish: false;
+    timestamps: true;
+  };
+  attributes: {
+    collaboration_score: Schema.Attribute.Decimal;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    date: Schema.Attribute.Date;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::workspace-kpi.workspace-kpi'
+    > &
+      Schema.Attribute.Private;
+    productivity_score: Schema.Attribute.Decimal;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    utilization_rate: Schema.Attribute.Decimal;
+    workspace_id: Schema.Attribute.String;
+  };
+}
+
+export interface ApiWorkspaceWorkspace extends Struct.CollectionTypeSchema {
+  collectionName: 'workspaces';
+  info: {
+    description: 'Schema for the workspaces table. Relationships must be added manually.';
+    displayName: 'Workspace';
+    pluralName: 'workspaces';
+    singularName: 'workspace';
+  };
+  options: {
+    draftAndPublish: false;
+    timestamps: true;
+  };
+  attributes: {
+    capacity: Schema.Attribute.Integer;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    floor_id: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::workspace.workspace'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    position_z: Schema.Attribute.Decimal;
+    publishedAt: Schema.Attribute.DateTime;
+    type: Schema.Attribute.Enumeration<
+      ['office', 'meeting', 'open-space', 'lab', 'cafeteria', 'recreation']
+    > &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface PluginContentReleasesRelease
   extends Struct.CollectionTypeSchema {
   collectionName: 'strapi_releases';
@@ -978,6 +2161,34 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
+      'api::alert.alert': ApiAlertAlert;
+      'api::attendance-record.attendance-record': ApiAttendanceRecordAttendanceRecord;
+      'api::audit-log.audit-log': ApiAuditLogAuditLog;
+      'api::branch-kpi.branch-kpi': ApiBranchKpiBranchKpi;
+      'api::branch.branch': ApiBranchBranch;
+      'api::dashboard.dashboard': ApiDashboardDashboard;
+      'api::department-kpi.department-kpi': ApiDepartmentKpiDepartmentKpi;
+      'api::department.department': ApiDepartmentDepartment;
+      'api::employee-kpi.employee-kpi': ApiEmployeeKpiEmployeeKpi;
+      'api::employee-skill.employee-skill': ApiEmployeeSkillEmployeeSkill;
+      'api::employee.employee': ApiEmployeeEmployee;
+      'api::floor-kpi.floor-kpi': ApiFloorKpiFloorKpi;
+      'api::floor.floor': ApiFloorFloor;
+      'api::insight.insight': ApiInsightInsight;
+      'api::organization.organization': ApiOrganizationOrganization;
+      'api::permission.permission': ApiPermissionPermission;
+      'api::project.project': ApiProjectProject;
+      'api::report.report': ApiReportReport;
+      'api::skill.skill': ApiSkillSkill;
+      'api::task.task': ApiTaskTask;
+      'api::team-kpi.team-kpi': ApiTeamKpiTeamKpi;
+      'api::team.team': ApiTeamTeam;
+      'api::user-alert-status.user-alert-status': ApiUserAlertStatusUserAlertStatus;
+      'api::user-branch-permission.user-branch-permission': ApiUserBranchPermissionUserBranchPermission;
+      'api::user-feature-permission.user-feature-permission': ApiUserFeaturePermissionUserFeaturePermission;
+      'api::user.user': ApiUserUser;
+      'api::workspace-kpi.workspace-kpi': ApiWorkspaceKpiWorkspaceKpi;
+      'api::workspace.workspace': ApiWorkspaceWorkspace;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

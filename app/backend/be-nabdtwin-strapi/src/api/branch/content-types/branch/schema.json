@@ -1,0 +1,70 @@
+{
+  "kind": "collectionType",
+  "collectionName": "branches",
+  "info": {
+    "singularName": "branch",
+    "pluralName": "branches",
+    "displayName": "Branch",
+    "description": "Schema for the branches table. Relationships must be added manually."
+  },
+  "options": {
+    "draftAndPublish": false,
+    "timestamps": true
+  },
+  "attributes": {
+    "organization_id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string",
+      "maxLength": 255,
+      "required": true
+    },
+    "code": {
+      "type": "string",
+      "maxLength": 50,
+      "unique": true
+    },
+    "address": {
+      "type": "text"
+    },
+    "city": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "country": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "postal_code": {
+      "type": "string",
+      "maxLength": 20
+    },
+    "latitude": {
+      "type": "decimal",
+      "precision": 10,
+      "scale": 8
+    },
+    "longitude": {
+      "type": "decimal",
+      "precision": 11,
+      "scale": 8
+    },
+    "total_floors": {
+      "type": "integer"
+    },
+    "total_employees": {
+      "type": "integer"
+    },
+    "status": {
+      "type": "enumeration",
+      "maxLength": 20,
+      "enum": [
+        "active",
+        "inactive",
+        "maintenance"
+      ],
+      "default": "active"
+    }
+  }
+}
