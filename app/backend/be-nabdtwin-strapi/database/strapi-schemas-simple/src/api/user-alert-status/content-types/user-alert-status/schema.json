@@ -1,0 +1,28 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_alert_status",
+  "info": {
+    "singularName": "user-alert-status",
+    "pluralName": "user-alert-statuses",
+    "displayName": "User Alert Status",
+    "description": "Schema for the user_alert_status table. Relationships must be added manually."
+  },
+  "options": {
+    "draftAndPublish": false,
+    "timestamps": true
+  },
+  "attributes": {
+    "user_id": {
+      "type": "string"
+    },
+    "alert_id": {
+      "type": "string"
+    },
+    "is_read": {
+      "type": "boolean"
+    },
+    "read_at": {
+      "type": "datetime"
+    }
+  }
+}

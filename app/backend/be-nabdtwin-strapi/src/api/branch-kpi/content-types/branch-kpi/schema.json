@@ -1,0 +1,62 @@
+{
+  "kind": "collectionType",
+  "collectionName": "branch_kpis",
+  "info": {
+    "singularName": "branch-kpi",
+    "pluralName": "branch-kpis",
+    "displayName": "Branch Kpi",
+    "description": "Schema for the branch_kpis table. Relationships must be added manually."
+  },
+  "options": {
+    "draftAndPublish": false,
+    "timestamps": true
+  },
+  "attributes": {
+    "branch_id": {
+      "type": "string"
+    },
+    "date": {
+      "type": "date"
+    },
+    "revenue": {
+      "type": "decimal",
+      "precision": 15,
+      "scale": 2,
+      "default": "0"
+    },
+    "revenue_target": {
+      "type": "decimal",
+      "precision": 15,
+      "scale": 2,
+      "default": "0"
+    },
+    "employee_count": {
+      "type": "integer"
+    },
+    "satisfaction_score": {
+      "type": "decimal",
+      "precision": 5,
+      "scale": 2
+    },
+    "productivity_score": {
+      "type": "decimal",
+      "precision": 5,
+      "scale": 2
+    },
+    "growth_rate": {
+      "type": "decimal",
+      "precision": 5,
+      "scale": 2
+    },
+    "performance_rating": {
+      "type": "enumeration",
+      "maxLength": 20,
+      "enum": [
+        "excellent",
+        "good",
+        "average",
+        "poor"
+      ]
+    }
+  }
+}
