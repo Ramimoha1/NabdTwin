@@ -1,0 +1,464 @@
+
+-- Enable UUID extension
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- ============================================================================
+-- ORGANIZATIONS & STRUCTURE
+-- ============================================================================
+
+-- Main organization table
+CREATE TABLE organizations (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    industry VARCHAR(100),
+    logo_url TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Branches/Locations
+CREATE TABLE branches (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+    name VARCHAR(255) NOT NULL,
+    code VARCHAR(50) UNIQUE,
+    address TEXT NOT NULL,
+    city VARCHAR(100),
+    country VARCHAR(100),
+    postal_code VARCHAR(20),
+    latitude DECIMAL(10, 8),
+    longitude DECIMAL(11, 8),
+    total_floors INTEGER DEFAULT 0,
+    total_employees INTEGER DEFAULT 0,
+    status VARCHAR(20) DEFAULT 'active' CHECK (status IN ('active', 'inactive', 'maintenance')),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Branch KPIs (time-series data)
+CREATE TABLE branch_kpis (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    branch_id UUID NOT NULL REFERENCES branches(id) ON DELETE CASCADE,
+    date DATE NOT NULL,
+    revenue DECIMAL(15, 2) DEFAULT 0,
+    revenue_target DECIMAL(15, 2) DEFAULT 0,
+    employee_count INTEGER DEFAULT 0,
+    satisfaction_score DECIMAL(5, 2) CHECK (satisfaction_score >= 0 AND satisfaction_score <= 100),
+    productivity_score DECIMAL(5, 2) CHECK (productivity_score >= 0 AND productivity_score <= 100),
+    growth_rate DECIMAL(5, 2),
+    performance_rating VARCHAR(20) CHECK (performance_rating IN ('excellent', 'good', 'average', 'poor')),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(branch_id, date)
+);
+
+-- Floors
+CREATE TABLE floors (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    branch_id UUID NOT NULL REFERENCES branches(id) ON DELETE CASCADE,
+    name VARCHAR(255) NOT NULL,
+    floor_number INTEGER NOT NULL,
+    description TEXT,
+    total_area DECIMAL(10, 2), -- in square meters
+    model_3d_url TEXT, -- URL to 3D model file
+    floor_plan_url TEXT, -- URL to 2D floor plan
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(branch_id, floor_number)
+);
+
+-- Floor KPIs
+CREATE TABLE floor_kpis (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    floor_id UUID NOT NULL REFERENCES floors(id) ON DELETE CASCADE,
+    date DATE NOT NULL,
+    occupancy_rate DECIMAL(5, 2) CHECK (occupancy_rate >= 0 AND occupancy_rate <= 100),
+    productivity_score DECIMAL(5, 2) CHECK (productivity_score >= 0 AND productivity_score <= 100),
+    satisfaction_score DECIMAL(5, 2) CHECK (satisfaction_score >= 0 AND satisfaction_score <= 100),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(floor_id, date)
+);
+
+-- Workspaces/Offices
+CREATE TABLE workspaces (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    floor_id UUID NOT NULL REFERENCES floors(id) ON DELETE CASCADE,
+    name VARCHAR(255) NOT NULL,
+    type VARCHAR(50) CHECK (type IN ('office', 'meeting', 'open-space', 'lab', 'cafeteria', 'recreation')),
+    capacity INTEGER,
+    area DECIMAL(10, 2), -- in square meters
+    position_x DECIMAL(10, 2), -- 3D coordinates for visualization
+    position_y DECIMAL(10, 2),
+    position_z DECIMAL(10, 2),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Workspace KPIs
+CREATE TABLE workspace_kpis (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+    date DATE NOT NULL,
+    utilization_rate DECIMAL(5, 2) CHECK (utilization_rate >= 0 AND utilization_rate <= 100),
+    productivity_score DECIMAL(5, 2) CHECK (productivity_score >= 0 AND productivity_score <= 100),
+    collaboration_score DECIMAL(5, 2) CHECK (collaboration_score >= 0 AND collaboration_score <= 100),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(workspace_id, date)
+);
+
+-- ============================================================================
+-- ORGANIZATIONAL UNITS
+-- ============================================================================
+
+-- Departments
+CREATE TABLE departments (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+    branch_id UUID REFERENCES branches(id) ON DELETE SET NULL,
+    name VARCHAR(255) NOT NULL,
+    code VARCHAR(50),
+    description TEXT,
+    head_employee_id UUID, -- Will reference employees table (added later via ALTER)
+    parent_department_id UUID REFERENCES departments(id) ON DELETE SET NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Department KPIs
+CREATE TABLE department_kpis (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    department_id UUID NOT NULL REFERENCES departments(id) ON DELETE CASCADE,
+    date DATE NOT NULL,
+    revenue DECIMAL(15, 2) DEFAULT 0,
+    revenue_target DECIMAL(15, 2) DEFAULT 0,
+    employee_count INTEGER DEFAULT 0,
+    team_count INTEGER DEFAULT 0,
+    tasks_completed INTEGER DEFAULT 0,
+    tasks_total INTEGER DEFAULT 0,
+    efficiency_score DECIMAL(5, 2) CHECK (efficiency_score >= 0 AND efficiency_score <= 100),
+    satisfaction_score DECIMAL(5, 2) CHECK (satisfaction_score >= 0 AND satisfaction_score <= 100),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(department_id, date)
+);
+
+-- Teams
+CREATE TABLE teams (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    department_id UUID NOT NULL REFERENCES departments(id) ON DELETE CASCADE,
+    branch_id UUID REFERENCES branches(id) ON DELETE SET NULL,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    leader_employee_id UUID, -- Will reference employees table
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Team KPIs
+CREATE TABLE team_kpis (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    team_id UUID NOT NULL REFERENCES teams(id) ON DELETE CASCADE,
+    date DATE NOT NULL,
+    tasks_completed INTEGER DEFAULT 0,
+    tasks_total INTEGER DEFAULT 0,
+    avg_performance_score DECIMAL(5, 2) CHECK (avg_performance_score >= 0 AND avg_performance_score <= 100),
+    productivity_score DECIMAL(5, 2) CHECK (productivity_score >= 0 AND productivity_score <= 100),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(team_id, date)
+);
+
+-- ============================================================================
+-- EMPLOYEES
+-- ============================================================================
+
+-- Employees
+CREATE TABLE employees (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+    employee_number VARCHAR(50) UNIQUE,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    phone VARCHAR(50),
+    date_of_birth DATE,
+    gender VARCHAR(20) CHECK (gender IN ('male', 'female', 'other', 'prefer_not_to_say')),
+    
+    -- Position information
+    job_title VARCHAR(255),
+    department_id UUID REFERENCES departments(id) ON DELETE SET NULL,
+    team_id UUID REFERENCES teams(id) ON DELETE SET NULL,
+    branch_id UUID REFERENCES branches(id) ON DELETE SET NULL,
+    workspace_id UUID REFERENCES workspaces(id) ON DELETE SET NULL,
+    supervisor_id UUID REFERENCES employees(id) ON DELETE SET NULL,
+    
+    -- Employment details
+    employment_type VARCHAR(50) CHECK (employment_type IN ('full-time', 'part-time', 'contract', 'intern')),
+    employment_status VARCHAR(20) DEFAULT 'active' CHECK (employment_status IN ('active', 'inactive', 'on-leave', 'terminated')),
+    hire_date DATE,
+    termination_date DATE,
+    
+    -- Compensation
+    salary DECIMAL(15, 2),
+    currency VARCHAR(3) DEFAULT 'USD',
+    
+    -- 3D Visualization
+    position_x DECIMAL(10, 2), -- Position in 3D space
+    position_y DECIMAL(10, 2),
+    position_z DECIMAL(10, 2),
+    avatar_url TEXT,
+    
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Employee KPIs (time-series performance data)
+CREATE TABLE employee_kpis (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    employee_id UUID NOT NULL REFERENCES employees(id) ON DELETE CASCADE,
+    date DATE NOT NULL,
+    tasks_completed INTEGER DEFAULT 0,
+    tasks_total INTEGER DEFAULT 0,
+    attendance_rate DECIMAL(5, 2) CHECK (attendance_rate >= 0 AND attendance_rate <= 100),
+    performance_score DECIMAL(5, 2) CHECK (performance_score >= 0 AND performance_score <= 100),
+    productivity_score DECIMAL(5, 2) CHECK (productivity_score >= 0 AND productivity_score <= 100),
+    projects_completed INTEGER DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(employee_id, date)
+);
+
+-- Employee Skills
+CREATE TABLE skills (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name VARCHAR(100) UNIQUE NOT NULL,
+    category VARCHAR(100),
+    description TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE employee_skills (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    employee_id UUID NOT NULL REFERENCES employees(id) ON DELETE CASCADE,
+    skill_id UUID NOT NULL REFERENCES skills(id) ON DELETE CASCADE,
+    proficiency_level VARCHAR(20) CHECK (proficiency_level IN ('beginner', 'intermediate', 'advanced', 'expert')),
+    years_of_experience DECIMAL(4, 1),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(employee_id, skill_id)
+);
+
+-- Attendance Records
+CREATE TABLE attendance_records (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    employee_id UUID NOT NULL REFERENCES employees(id) ON DELETE CASCADE,
+    date DATE NOT NULL,
+    check_in_time TIMESTAMP WITH TIME ZONE,
+    check_out_time TIMESTAMP WITH TIME ZONE,
+    status VARCHAR(20) CHECK (status IN ('present', 'absent', 'late', 'on-leave', 'sick-leave', 'holiday')),
+    hours_worked DECIMAL(5, 2),
+    notes TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(employee_id, date)
+);
+
+-- ============================================================================
+-- PROJECTS & TASKS
+-- ============================================================================
+
+-- Projects
+CREATE TABLE projects (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    department_id UUID REFERENCES departments(id) ON DELETE SET NULL,
+    team_id UUID REFERENCES teams(id) ON DELETE SET NULL,
+    status VARCHAR(50) CHECK (status IN ('planning', 'active', 'on-hold', 'completed', 'cancelled')),
+    priority VARCHAR(20) CHECK (priority IN ('low', 'medium', 'high', 'critical')),
+    start_date DATE,
+    end_date DATE,
+    budget DECIMAL(15, 2),
+    actual_cost DECIMAL(15, 2),
+    progress_percentage DECIMAL(5, 2) CHECK (progress_percentage >= 0 AND progress_percentage <= 100),
+    created_by UUID REFERENCES employees(id) ON DELETE SET NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tasks
+CREATE TABLE tasks (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    project_id UUID REFERENCES projects(id) ON DELETE CASCADE,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    assigned_to UUID REFERENCES employees(id) ON DELETE SET NULL,
+    status VARCHAR(50) CHECK (status IN ('todo', 'in-progress', 'review', 'completed', 'cancelled')),
+    priority VARCHAR(20) CHECK (priority IN ('low', 'medium', 'high', 'critical')),
+    due_date DATE,
+    completed_date DATE,
+    estimated_hours DECIMAL(6, 2),
+    actual_hours DECIMAL(6, 2),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ============================================================================
+-- USERS & AUTHENTICATION
+-- ============================================================================
+
+-- System Users (for authentication and access)
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    employee_id UUID REFERENCES employees(id) ON DELETE CASCADE,
+    username VARCHAR(100) UNIQUE NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    role VARCHAR(20) NOT NULL CHECK (role IN ('admin', 'normal')),
+    is_active BOOLEAN DEFAULT TRUE,
+    last_login TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Permissions (for granular access control)
+CREATE TABLE permissions (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name VARCHAR(100) UNIQUE NOT NULL,
+    description TEXT,
+    category VARCHAR(50), -- e.g., 'analytics', 'visualization', 'reports', 'insights'
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- User Branch Permissions (which branches a user can access)
+CREATE TABLE user_branch_permissions (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    branch_id UUID NOT NULL REFERENCES branches(id) ON DELETE CASCADE,
+    granted_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    granted_by UUID REFERENCES users(id) ON DELETE SET NULL,
+    UNIQUE(user_id, branch_id)
+);
+
+-- User Feature Permissions (which features a user can access)
+CREATE TABLE user_feature_permissions (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    permission_id UUID NOT NULL REFERENCES permissions(id) ON DELETE CASCADE,
+    granted_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    granted_by UUID REFERENCES users(id) ON DELETE SET NULL,
+    UNIQUE(user_id, permission_id)
+);
+
+-- ============================================================================
+-- REPORTS
+-- ============================================================================
+
+-- Reports
+CREATE TABLE reports (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    type VARCHAR(50) CHECK (type IN ('performance', 'attendance', 'project', 'kpi', 'financial', 'custom')),
+    scope VARCHAR(50) CHECK (scope IN ('organization', 'branch', 'department', 'team', 'employee')),
+    
+    -- Related entities
+    organization_id UUID REFERENCES organizations(id) ON DELETE CASCADE,
+    branch_id UUID REFERENCES branches(id) ON DELETE SET NULL,
+    department_id UUID REFERENCES departments(id) ON DELETE SET NULL,
+    team_id UUID REFERENCES teams(id) ON DELETE SET NULL,
+    employee_id UUID REFERENCES employees(id) ON DELETE SET NULL,
+    
+    -- Report details
+    generated_by UUID NOT NULL REFERENCES users(id) ON DELETE SET NULL,
+    report_data JSONB, -- Store report data as JSON
+    file_url TEXT, -- URL to PDF/CSV file
+    date_from DATE,
+    date_to DATE,
+    
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ============================================================================
+-- ALERTS & NOTIFICATIONS
+-- ============================================================================
+
+-- Alerts
+CREATE TABLE alerts (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    severity VARCHAR(20) CHECK (severity IN ('critical', 'warning', 'info')),
+    category VARCHAR(50), -- e.g., 'performance', 'attendance', 'system', 'kpi'
+    
+    -- Related entities
+    organization_id UUID REFERENCES organizations(id) ON DELETE CASCADE,
+    branch_id UUID REFERENCES branches(id) ON DELETE SET NULL,
+    department_id UUID REFERENCES departments(id) ON DELETE SET NULL,
+    team_id UUID REFERENCES teams(id) ON DELETE SET NULL,
+    employee_id UUID REFERENCES employees(id) ON DELETE SET NULL,
+    
+    is_resolved BOOLEAN DEFAULT FALSE,
+    resolved_at TIMESTAMP WITH TIME ZONE,
+    resolved_by UUID REFERENCES users(id) ON DELETE SET NULL,
+    
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- User Alert Read Status
+CREATE TABLE user_alert_status (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    alert_id UUID NOT NULL REFERENCES alerts(id) ON DELETE CASCADE,
+    is_read BOOLEAN DEFAULT FALSE,
+    read_at TIMESTAMP WITH TIME ZONE,
+    UNIQUE(user_id, alert_id)
+);
+
+-- ============================================================================
+-- INSIGHTS & ANALYTICS
+-- ============================================================================
+
+-- Custom Dashboards
+CREATE TABLE dashboards (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    layout JSONB, -- Store dashboard widget layout as JSON
+    is_default BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Saved Insights
+CREATE TABLE insights (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    insight_type VARCHAR(50), -- e.g., 'trend', 'comparison', 'prediction', 'anomaly'
+    data JSONB, -- Store insight data as JSON
+    
+    -- Related entities
+    organization_id UUID REFERENCES organizations(id) ON DELETE CASCADE,
+    branch_id UUID REFERENCES branches(id) ON DELETE SET NULL,
+    
+    created_by UUID REFERENCES users(id) ON DELETE SET NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ============================================================================
+-- AUDIT LOG
+-- ============================================================================
+
+-- Audit Log (track all important actions)
+CREATE TABLE audit_log (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    action VARCHAR(100) NOT NULL, -- e.g., 'create', 'update', 'delete', 'login', 'export'
+    entity_type VARCHAR(100), -- e.g., 'employee', 'branch', 'report'
+    entity_id UUID,
+    old_values JSONB,
+    new_values JSONB,
+    ip_address INET,
+    user_agent TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
