@@ -1,10 +1,23 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../externaluicomponents/Card.tsx";
 import { Building2, Lock, Mail, Loader2 } from 'lucide-react';
 import { useState } from "react";
+import {Label} from "../externaluicomponents/label.tsx";
+import {Input} from "../externaluicomponents/input.tsx";
+import {useNavigate} from "react-router-dom";
 
 const STRAPI_URL = "http://localhost:3001";
 
 function LoginPage() {
+
+    const navigate = useNavigate();
+    const navHome = () => {
+        navigate("/homepage", { replace: true });
+    }
+    // to do add expiry to jwt
+    if (localStorage.getItem("jwt") !== null) {
+        navHome()
+    }
+
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -30,6 +43,7 @@ function LoginPage() {
             });
 
             const data = await response.json();
+            console.log("Successfully logged in", data);
 
             if (response.ok) {
                 console.log("Login Successful!", data.user);
@@ -38,8 +52,9 @@ function LoginPage() {
 
                 localStorage.setItem('user', JSON.stringify(data.user));
 
+                navHome()
 
-                alert("Login successful! Token saved. Redirecting...");
+
 
             } else {
                 // Login failed (e.g., invalid credentials)
@@ -48,7 +63,7 @@ function LoginPage() {
             }
         } catch (err) {
             console.error("Network error:", err);
-            setError("Cannot connect to the server. Check your API URL.");
+            setError("Cannot connect to the server.");
         } finally {
             setIsLoading(false);
         }
@@ -81,10 +96,10 @@ function LoginPage() {
                             )}
 
                             <div className="space-y-2">
-                                <label htmlFor="email">Email</label>
+                                <Label htmlFor="email">Email</Label>
                                 <div className="relative">
                                     <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                                    <input
+                                    <Input
                                         id="email"
                                         type="email"
                                         placeholder="user@nabdtwin.com"
@@ -97,10 +112,10 @@ function LoginPage() {
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                <label htmlFor="password">Password</label>
+                                <Label htmlFor="password">Password</Label>
                                 <div className="relative">
                                     <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                                    <input
+                                    <Input
                                         id="password"
                                         type="password"
                                         placeholder="••••••••"
