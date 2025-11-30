@@ -1,7 +1,7 @@
 import {Outlet} from "react-router-dom";
-import {Sidebar} from "../components/SideBar.tsx";
+import Sidebar from "../components/sidebar.tsx";
 
-function MainLayout(props) {
+function MainLayout() {
     return (<>
             <Sidebar/>
             <Outlet/>
