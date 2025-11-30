@@ -1,57 +1,35 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../externaluicomponents/Card.tsx";
 import { Building2, Lock, Mail, Loader2 } from 'lucide-react';
 import { useState } from "react";
+import {Label} from "../externaluicomponents/label.tsx";
+import {Input} from "../externaluicomponents/input.tsx";
+import {useNavigate} from "react-router-dom";
+import {useDispatch, useSelector} from "react-redux";
+import {selectIsLoading, selectIslogin} from "../store/auth/authSelector.ts";
+import {loginUser} from "../store/auth/authThunks.ts";
+import {type AppDispatch} from "../store/store.ts";
 
-const STRAPI_URL = "http://localhost:3001";
+
 
 function LoginPage() {
+    const dispatch: AppDispatch = useDispatch();
+    const isLoading = useSelector(selectIsLoading);
+
+    const navigate = useNavigate();
+    const navHome = () => {
+        navigate("/homepage", { replace: true });
+    }
+
+
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState(null);
+    const error = useSelector((state) => state.auth.error);
+    const isLoggedIn = useSelector(selectIslogin)
 
     const handleSubmit = async (e) => {
         e.preventDefault(); // Prevent default form submission
-
-        // Reset state before new attempt
-        setError(null);
-        setIsLoading(true);
-
-        try {
-            const response = await fetch(`${STRAPI_URL}/api/auth/local`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    identifier: email, // Strapi uses 'identifier' for either email or username
-                    password: password,
-                }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                console.log("Login Successful!", data.user);
-
-                localStorage.setItem('jwt', data.jwt);
-
-                localStorage.setItem('user', JSON.stringify(data.user));
-
-
-                alert("Login successful! Token saved. Redirecting...");
-
-            } else {
-                // Login failed (e.g., invalid credentials)
-                console.error("Login failed:", data.error.message);
-                setError(data.error.message || "An unknown error occurred during login.");
-            }
-        } catch (err) {
-            console.error("Network error:", err);
-            setError("Cannot connect to the server. Check your API URL.");
-        } finally {
-            setIsLoading(false);
-        }
+        dispatch(loginUser({identifier :email, password: password}));
+        if (isLoggedIn) navHome()
     };
 
     return (
@@ -81,10 +59,10 @@ function LoginPage() {
                             )}
 
                             <div className="space-y-2">
-                                <label htmlFor="email">Email</label>
+                                <Label htmlFor="email">Email</Label>
                                 <div className="relative">
                                     <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                                    <input
+                                    <Input
                                         id="email"
                                         type="email"
                                         placeholder="user@nabdtwin.com"
@@ -97,10 +75,10 @@ function LoginPage() {
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                <label htmlFor="password">Password</label>
+                                <Label htmlFor="password">Password</Label>
                                 <div className="relative">
                                     <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                                    <input
+                                    <Input
                                         id="password"
                                         type="password"
                                         placeholder="••••••••"
