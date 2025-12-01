@@ -639,7 +639,6 @@ export interface ApiBranchBranch extends Struct.CollectionTypeSchema {
   };
   options: {
     draftAndPublish: false;
-    timestamps: true;
   };
   attributes: {
     address: Schema.Attribute.Text;
@@ -672,7 +671,10 @@ export interface ApiBranchBranch extends Struct.CollectionTypeSchema {
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
-    organization_id: Schema.Attribute.String;
+    organization_idtest: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::organization.organization'
+    >;
     postal_code: Schema.Attribute.String &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 20;
@@ -681,9 +683,6 @@ export interface ApiBranchBranch extends Struct.CollectionTypeSchema {
     status: Schema.Attribute.Enumeration<
       ['active', 'inactive', 'maintenance']
     > &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 20;
-      }> &
       Schema.Attribute.DefaultTo<'active'>;
     total_employees: Schema.Attribute.Integer;
     total_floors: Schema.Attribute.Integer;
@@ -1087,7 +1086,6 @@ export interface ApiOrganizationOrganization
   };
   options: {
     draftAndPublish: false;
-    timestamps: true;
   };
   attributes: {
     createdAt: Schema.Attribute.DateTime;
@@ -1110,6 +1108,7 @@ export interface ApiOrganizationOrganization
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
+    organizations: Schema.Attribute.Relation<'oneToMany', 'api::branch.branch'>;
     publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -1518,57 +1517,6 @@ export interface ApiUserFeaturePermissionUserFeaturePermission
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     user_id: Schema.Attribute.String;
-  };
-}
-
-export interface ApiUserUser extends Struct.CollectionTypeSchema {
-  collectionName: 'users';
-  info: {
-    description: 'Schema for the users table. Relationships must be added manually.';
-    displayName: 'User';
-    pluralName: 'users';
-    singularName: 'user';
-  };
-  options: {
-    draftAndPublish: false;
-    timestamps: true;
-  };
-  attributes: {
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    email: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.Unique &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 255;
-      }>;
-    employee_id: Schema.Attribute.String;
-    is_active: Schema.Attribute.Boolean;
-    last_login: Schema.Attribute.DateTime;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<'oneToMany', 'api::user.user'> &
-      Schema.Attribute.Private;
-    password_hash: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 255;
-      }>;
-    publishedAt: Schema.Attribute.DateTime;
-    role: Schema.Attribute.Enumeration<['admin', 'normal']> &
-      Schema.Attribute.Required &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 20;
-      }>;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    username: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.Unique &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 100;
-      }>;
   };
 }
 
@@ -2105,7 +2053,6 @@ export interface PluginUsersPermissionsUser
   };
   options: {
     draftAndPublish: false;
-    timestamps: true;
   };
   attributes: {
     blocked: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
@@ -2137,6 +2084,9 @@ export interface PluginUsersPermissionsUser
       'manyToOne',
       'plugin::users-permissions.role'
     >;
+    type: Schema.Attribute.Enumeration<['admin', 'normal']> &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'normal'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -2186,7 +2136,6 @@ declare module '@strapi/strapi' {
       'api::user-alert-status.user-alert-status': ApiUserAlertStatusUserAlertStatus;
       'api::user-branch-permission.user-branch-permission': ApiUserBranchPermissionUserBranchPermission;
       'api::user-feature-permission.user-feature-permission': ApiUserFeaturePermissionUserFeaturePermission;
-      'api::user.user': ApiUserUser;
       'api::workspace-kpi.workspace-kpi': ApiWorkspaceKpiWorkspaceKpi;
       'api::workspace.workspace': ApiWorkspaceWorkspace;
       'plugin::content-releases.release': PluginContentReleasesRelease;
