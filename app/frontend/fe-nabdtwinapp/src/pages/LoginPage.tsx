@@ -16,20 +16,15 @@ function LoginPage() {
     const isLoading = useSelector(selectIsLoading);
 
     const navigate = useNavigate();
-    const navHome = () => {
-        navigate("/homepage", { replace: true });
-    }
 
 
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
     const error = useSelector((state) => state.auth.error);
-    const isLoggedIn = useSelector(selectIslogin)
 
     const handleSubmit = async (e) => {
         e.preventDefault(); // Prevent default form submission
-        dispatch(loginUser({identifier :email, password: password}));
-        if (isLoggedIn) navHome()
+        dispatch(loginUser({identifier :email, password: password , navigate: navigate}));
     };
 
     return (
