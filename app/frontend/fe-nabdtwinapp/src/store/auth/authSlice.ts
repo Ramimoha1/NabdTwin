@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { loginUser } from "./authThunks";
+import {useNavigate} from "react-router-dom";
 
 interface AuthState {
     username: string | null;
@@ -49,6 +50,7 @@ export const authSlice = createSlice({
                 state.useremail = action.payload.useremail;
                 state.token = action.payload.token;
                 state.accountType = action.payload.accountType;
+
             })
             .addCase(loginUser.rejected, (state, action) => {
                 state.isLoading = false;
