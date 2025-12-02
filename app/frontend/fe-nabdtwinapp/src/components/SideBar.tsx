@@ -10,6 +10,7 @@ export function Sidebar() {
     const navigate = useNavigate()
     const dispatch = useDispatch();
     const location = useLocation();
+    console.log(location.pathname)
     const { username, accountType } = useSelector((state: RootState) => state.auth);
 
     const menuItems = [
@@ -59,14 +60,12 @@ export function Sidebar() {
                     return (
                         <Button
                             key={item.to}
-                            variant={location.pathname === item.to ? 'secondary' : 'ghost'}
+                            variant={location.pathname.startsWith(item.to)  ? 'secondary' : 'ghost'}
                             className="w-full justify-start"
-                            asChild
+                            onClick={() => navigate(item.to)}
                         >
-                            <Link to={item.to}>
-                                <item.icon className="h-4 w-4 mr-2" />
-                                {item.label}
-                            </Link>
+                            <item.icon className="h-4 w-4 mr-2" />
+                            {item.label}
                         </Button>
                     );
                 })}
@@ -75,7 +74,7 @@ export function Sidebar() {
 
                 <Button
                     variant="ghost"
-                    className="w-full justify-start relative"
+                    className="w-full justify-start hover:bg-gray-300"
                 >
                     <Bell className="h-4 w-4 mr-2" />
                     Alerts

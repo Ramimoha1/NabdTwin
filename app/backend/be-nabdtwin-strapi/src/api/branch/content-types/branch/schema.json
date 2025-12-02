@@ -8,13 +8,10 @@
     "description": "Schema for the branches table. Relationships must be added manually."
   },
   "options": {
-    "draftAndPublish": false,
-    "timestamps": true
+    "draftAndPublish": false
   },
+  "pluginOptions": {},
   "attributes": {
-    "organization_id": {
-      "type": "string"
-    },
     "name": {
       "type": "string",
       "maxLength": 255,
@@ -41,14 +38,10 @@
       "maxLength": 20
     },
     "latitude": {
-      "type": "decimal",
-      "precision": 10,
-      "scale": 8
+      "type": "decimal"
     },
     "longitude": {
-      "type": "decimal",
-      "precision": 11,
-      "scale": 8
+      "type": "decimal"
     },
     "total_floors": {
       "type": "integer"
@@ -58,13 +51,18 @@
     },
     "status": {
       "type": "enumeration",
-      "maxLength": 20,
+      "default": "active",
       "enum": [
         "active",
         "inactive",
         "maintenance"
-      ],
-      "default": "active"
+      ]
+    },
+    "organization_idtest": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::organization.organization",
+      "inversedBy": "organizations"
     }
   }
 }
