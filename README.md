@@ -16,7 +16,7 @@
 
 | Sprint  | Module Name | Frontend                                                      | Backend | Database |
 |---------|-------------|---------------------------------------------------------------|---------|----------|
-| Sprint 1|             | [index.html](/app/frontend/fe-nabdtwinapp/index.html)        | -       | -        |
+| Sprint 1|KPI and Metric Calculation| [index.html](/app/frontend/fe-nabdtwinapp/index.html)        | -       | -        |
 | Sprint 2|             | -                                                             | -       | -        |
 | Sprint 3|             | -                                                             | -       | -        |
 
@@ -26,7 +26,7 @@
 
 | Sprint  | Module Name | Frontend                                                            | Backend | Database |
 |---------|-------------|---------------------------------------------------------------------|---------|----------|
-| Sprint 1|             | [package.json](/app/frontend/fe-nabdtwinapp/package.json)          | -       | -        |
+| Sprint 1|Google Maps and Floor Visualization| [package.json](/app/frontend/fe-nabdtwinapp/package.json)          | -       | -        |
 | Sprint 2|             | -                                                                   | -       | -        |
 | Sprint 3|             | -                                                                   | -       | -        |
 
@@ -36,7 +36,7 @@
 
 | Sprint  | Module Name | Frontend                                                            | Backend | Database |
 |---------|-------------|---------------------------------------------------------------------|---------|----------|
-| Sprint 1|             | [tsconfig.json](/app/frontend/fe-nabdtwinapp/tsconfig.json)        | -       | -        |
+| Sprint 1| Authentication & JWT| [tsconfig.json](/app/frontend/fe-nabdtwinapp/tsconfig.json)        | -       | -        |
 | Sprint 2|             | -                                                                   | -       | -        |
 | Sprint 3|             | -                                                                   | -       | -        |
 
@@ -46,6 +46,6 @@
 
 | Sprint  | Module Name | Frontend                                                      | Backend | Database |
 |---------|-------------|---------------------------------------------------------------|---------|----------|
-| Sprint 1|             | [index.html](/app/frontend/fe-nabdtwinapp/index.html)        | -       | -        |
+| Sprint 1|Dashboard Visualization Module| [index.html](/app/frontend/fe-nabdtwinapp/index.html)        | -       | -        |
 | Sprint 2|             | -                                                             | -       | -        |
 | Sprint 3|             | -                                                             | -       | -        |
