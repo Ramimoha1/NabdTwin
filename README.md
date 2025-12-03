@@ -6,7 +6,7 @@
 
 | Sprint  | Module Name | Frontend                                                      | Backend | Database |
 |---------|-------------|---------------------------------------------------------------|---------|----------|
-| Sprint 1|             | [index.html](/app/frontend/fe-nabdtwinapp/index.html)        | -       | -        |
+| Sprint 1|Data Schema Management| [index.html](/app/frontend/fe-nabdtwinapp/index.html)        | -       | -        |
 | Sprint 2|             | -                                                             | -       | -        |
 | Sprint 3|             | -                                                             | -       | -        |
 
