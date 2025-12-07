@@ -17,6 +17,5 @@ createRoot(document.getElementById('root')!).render(
               </QueryClientProvider>
           </PersistGate>
       </Provider>
-
   </StrictMode>,
 )

@@ -6,6 +6,7 @@ import ReportsPage from "../pages/ReportsPage.tsx";
 import AccountsPage from "../pages/AccountsPage.tsx";
 import NotFoundPage from "../pages/PageNotFound.tsx";
 import MainLayout from "../layout/MainLayout.tsx";
+import AdminPage from "../pages/AdminPage.tsx";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -18,7 +19,7 @@ const router = createBrowserRouter(
                 <Route path="homepage" element={<MapViewPage />} />
                 <Route path="insights" element={<InsightsPage />} />
                 <Route path="reports" element={<ReportsPage />} />
-                <Route path="accounts" element={<AccountsPage />} />
+                <Route path="accounts" element={<AdminPage />} />
             </Route>
 
             {/* Catch-all */}
