@@ -12,13 +12,14 @@ export function Sidebar() {
     const location = useLocation();
     console.log(location.pathname)
     const { username, accountType } = useSelector((state: RootState) => state.auth);
-
+    console.log(accountType);
     const menuItems = [
         { icon: Map, label: 'Map View', to: '/homepage', adminOnly: false },
         { icon: TrendingUp, label: 'Insights', to: '/insights', adminOnly: false },
         { icon: FileText, label: 'Reports', to: '/reports', adminOnly: false },
         { icon: Users, label: 'Accounts', to: '/accounts', adminOnly: true }
     ];
+
     const handlLoggout = () => {
         dispatch(logoutUser())
         navigate("/", { replace: true });

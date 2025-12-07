@@ -4,19 +4,23 @@ import {Card} from "../externaluicomponents/Card.tsx";
 import {Activity, DollarSign, MapPin, TrendingUp, Users} from "lucide-react";
 import {getBranches} from "../services/API/branches.ts";
 import {useQuery} from "@tanstack/react-query";
-import type {Branch} from "../Types";
+import type {Branch} from "../model";
 import {useState} from "react";
 import {PerformanceHeatmap} from "../components/PerformanceHeatMap.tsx";
+import Map from "../components/Map.tsx";
 
 function MapViewPage() {
     const title = "HomePage";
     const description = "Welcome to the HomePage";
     const [hoveredBranch, setHoveredBranch] = useState<string | null>(null);
 
-    const {  data : branches, isLoading, isError, error } =  useQuery<Branch[]>({
+    const {  data , isLoading, isError, error } =  useQuery<Branch[]>({
         queryKey: ["branches"],
         queryFn: getBranches,
     });
+
+    const branches: Branch[] = data ?? [];
+
 
     if (isLoading) return <p>Loading...wait bro</p>;
     if (isError) return <p>Error! {error}</p>;
@@ -70,99 +74,100 @@ function MapViewPage() {
             <div className="flex-1 p-6 overflow-auto">
                 <div className="bg-gradient-to-br from-blue-50 to-gray-50 rounded-lg border border-gray-200 h-full min-h-[600px] relative">
                     {/* Mock Map Visualization  need to be replaced with Google map api*/}
-                    <div className="absolute inset-0 p-8">
-                        <div className="relative h-full w-full">
-                            {/* Grid background for map effect */}
-                            <div className="absolute inset-0 opacity-10"
-                                 style={{
-                                     backgroundImage: `linear-gradient(#999 1px, transparent 1px), linear-gradient(90deg, #999 1px, transparent 1px)`,
-                                     backgroundSize: '50px 50px'
-                                 }}
-                            />
+                    <Map branches={branches}></Map>
+                    {/*<div className="absolute inset-0 p-8">*/}
+                    {/*    <div className="relative h-full w-full">*/}
+                    {/*        /!* Grid background for map effect *!/*/}
+                    {/*        <div className="absolute inset-0 opacity-10"*/}
+                    {/*             style={{*/}
+                    {/*                 backgroundImage: `linear-gradient(#999 1px, transparent 1px), linear-gradient(90deg, #999 1px, transparent 1px)`,*/}
+                    {/*                 backgroundSize: '50px 50px'*/}
+                    {/*             }}*/}
+                    {/*        />*/}
 
-                            {/* Branch markers */}
-                            {branches?.map((branch, index) => {
-                                const positions = [
-                                    { top: '30%', left: '50%' }, // Cairo
-                                    { top: '20%', left: '40%' }, // Alexandria
-                                    { top: '35%', left: '45%' }, // Giza
-                                    { top: '15%', left: '60%' }, // Mansoura
-                                    { top: '70%', left: '65%' }  // Aswan
-                                ];
-                                const pos = positions[index] || { top: '50%', left: '50%' };
+                    {/*        /!* Branch markers *!/*/}
+                    {/*        {branches?.map((branch, index) => {*/}
+                    {/*            const positions = [*/}
+                    {/*                { top: '30%', left: '50%' }, // Cairo*/}
+                    {/*                { top: '20%', left: '40%' }, // Alexandria*/}
+                    {/*                { top: '35%', left: '45%' }, // Giza*/}
+                    {/*                { top: '15%', left: '60%' }, // Mansoura*/}
+                    {/*                { top: '70%', left: '65%' }  // Aswan*/}
+                    {/*            ];*/}
+                    {/*            const pos = positions[index] || { top: '50%', left: '50%' };*/}
 
-                                return (
-                                    <div
-                                        key={branch.id}
-                                        className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-all hover:scale-110"
-                                        style={pos}
-                                        onMouseEnter={() => setHoveredBranch(branch.id)}
-                                        onMouseLeave={() => setHoveredBranch(null)}
-                                        onClick={() => {
-                                            console.log("clickyy haha")
-                                        }}
-                                    >
-                                        {/* Marker */}
-                                        <div className="relative">
-                                            <div className={`h-12 w-12 rounded-full ${getPerformanceColor(branch.performance)} flex items-center justify-center shadow-lg ring-4 ring-white`}>
-                                                <MapPin className="h-6 w-6 text-white" />
-                                            </div>
+                    {/*            return (*/}
+                    {/*                <div*/}
+                    {/*                    key={branch.id}*/}
+                    {/*                    className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-all hover:scale-110"*/}
+                    {/*                    style={pos}*/}
+                    {/*                    onMouseEnter={() => setHoveredBranch(branch.id)}*/}
+                    {/*                    onMouseLeave={() => setHoveredBranch(null)}*/}
+                    {/*                    onClick={() => {*/}
+                    {/*                        console.log("clickyy haha")*/}
+                    {/*                    }}*/}
+                    {/*                >*/}
+                    {/*                    /!* Marker *!/*/}
+                    {/*                    <div className="relative">*/}
+                    {/*                        <div className={`h-12 w-12 rounded-full ${getPerformanceColor(branch.performance)} flex items-center justify-center shadow-lg ring-4 ring-white`}>*/}
+                    {/*                            <MapPin className="h-6 w-6 text-white" />*/}
+                    {/*                        </div>*/}
 
-                                            {/* Hover popup */}
-                                            {hoveredBranch === branch.id && (
-                                                <Card className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 p-4 w-64 shadow-xl z-10">
-                                                    <div className="space-y-2">
-                                                        <div className="flex items-start justify-between">
-                                                            <div>
-                                                                <h3 className="mb-1">{branch.name}</h3>
-                                                                <p className="text-sm text-gray-500">{branch.location.address}</p>
-                                                            </div>
-                                                            <Badge className={getPerformanceBadgeColor(branch.performance)}>
-                                                                {branch.performance}
-                                                            </Badge>
-                                                        </div>
-                                                        <div className="grid grid-cols-2 gap-3 pt-2 border-t">
-                                                            <div className="flex items-center gap-2">
-                                                                <DollarSign className="h-4 w-4 text-green-600" />
-                                                                <div>
-                                                                    <p className="text-xs text-gray-500">Revenue</p>
-                                                                    <p className="text-sm">{formatCurrency(branch.kpis.revenue)}</p>
-                                                                </div>
-                                                            </div>
-                                                            <div className="flex items-center gap-2">
-                                                                <Users className="h-4 w-4 text-blue-600" />
-                                                                <div>
-                                                                    <p className="text-xs text-gray-500">Employees</p>
-                                                                    <p className="text-sm">{branch.kpis.employees}</p>
-                                                                </div>
-                                                            </div>
-                                                            <div className="flex items-center gap-2">
-                                                                <Activity className="h-4 w-4 text-purple-600" />
-                                                                <div>
-                                                                    <p className="text-xs text-gray-500">Productivity</p>
-                                                                    <p className="text-sm">{branch.kpis.productivity}%</p>
-                                                                </div>
-                                                            </div>
-                                                            <div className="flex items-center gap-2">
-                                                                <TrendingUp className="h-4 w-4 text-orange-600" />
-                                                                <div>
-                                                                    <p className="text-xs text-gray-500">Growth</p>
-                                                                    <p className="text-sm">+{branch.kpis.growth}%</p>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <p className="text-xs text-gray-500 pt-2 border-t">
-                                                            Click to explore branch details
-                                                        </p>
-                                                    </div>
-                                                </Card>
-                                            )}
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
+                    {/*                        /!* Hover popup *!/*/}
+                    {/*                        {hoveredBranch === branch.id && (*/}
+                    {/*                            <Card className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 p-4 w-64 shadow-xl z-10">*/}
+                    {/*                                <div className="space-y-2">*/}
+                    {/*                                    <div className="flex items-start justify-between">*/}
+                    {/*                                        <div>*/}
+                    {/*                                            <h3 className="mb-1">{branch.name}</h3>*/}
+                    {/*                                            <p className="text-sm text-gray-500">{branch.location.address}</p>*/}
+                    {/*                                        </div>*/}
+                    {/*                                        <Badge className={getPerformanceBadgeColor(branch.performance)}>*/}
+                    {/*                                            {branch.performance}*/}
+                    {/*                                        </Badge>*/}
+                    {/*                                    </div>*/}
+                    {/*                                    <div className="grid grid-cols-2 gap-3 pt-2 border-t">*/}
+                    {/*                                        <div className="flex items-center gap-2">*/}
+                    {/*                                            <DollarSign className="h-4 w-4 text-green-600" />*/}
+                    {/*                                            <div>*/}
+                    {/*                                                <p className="text-xs text-gray-500">Revenue</p>*/}
+                    {/*                                                <p className="text-sm">{formatCurrency(branch.kpis.revenue)}</p>*/}
+                    {/*                                            </div>*/}
+                    {/*                                        </div>*/}
+                    {/*                                        <div className="flex items-center gap-2">*/}
+                    {/*                                            <Users className="h-4 w-4 text-blue-600" />*/}
+                    {/*                                            <div>*/}
+                    {/*                                                <p className="text-xs text-gray-500">Employees</p>*/}
+                    {/*                                                <p className="text-sm">{branch.kpis.employees}</p>*/}
+                    {/*                                            </div>*/}
+                    {/*                                        </div>*/}
+                    {/*                                        <div className="flex items-center gap-2">*/}
+                    {/*                                            <Activity className="h-4 w-4 text-purple-600" />*/}
+                    {/*                                            <div>*/}
+                    {/*                                                <p className="text-xs text-gray-500">Productivity</p>*/}
+                    {/*                                                <p className="text-sm">{branch.kpis.productivity}%</p>*/}
+                    {/*                                            </div>*/}
+                    {/*                                        </div>*/}
+                    {/*                                        <div className="flex items-center gap-2">*/}
+                    {/*                                            <TrendingUp className="h-4 w-4 text-orange-600" />*/}
+                    {/*                                            <div>*/}
+                    {/*                                                <p className="text-xs text-gray-500">Growth</p>*/}
+                    {/*                                                <p className="text-sm">+{branch.kpis.growth}%</p>*/}
+                    {/*                                            </div>*/}
+                    {/*                                        </div>*/}
+                    {/*                                    </div>*/}
+                    {/*                                    <p className="text-xs text-gray-500 pt-2 border-t">*/}
+                    {/*                                        Click to explore branch details*/}
+                    {/*                                    </p>*/}
+                    {/*                                </div>*/}
+                    {/*                            </Card>*/}
+                    {/*                        )}*/}
+                    {/*                    </div>*/}
+                    {/*                </div>*/}
+                    {/*            );*/}
+                    {/*        })}*/}
+                    {/*    </div>*/}
+                    {/*</div>*/}
                 </div>
             </div>
 

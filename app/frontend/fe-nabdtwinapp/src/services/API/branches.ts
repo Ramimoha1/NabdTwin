@@ -1,5 +1,5 @@
 import { api } from "./api";
-import type {Branch} from "../../Types";
+import type {Branch} from "../../model";
 
 export const getBranches = () => {
     const mockBranches: Branch[] = [

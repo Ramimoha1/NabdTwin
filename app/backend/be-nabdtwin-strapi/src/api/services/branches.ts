@@ -1,0 +1,5 @@
+/**
+ * Branches service
+ */
+
+export default () => ({});
