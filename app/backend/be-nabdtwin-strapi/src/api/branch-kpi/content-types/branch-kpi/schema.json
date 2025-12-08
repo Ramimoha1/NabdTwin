@@ -1,0 +1,55 @@
+{
+  "kind": "collectionType",
+  "collectionName": "branch_kpis",
+  "info": {
+    "singularName": "branch-kpi",
+    "pluralName": "branch-kpis",
+    "displayName": "Branch KPI",
+    "description": "Branch KPI time-series data"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "branch": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::branch.branch",
+      "inversedBy": "branchKpis"
+    },
+    "date": {
+      "type": "date",
+      "required": true
+    },
+    "revenue": {
+      "type": "decimal",
+      "default": 0
+    },
+    "revenueTarget": {
+      "type": "decimal",
+      "default": 0
+    },
+    "employeeCount": {
+      "type": "integer",
+      "default": 0
+    },
+    "satisfactionScore": {
+      "type": "decimal",
+      "min": 0,
+      "max": 100
+    },
+    "productivityScore": {
+      "type": "decimal",
+      "min": 0,
+      "max": 100
+    },
+    "growthRate": {
+      "type": "decimal"
+    },
+    "performanceRating": {
+      "type": "enumeration",
+      "enum": ["excellent", "good", "average", "poor"]
+    }
+  }
+}

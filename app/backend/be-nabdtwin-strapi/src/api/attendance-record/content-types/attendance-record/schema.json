@@ -1,0 +1,43 @@
+{
+  "kind": "collectionType",
+  "collectionName": "attendance_records",
+  "info": {
+    "singularName": "attendance-record",
+    "pluralName": "attendance-records",
+    "displayName": "Attendance Record",
+    "description": "Employee attendance record"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "employee": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::employee.employee",
+      "inversedBy": "attendanceRecords"
+    },
+    "date": {
+      "type": "date",
+      "required": true
+    },
+    "checkInTime": {
+      "type": "datetime"
+    },
+    "checkOutTime": {
+      "type": "datetime"
+    },
+      "attendanceStatus": {
+      "type": "enumeration",
+      "columnName": "status",
+      "enum": ["present", "absent", "late", "on-leave", "sick-leave", "holiday"]
+    },
+    "hoursWorked": {
+      "type": "decimal"
+    },
+    "notes": {
+      "type": "text"
+    }
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "kind": "collectionType",
+  "collectionName": "departments",
+  "info": {
+    "singularName": "department",
+    "pluralName": "departments",
+    "displayName": "Department",
+    "description": "Department entity"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "organization": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::organization.organization",
+      "inversedBy": "departments"
+    },
+    "branch": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::branch.branch",
+      "inversedBy": "departments"
+    },
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "code": {
+      "type": "string",
+      "maxLength": 50
+    },
+    "description": {
+      "type": "text"
+    },
+    "headEmployee": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::employee.employee"
+    },
+    "parentDepartment": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::department.department"
+    },
+    "teams": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::team.team",
+      "mappedBy": "department"
+    },
+    "employees": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::employee.employee",
+      "mappedBy": "department"
+    },
+    "departmentKpis": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::department-kpi.department-kpi",
+      "mappedBy": "department"
+    },
+    "projects": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::project.project",
+      "mappedBy": "department"
+    },
+    "reports": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::report.report",
+      "mappedBy": "department"
+    },
+    "alerts": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::alert.alert",
+      "mappedBy": "department"
+    }
+  }
+}

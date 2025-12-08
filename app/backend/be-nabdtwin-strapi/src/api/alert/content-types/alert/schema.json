@@ -1,0 +1,80 @@
+{
+  "kind": "collectionType",
+  "collectionName": "alerts",
+  "info": {
+    "singularName": "alert",
+    "pluralName": "alerts",
+    "displayName": "Alert",
+    "description": "Alert entity"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "description": {
+      "type": "text"
+    },
+    "severity": {
+      "type": "enumeration",
+      "enum": ["critical", "warning", "info"]
+    },
+    "category": {
+      "type": "string",
+      "maxLength": 50
+    },
+    "organization": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::organization.organization",
+      "inversedBy": "alerts"
+    },
+    "branch": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::branch.branch",
+      "inversedBy": "alerts"
+    },
+    "department": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::department.department",
+      "inversedBy": "alerts"
+    },
+    "team": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::team.team",
+      "inversedBy": "alerts"
+    },
+    "employee": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::employee.employee",
+      "inversedBy": "alerts"
+    },
+    "isResolved": {
+      "type": "boolean",
+      "default": false
+    },
+    "resolvedAt": {
+      "type": "datetime"
+    },
+    "resolvedBy": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "userAlertStatuses": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::user-alert-status.user-alert-status",
+      "mappedBy": "alert"
+    }
+  }
+}

@@ -1,0 +1,169 @@
+{
+  "kind": "collectionType",
+  "collectionName": "employees",
+  "info": {
+    "singularName": "employee",
+    "pluralName": "employees",
+    "displayName": "Employee",
+    "description": "Employee entity"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "organization": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::organization.organization",
+      "inversedBy": "employees"
+    },
+    "employeeNumber": {
+      "type": "string",
+      "unique": true,
+      "maxLength": 50
+    },
+    "firstName": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100
+    },
+    "lastName": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100
+    },
+    "email": {
+      "type": "email",
+      "required": true,
+      "unique": true
+    },
+    "phone": {
+      "type": "string",
+      "maxLength": 50
+    },
+    "dateOfBirth": {
+      "type": "date"
+    },
+    "gender": {
+      "type": "enumeration",
+      "enum": ["male", "female", "other", "prefer_not_to_say"]
+    },
+    "jobTitle": {
+      "type": "string",
+      "maxLength": 255
+    },
+    "department": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::department.department",
+      "inversedBy": "employees"
+    },
+    "team": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::team.team",
+      "inversedBy": "employees"
+    },
+    "branch": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::branch.branch",
+      "inversedBy": "employees"
+    },
+    "workspace": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::workspace.workspace",
+      "inversedBy": "employees"
+    },
+    "supervisor": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::employee.employee"
+    },
+    "employmentType": {
+      "type": "enumeration",
+      "enum": ["full-time", "part-time", "contract", "intern"]
+    },
+    "employmentStatus": {
+      "type": "enumeration",
+      "enum": ["active", "inactive", "on-leave", "terminated"],
+      "default": "active"
+    },
+    "hireDate": {
+      "type": "date"
+    },
+    "terminationDate": {
+      "type": "date"
+    },
+    "salary": {
+      "type": "decimal"
+    },
+    "currency": {
+      "type": "string",
+      "default": "USD",
+      "maxLength": 3
+    },
+    "positionX": {
+      "type": "decimal"
+    },
+    "positionY": {
+      "type": "decimal"
+    },
+    "positionZ": {
+      "type": "decimal"
+    },
+    "avatarUrl": {
+      "type": "text"
+    },
+    "employeeKpis": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::employee-kpi.employee-kpi",
+      "mappedBy": "employee"
+    },
+    "employeeSkills": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::employee-skill.employee-skill",
+      "mappedBy": "employee"
+    },
+    "attendanceRecords": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::attendance-record.attendance-record",
+      "mappedBy": "employee"
+    },
+    "assignedTasks": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::task.task",
+      "mappedBy": "assignedTo"
+    },
+    "createdProjects": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::project.project",
+      "mappedBy": "createdBy"
+    },
+    "reports": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::report.report",
+      "mappedBy": "employee"
+    },
+    "alerts": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::alert.alert",
+      "mappedBy": "employee"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "employee"
+    }
+  }
+}
