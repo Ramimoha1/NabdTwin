@@ -1,0 +1,41 @@
+{
+  "kind": "collectionType",
+  "collectionName": "workspace_kpis",
+  "info": {
+    "singularName": "workspace-kpi",
+    "pluralName": "workspace-kpis",
+    "displayName": "Workspace KPI",
+    "description": "Workspace KPI time-series data"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "workspace": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::workspace.workspace",
+      "inversedBy": "workspaceKpis"
+    },
+    "date": {
+      "type": "date",
+      "required": true
+    },
+    "utilizationRate": {
+      "type": "decimal",
+      "min": 0,
+      "max": 100
+    },
+    "productivityScore": {
+      "type": "decimal",
+      "min": 0,
+      "max": 100
+    },
+    "collaborationScore": {
+      "type": "decimal",
+      "min": 0,
+      "max": 100
+    }
+  }
+}

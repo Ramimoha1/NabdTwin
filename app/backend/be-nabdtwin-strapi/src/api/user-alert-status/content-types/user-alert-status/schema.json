@@ -1,0 +1,35 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_alert_statuses",
+  "info": {
+    "singularName": "user-alert-status",
+    "pluralName": "user-alert-statuses",
+    "displayName": "User Alert Status",
+    "description": "User alert read status"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "userAlertStatuses"
+    },
+    "alert": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::alert.alert",
+      "inversedBy": "userAlertStatuses"
+    },
+    "isRead": {
+      "type": "boolean",
+      "default": false
+    },
+    "readAt": {
+      "type": "datetime"
+    }
+  }
+}

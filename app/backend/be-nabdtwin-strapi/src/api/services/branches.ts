@@ -1,5 +1,0 @@
-/**
- * Branches service
- */
-
-export default () => ({});

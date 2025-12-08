@@ -74,6 +74,36 @@
         "admin",
         "normal"
       ]
+    },
+    "employee": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::employee.employee",
+      "mappedBy": "user"
+    },
+    "userBranchPermissions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::user-branch-permission.user-branch-permission",
+      "mappedBy": "user"
+    },
+    "userFeaturePermissions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::user-feature-permission.user-feature-permission",
+      "mappedBy": "user"
+    },
+    "userAlertStatuses": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::user-alert-status.user-alert-status",
+      "mappedBy": "user"
+    },
+    "dashboards": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::dashboard.dashboard",
+      "mappedBy": "user"
     }
   }
 }

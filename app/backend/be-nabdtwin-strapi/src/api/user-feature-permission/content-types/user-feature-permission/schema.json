@@ -1,0 +1,36 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_feature_permissions",
+  "info": {
+    "singularName": "user-feature-permission",
+    "pluralName": "user-feature-permissions",
+    "displayName": "User Feature Permission",
+    "description": "User feature access permission"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "userFeaturePermissions"
+    },
+    "appFeature": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::app-feature.app-feature",
+      "inversedBy": "userFeaturePermissions"
+    },
+    "grantedAt": {
+      "type": "datetime"
+    },
+    "grantedBy": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}

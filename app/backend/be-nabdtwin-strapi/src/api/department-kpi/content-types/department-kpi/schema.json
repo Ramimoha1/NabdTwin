@@ -1,0 +1,60 @@
+{
+  "kind": "collectionType",
+  "collectionName": "department_kpis",
+  "info": {
+    "singularName": "department-kpi",
+    "pluralName": "department-kpis",
+    "displayName": "Department KPI",
+    "description": "Department KPI time-series data"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "department": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::department.department",
+      "inversedBy": "departmentKpis"
+    },
+    "date": {
+      "type": "date",
+      "required": true
+    },
+    "revenue": {
+      "type": "decimal",
+      "default": 0
+    },
+    "revenueTarget": {
+      "type": "decimal",
+      "default": 0
+    },
+    "employeeCount": {
+      "type": "integer",
+      "default": 0
+    },
+    "teamCount": {
+      "type": "integer",
+      "default": 0
+    },
+    "tasksCompleted": {
+      "type": "integer",
+      "default": 0
+    },
+    "tasksTotal": {
+      "type": "integer",
+      "default": 0
+    },
+    "efficiencyScore": {
+      "type": "decimal",
+      "min": 0,
+      "max": 100
+    },
+    "satisfactionScore": {
+      "type": "decimal",
+      "min": 0,
+      "max": 100
+    }
+  }
+}

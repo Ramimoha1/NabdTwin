@@ -1,0 +1,53 @@
+{
+  "kind": "collectionType",
+  "collectionName": "employee_kpis",
+  "info": {
+    "singularName": "employee-kpi",
+    "pluralName": "employee-kpis",
+    "displayName": "Employee KPI",
+    "description": "Employee KPI time-series data"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "employee": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::employee.employee",
+      "inversedBy": "employeeKpis"
+    },
+    "date": {
+      "type": "date",
+      "required": true
+    },
+    "tasksCompleted": {
+      "type": "integer",
+      "default": 0
+    },
+    "tasksTotal": {
+      "type": "integer",
+      "default": 0
+    },
+    "attendanceRate": {
+      "type": "decimal",
+      "min": 0,
+      "max": 100
+    },
+    "performanceScore": {
+      "type": "decimal",
+      "min": 0,
+      "max": 100
+    },
+    "productivityScore": {
+      "type": "decimal",
+      "min": 0,
+      "max": 100
+    },
+    "projectsCompleted": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

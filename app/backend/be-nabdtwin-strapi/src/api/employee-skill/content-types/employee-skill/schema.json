@@ -1,0 +1,35 @@
+{
+  "kind": "collectionType",
+  "collectionName": "employee_skills",
+  "info": {
+    "singularName": "employee-skill",
+    "pluralName": "employee-skills",
+    "displayName": "Employee Skill",
+    "description": "Employee skill relationship with proficiency"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "employee": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::employee.employee",
+      "inversedBy": "employeeSkills"
+    },
+    "skill": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::skill.skill",
+      "inversedBy": "employeeSkills"
+    },
+    "proficiencyLevel": {
+      "type": "enumeration",
+      "enum": ["beginner", "intermediate", "advanced", "expert"]
+    },
+    "yearsOfExperience": {
+      "type": "decimal"
+    }
+  }
+}
