@@ -33,150 +33,275 @@ export interface UpdatePermissionsRequest {
     };
 }
 
-// Mock data for development
-const mockUsers: UserAccount[] = [
-    {
-        id: 'user-1',
-        name: 'Ahmed Mohamed',
-        username: 'ahmed.mohamed',
-        email: 'ahmed.mohamed@nabdtwin.com',
-        role: 'admin',
-        status: 'active',
+/**
+ * Normalize Strapi user data to frontend UserAccount format
+ */
+const normalizeUserData = (rawUser: any): UserAccount => {
+    const user = rawUser.attributes || rawUser;
+    
+    const branchPermissions = user.userBranchPermissions?.data || user.userBranchPermissions || [];
+    const viewBranches = branchPermissions.map((bp: any) => 
+        (bp.attributes?.branch?.data?.id || bp.branch?.id || bp.branch || '').toString()
+    ).filter(Boolean);
+    
+    const featurePermissions = user.userFeaturePermissions?.data || user.userFeaturePermissions || [];
+    const featureNames = featurePermissions.map((fp: any) => 
+        fp.attributes?.appFeature?.data?.attributes?.name || fp.appFeature?.name || ''
+    );
+    
+    return {
+        id: (rawUser.id || rawUser.documentId || '').toString(),
+        name: user.username || user.email?.split('@')[0] || 'Unknown User',
+        username: user.username || user.email?.split('@')[0] || '',
+        email: user.email || '',
+        role: user.type === 'admin' || user.role?.name === 'Admin' ? 'admin' : 'user',
+        status: user.blocked ? 'inactive' : 'active',
         permissions: {
-            viewBranches: [],
-            viewReports: true,
-            viewInsights: true,
-            viewEmployees: true
+            viewBranches: viewBranches,
+            viewReports: featureNames.includes('viewReports') || user.type === 'admin',
+            viewInsights: featureNames.includes('viewInsights') || user.type === 'admin',
+            viewEmployees: featureNames.includes('viewEmployees') || user.type === 'admin'
         },
-        createdAt: '2024-01-15T10:30:00Z',
-        lastLogin: '2024-12-07T08:45:00Z'
-    },
-    {
-        id: 'user-2',
-        name: 'Sarah Hassan',
-        username: 'sarah.hassan',
-        email: 'sarah.hassan@nabdtwin.com',
-        role: 'user',
-        status: 'active',
-        permissions: {
-            viewBranches: ['branch-1', 'branch-2'],
-            viewReports: true,
-            viewInsights: true,
-            viewEmployees: false
-        },
-        createdAt: '2024-02-20T14:20:00Z',
-        lastLogin: '2024-12-06T16:30:00Z'
-    },
-    {
-        id: 'user-3',
-        name: 'Omar Khaled',
-        username: 'omar.khaled',
-        email: 'omar.khaled@nabdtwin.com',
-        role: 'user',
-        status: 'active',
-        permissions: {
-            viewBranches: ['branch-3'],
-            viewReports: true,
-            viewInsights: false,
-            viewEmployees: false
-        },
-        createdAt: '2024-03-10T09:15:00Z',
-        lastLogin: '2024-12-05T11:20:00Z'
-    },
-    {
-        id: 'user-4',
-        name: 'Fatma Ali',
-        username: 'fatma.ali',
-        email: 'fatma.ali@nabdtwin.com',
-        role: 'user',
-        status: 'inactive',
-        permissions: {
-            viewBranches: [],
-            viewReports: false,
-            viewInsights: false,
-            viewEmployees: false
-        },
-        createdAt: '2024-04-05T13:45:00Z'
+        createdAt: user.createdAt || new Date().toISOString(),
+        lastLogin: user.lastLogin
+    };
+};
+
+/**
+ * Get all users from Strapi
+ */
+export const getUsers = async (): Promise<UserAccount[]> => {
+    try {
+        const response = await api.get('/api/users', {
+            params: {
+                populate: {
+                    role: true,
+                    userBranchPermissions: {
+                        populate: ['branch']
+                    },
+                    userFeaturePermissions: {
+                        populate: ['appFeature']
+                    }
+                }
+            }
+        });
+        
+        console.log('Users API Response:', response.data);
+        const users = Array.isArray(response.data) ? response.data : (response.data.data || []);
+        return users.map(normalizeUserData);
+    } catch (error: any) {
+        console.error('Error fetching users:', error);
+        console.error('Error details:', {
+            status: error.response?.status,
+            statusText: error.response?.statusText,
+            data: error.response?.data
+        });
+        
+        // If 403, it might be a permissions issue - return empty array for now
+        if (error.response?.status === 403) {
+            console.warn('Access forbidden - check Strapi permissions for users endpoint');
+            return [];
+        }
+        
+        throw error;
     }
-];
-
-// Get all users
-export const getUsers = (): Promise<UserAccount[]> => {
-    return new Promise(resolve => setTimeout(() => resolve([...mockUsers]), 300));
-    // return api.get("/users").then(res => res.data);
 };
 
-// Create new user
-export const createUser = (userData: CreateUserRequest): Promise<UserAccount> => {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            const newUser: UserAccount = {
-                id: `user-${Date.now()}`,
-                name: userData.name,
-                username: userData.email.split('@')[0],
-                email: userData.email,
-                role: userData.role,
-                status: 'active',
-                permissions: {
-                    viewBranches: [],
-                    viewReports: userData.role === 'admin',
-                    viewInsights: userData.role === 'admin',
-                    viewEmployees: userData.role === 'admin'
-                },
-                createdAt: new Date().toISOString()
-            };
-            mockUsers.push(newUser);
-            resolve(newUser);
-        }, 300);
-    });
-    // return api.post("/users", userData).then(res => res.data);
+export const createUser = async (userData: CreateUserRequest): Promise<UserAccount> => {
+    try {
+        const rolesResponse = await api.get('/api/users-permissions/roles');
+        const authenticatedRole = rolesResponse.data.roles?.find((r: any) => r.type === 'authenticated');
+        
+        if (!authenticatedRole) {
+            throw new Error('Authenticated role not found');
+        }
+        
+        const response = await api.post('/api/users', {
+            username: userData.email, 
+            email: userData.email,
+            password: 'TempPassword123!', 
+            role: authenticatedRole.id, 
+            type: userData.role, 
+            confirmed: true,
+            blocked: false
+        });
+        
+        console.log('Create user response:', response.data);
+        return normalizeUserData(response.data);
+    } catch (error: any) {
+        console.error('Error creating user:', error);
+        console.error('Error response:', error.response?.data);
+        
+        if (error.response?.data?.error?.message) {
+            throw new Error(error.response.data.error.message);
+        }
+        
+        throw error;
+    }
 };
 
-// Update user permissions
-export const updateUserPermissions = (data: UpdatePermissionsRequest): Promise<UserAccount> => {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            const userIndex = mockUsers.findIndex(u => u.id === data.userId);
-            if (userIndex === -1) {
-                reject(new Error('User not found'));
-                return;
+
+export const updateUserPermissions = async (data: UpdatePermissionsRequest): Promise<UserAccount> => {
+    try {
+        console.log("🔄 Starting Robust Permission Update for User:", data.userId);
+
+        // ---------------------------------------------------------
+        // STEP 1: DIRECT CLEANUP (The fix)
+        // Instead of guessing IDs from the user object, we ask the Permission Table:
+        // "Give me ALL permissions belonging to this user"
+        // ---------------------------------------------------------
+        
+        // A. Fetch existing Branch Permissions for this user
+        const branchPermsResponse = await api.get('/api/user-branch-permissions', {
+            params: {
+                filters: { user: data.userId },
+                populate: '*' // Ensure we get the IDs
             }
-            mockUsers[userIndex].permissions = data.permissions;
-            resolve(mockUsers[userIndex]);
-        }, 300);
-    });
-    // return api.patch(`/users/${data.userId}/permissions`, data.permissions).then(res => res.data);
+        });
+        
+        const branchPermsToDelete = branchPermsResponse.data.data || [];
+        console.log(`🗑️ Found ${branchPermsToDelete.length} REAL branch permissions to delete.`);
+
+        // B. Fetch existing Feature Permissions for this user
+        const featurePermsResponse = await api.get('/api/user-feature-permissions', {
+            params: {
+                filters: { user: data.userId },
+                populate: '*'
+            }
+        });
+        
+        const featurePermsToDelete = featurePermsResponse.data.data || [];
+
+        // ---------------------------------------------------------
+        // STEP 2: EXECUTE DELETE
+        // ---------------------------------------------------------
+        
+        await Promise.all(
+            branchPermsToDelete.map((perm: any) => {
+                // Use documentId or id depending on Strapi version (v5 uses documentId often)
+                const idToDelete = perm.documentId || perm.id; 
+                console.log(` - Deleting Branch Perm (ID: ${idToDelete})`);
+                return api.delete(`/api/user-branch-permissions/${idToDelete}`);
+            })
+        );
+
+        await Promise.all(
+            featurePermsToDelete.map((perm: any) => {
+                const idToDelete = perm.documentId || perm.id;
+                return api.delete(`/api/user-feature-permissions/${idToDelete}`);
+            })
+        );
+
+        // ---------------------------------------------------------
+        // STEP 3: CREATE NEW PERMISSIONS
+        // ---------------------------------------------------------
+        console.log(`✨ Creating ${data.permissions.viewBranches.length} new branch permissions...`);
+        
+        await Promise.all(
+            data.permissions.viewBranches.map((branchId: string) =>
+                api.post('/api/user-branch-permissions', {
+                    data: {
+                        user: data.userId,
+                        branch: branchId,
+                        grantedAt: new Date().toISOString()
+                    }
+                })
+            )
+        );
+
+        // ---------------------------------------------------------
+        // STEP 4: HANDLE FEATURES (Lookup -> Create)
+        // ---------------------------------------------------------
+        const featureNames = ['viewReports', 'viewInsights', 'viewEmployees'];
+        const featureMap: Record<string, string> = {};
+
+        for (const featureName of featureNames) {
+             const featureResponse = await api.get('/api/app-features', {
+                params: { filters: { name: { $eq: featureName } } }
+            });
+            
+            let featureId;
+            const features = featureResponse.data.data; 
+            
+            if (features && features.length > 0) {
+                featureId = features[0].documentId || features[0].id; // Prefer documentId for v5 relations
+            } else {
+                const createResponse = await api.post('/api/app-features', {
+                    data: { name: featureName, description: `Permission to ${featureName}` }
+                });
+                featureId = createResponse.data.data.documentId || createResponse.data.data.id;
+            }
+            featureMap[featureName] = featureId;
+        }
+
+        const featurePermissions = [];
+        if (data.permissions.viewReports) featurePermissions.push(featureMap.viewReports);
+        if (data.permissions.viewInsights) featurePermissions.push(featureMap.viewInsights);
+        if (data.permissions.viewEmployees) featurePermissions.push(featureMap.viewEmployees);
+        
+        await Promise.all(
+            featurePermissions.map((featureId: string) =>
+                api.post('/api/user-feature-permissions', {
+                    data: {
+                        user: data.userId,
+                        appFeature: featureId,
+                        grantedAt: new Date().toISOString()
+                    }
+                })
+            )
+        );
+
+        // ---------------------------------------------------------
+        // STEP 5: RETURN UPDATED USER
+        // ---------------------------------------------------------
+        const updatedResponse = await api.get(`/api/users/${data.userId}`, {
+            params: {
+                populate: {
+                    userBranchPermissions: { populate: ['branch'] },
+                    userFeaturePermissions: { populate: ['appFeature'] }
+                }
+            }
+        });
+        
+        return normalizeUserData(updatedResponse.data);
+
+    } catch (error) {
+        console.error('Error updating user permissions:', error);
+        throw error;
+    }
 };
 
-// Toggle user status (activate/deactivate)
-export const toggleUserStatus = (userId: string): Promise<UserAccount> => {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            const userIndex = mockUsers.findIndex(u => u.id === userId);
-            if (userIndex === -1) {
-                reject(new Error('User not found'));
-                return;
-            }
-            mockUsers[userIndex].status =
-                mockUsers[userIndex].status === 'active' ? 'inactive' : 'active';
-            resolve(mockUsers[userIndex]);
-        }, 300);
-    });
-    // return api.patch(`/users/${userId}/status`).then(res => res.data);
+/**
+ * Delete user
+ */
+export const deleteUser = async (userId: string): Promise<void> => {
+    try {
+        await api.delete(`/api/users/${userId}`);
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        throw error;
+    }
 };
 
-// Delete user
-export const deleteUser = (userId: string): Promise<void> => {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            const userIndex = mockUsers.findIndex(u => u.id === userId);
-            if (userIndex === -1) {
-                reject(new Error('User not found'));
-                return;
-            }
-            mockUsers.splice(userIndex, 1);
-            resolve();
-        }, 300);
-    });
-    // return api.delete(`/users/${userId}`).then(res => res.data);
+/**
+ * Toggle user status (activate/deactivate)
+ */
+export const toggleUserStatus = async (userId: string): Promise<UserAccount> => {
+    try {
+        // First get the current user status
+        const userResponse = await api.get(`/api/users/${userId}`);
+        // In Strapi Users, 'blocked' = true means inactive/banned
+        const currentBlocked = userResponse.data.blocked || false;
+        
+        // Toggle the blocked status (if blocked is true, set to false, and vice versa)
+        const response = await api.put(`/api/users/${userId}`, {
+            blocked: !currentBlocked
+        });
+        
+        // Return normalized data so the UI updates instantly
+        return normalizeUserData(response.data);
+    } catch (error) {
+        console.error('Error toggling user status:', error);
+        throw error;
+    }
 };

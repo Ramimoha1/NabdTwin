@@ -30,6 +30,14 @@
       "type": "decimal",
       "default": 0
     },
+    "joinedCount": {
+      "type": "integer",
+      "default": 0
+    },
+    "leftCount": {
+      "type": "integer",
+      "default": 0
+    },
     "employeeCount": {
       "type": "integer",
       "default": 0

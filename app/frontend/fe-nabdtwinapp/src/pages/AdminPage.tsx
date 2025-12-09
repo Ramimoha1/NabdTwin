@@ -12,25 +12,25 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Checkbox } from '../externaluicomponents/checkbox';
 import { UserPlus, Mail, User as UserIcon, Calendar, Clock, Shield, Settings } from 'lucide-react';
 import { getBranches } from '../services/API/branches.ts';
+import type { Branch } from '../model';
 import { toast } from 'sonner';
 import {
     getUsers,
     createUser,
     updateUserPermissions,
     toggleUserStatus,
-} from '../services/API/userapi.ts';
-
-import type {
-    UserAccount,
-    CreateUserRequest,
-    UpdatePermissionsRequest
+    type UserAccount,
+    type CreateUserRequest,
+    type UpdatePermissionsRequest
 } from '../services/API/userapi.ts';
 
 
 const AdminPage = () => {
-    const mockBranches =getBranches();
     const accountType = useSelector(selectAccountType);
     const isLoggedIn = useSelector(selectIslogin);
+
+    // State for branches
+    const [branches, setBranches] = useState<Branch[]>([]);
 
     // State for users list
     const [users, setUsers] = useState<UserAccount[]>([]);
@@ -50,10 +50,21 @@ const AdminPage = () => {
     const [permissionInsights, setPermissionInsights] = useState(false);
     const [permissionEmployees, setPermissionEmployees] = useState(false);
 
-    // Load users on component mount
+    // Load users and branches on component mount
     useEffect(() => {
         loadUsers();
+        loadBranches();
     }, []);
+
+    const loadBranches = async () => {
+        try {
+            const data = await getBranches();
+            setBranches(data);
+        } catch (error) {
+            toast.error('Failed to load branches');
+            console.error('Error loading branches:', error);
+        }
+    };
 
     const loadUsers = async () => {
         try {
@@ -160,7 +171,7 @@ const AdminPage = () => {
     };
 
     const handleToggleAllBranches = () => {
-        setPermissionBranches(prev => prev.length === 0 ? mockBranches.map(b => b.id) : []);
+        setPermissionBranches(prev => prev.length === 0 ? branches.map(b => b.id) : []);
     };
 
     const formatDate = (dateString: string) => {
@@ -404,7 +415,7 @@ const AdminPage = () => {
                                     </div>
                                 ) : (
                                     <div className="space-y-2 border rounded-lg p-4">
-                                        {mockBranches.map((branch) => (
+                                        {branches.map((branch: Branch) => (
                                             <div key={branch.id} className="flex items-center space-x-2">
                                                 <Checkbox
                                                     id={`branch-${branch.id}`}

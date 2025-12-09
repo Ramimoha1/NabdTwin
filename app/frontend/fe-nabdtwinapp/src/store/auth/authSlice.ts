@@ -1,8 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { loginUser } from "./authThunks";
-import {useNavigate} from "react-router-dom";
+
+interface UserPermissions {
+    viewBranches: string[];
+    viewReports: boolean;
+    viewInsights: boolean;
+    viewEmployees: boolean;
+}
 
 interface AuthState {
+    userId: string | null;
     username: string | null;
     useremail: string | null;
     accountType: "admin" | "user" | "unregistered";
@@ -10,9 +17,11 @@ interface AuthState {
     isLoggedIn: boolean;
     error: string | null;
     isLoading: boolean;
+    permissions: UserPermissions | null;
 }
 
 const initialState: AuthState = {
+    userId: null,
     username: null,
     useremail: null,
     token: null,
@@ -20,6 +29,7 @@ const initialState: AuthState = {
     isLoggedIn: false,
     error: null,
     isLoading: false,
+    permissions: null,
 };
 
 export const authSlice = createSlice({
@@ -27,6 +37,7 @@ export const authSlice = createSlice({
     initialState,
     reducers: {
         logoutUser(state) {
+            state.userId = null;
             state.username = null;
             state.useremail = null;
             state.isLoggedIn = false;
@@ -34,6 +45,7 @@ export const authSlice = createSlice({
             state.error = null;
             state.isLoading = false;
             state.accountType = "unregistered";
+            state.permissions = null;
         }
     },
     extraReducers: (builder) => {
@@ -46,10 +58,12 @@ export const authSlice = createSlice({
                 state.isLoading = false;
                 state.isLoggedIn = true;
 
+                state.userId = action.payload.userId;
                 state.username = action.payload.username;
                 state.useremail = action.payload.useremail;
                 state.token = action.payload.token;
                 state.accountType = action.payload.accountType;
+                state.permissions = action.payload.permissions;
 
             })
             .addCase(loginUser.rejected, (state, action) => {

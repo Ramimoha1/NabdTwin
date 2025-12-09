@@ -1,73 +1,72 @@
-# React + TypeScript + Vite
+# NabdTwin Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Modern React-based dashboard for organizational management and performance tracking with real-time branch visualization and comprehensive permission system.
 
-Currently, two official plugins are available:
+## 🚀 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Interactive Map View**: Google Maps integration with real-time KPI data
+- **Permission-Based Access**: Role-based UI with granular permissions
+- **User Management**: Complete admin panel for users and permissions
+- **Real-time Data**: Strapi v5 backend integration
+- **Responsive Design**: Mobile-friendly Tailwind CSS UI
 
-## React Compiler
+## 📋 Prerequisites
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Node.js 18+
+- Strapi v5 backend running (default: `http://localhost:3001`)
+- Google Maps API Key
 
-## Expanding the ESLint configuration
+## 🛠️ Installation
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+```bash
+# Install dependencies
+npm install
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+# Configure environment
+cp .env.example .env
+# Edit .env with your API keys
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Start development server
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🏗️ Build for Production
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run build
+npm run preview
 ```
+
+## 📁 Project Structure
+
+```
+src/
+├── components/     # Reusable UI components
+├── pages/         # Page components (routes)
+├── services/      # API and business logic
+├── store/         # Redux state management
+├── hooks/         # Custom React hooks
+└── model/         # TypeScript interfaces
+```
+
+## 🔐 Permissions System
+
+- **Branch Permissions**: Control which branches users can view
+- **Feature Permissions**: `viewReports`, `viewInsights`, `viewEmployees`
+- **Admin Role**: Full system access
+
+See [PERMISSIONS.md](./PERMISSIONS.md) for details.
+
+## 🐛 Troubleshooting
+
+**Failed to fetch branches**: Check backend running and `.env` API URL  
+**Access Denied**: Verify user permissions in Strapi admin  
+**Map not loading**: Check `VITE_GOOGLE_MAPS_API_KEY` is set
+
+## 👥 Team
+
+- **Rami** - Data Schema Management
+- **Ammar** - KPI and Metric Calculation
+- **Ali** - Google Maps and Floor Visualization
+- **Amr** - Authentication & JWT
+- **Nouredin** - Dashboard Visualization Module
