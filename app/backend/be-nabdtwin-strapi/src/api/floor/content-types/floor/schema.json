@@ -1,0 +1,55 @@
+{
+  "kind": "collectionType",
+  "collectionName": "floors",
+  "info": {
+    "singularName": "floor",
+    "pluralName": "floors",
+    "displayName": "Floor",
+    "description": "Floor entity"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "branch": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::branch.branch",
+      "inversedBy": "floors"
+    },
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "floorNumber": {
+      "type": "integer",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "totalArea": {
+      "type": "decimal"
+    },
+    "model3dUrl": {
+      "type": "text"
+    },
+    "floorPlanUrl": {
+      "type": "text"
+    },
+    "workspaces": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::workspace.workspace",
+      "mappedBy": "floor"
+    },
+    "floorKpis": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::floor-kpi.floor-kpi",
+      "mappedBy": "floor"
+    }
+  }
+}

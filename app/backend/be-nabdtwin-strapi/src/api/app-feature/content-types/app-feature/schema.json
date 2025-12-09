@@ -1,0 +1,35 @@
+{
+  "kind": "collectionType",
+  "collectionName": "app_features",
+  "info": {
+    "singularName": "app-feature",
+    "pluralName": "app-features",
+    "displayName": "App Feature",
+    "description": "Application feature/permission entity"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "maxLength": 100
+    },
+    "description": {
+      "type": "text"
+    },
+    "category": {
+      "type": "string",
+      "maxLength": 50
+    },
+    "userFeaturePermissions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::user-feature-permission.user-feature-permission",
+      "mappedBy": "appFeature"
+    }
+  }
+}
