@@ -120,6 +120,18 @@
       "relation": "oneToMany",
       "target": "api::insight.insight",
       "mappedBy": "branch"
+    },
+    "financials": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::branch-financial.branch-financial",
+      "mappedBy": "branch"
+    },
+    "customerSurveys": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::satisfaction-survey.satisfaction-survey",
+      "mappedBy": "branch"
     }
   }
 }
