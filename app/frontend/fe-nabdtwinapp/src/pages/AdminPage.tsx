@@ -40,6 +40,7 @@ const AdminPage = () => {
     const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
     const [newUserName, setNewUserName] = useState('');
     const [newUserEmail, setNewUserEmail] = useState('');
+    const [newUserPassword, setNewUserPassword] = useState('');
     const [newUserRole, setNewUserRole] = useState<'admin' | 'user'>('user');
 
     // State for permissions dialog
@@ -78,6 +79,9 @@ const AdminPage = () => {
             setLoading(false);
         }
     };
+    const handleUpdate = async () => {
+
+    }
 
     const handleCreateUser = async () => {
         if (!newUserName.trim() || !newUserEmail.trim()) {
@@ -96,6 +100,7 @@ const AdminPage = () => {
             const userData: CreateUserRequest = {
                 name: newUserName,
                 email: newUserEmail,
+                password: newUserPassword,
                 role: newUserRole
             };
 
@@ -105,6 +110,7 @@ const AdminPage = () => {
             // Reset form
             setNewUserName('');
             setNewUserEmail('');
+            setNewUserPassword('')
             setNewUserRole('user');
             setIsCreateDialogOpen(false);
 
@@ -248,6 +254,16 @@ const AdminPage = () => {
                                         />
                                     </div>
                                     <div className="space-y-2">
+                                        <Label htmlFor="userPassword">Password</Label>
+                                        <Input
+                                            id="userPassword"
+                                            type="password"
+                                            placeholder="user@nabdtwin.com"
+                                            value={newUserPassword}
+                                            onChange={(e) => setNewUserPassword(e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
                                         <Label htmlFor="userRole">Role</Label>
                                         <Select value={newUserRole} onValueChange={(value: 'admin' | 'user') => setNewUserRole(value)}>
                                             <SelectTrigger>
@@ -363,6 +379,14 @@ const AdminPage = () => {
                                             </div>
                                         </div>
                                         <div className="flex gap-2 ml-4">
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => handleupdate(user)}
+                                            >
+                                                <Settings className="h-4 w-4 mr-2" />
+                                                update
+                                            </Button>
                                             <Button
                                                 variant="outline"
                                                 size="sm"

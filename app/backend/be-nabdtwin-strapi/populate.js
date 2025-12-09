@@ -1,7 +1,6 @@
 
 const API_URL = 'http://localhost:3001/api'; 
 // ⚠️ Since we are bypassing auth, make sure your POST routes are set to auth: false!
-
 async function seed() {
     console.log("🚀 Starting Data Population...");
 
@@ -133,10 +132,12 @@ async function seed() {
     
     const jobTitle = jobTitles[i % jobTitles.length];
 
+
     const res = await post('employees', {
       firstName: first,
       lastName: last,
       email: `${first.toLowerCase()}.${last.toLowerCase()}@techcorp.sa`,
+
       branch: branch.id,
       floor: floor,
       jobTitle: jobTitle,

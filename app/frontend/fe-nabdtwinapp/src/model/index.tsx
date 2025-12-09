@@ -62,6 +62,51 @@ export interface Employee {
     avatar?: string;
 }
 
+export interface EmployeeDetail extends Employee {
+    joinDate: Date;
+    supervisorName?: string;
+    skills: string[];
+    recentReports: { id: string; title: string; date: Date; type: string }[];
+    kpis: {
+        performanceScore: number;
+        tasksCompleted: number;
+        tasksTotal: number;
+        attendanceRate: number;
+        productivityScore: number;
+    };
+}
+
+export interface TeamData {
+    id: string;
+    name: string;
+    department: string;
+    leaderName: string;
+    memberCount: number;
+    members: string[];
+    kpis: {
+        avgPerformance: number;
+        productivity: number;
+        tasksCompleted: number;
+        tasksTotal: number;
+    };
+}
+
+export interface DepartmentData {
+    id: string;
+    name: string;
+    headName: string;
+    employeeCount: number;
+    teamCount: number;
+    kpis: {
+        efficiency: number;
+        satisfaction: number;
+        revenue: number;
+        revenueTarget: number;
+        tasksCompleted: number;
+        tasksTotal: number;
+    };
+}
+
 export interface Report {
     id: string;
     title: string;
