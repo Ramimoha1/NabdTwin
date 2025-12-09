@@ -31,11 +31,6 @@
       "type": "decimal",
       "min": 0,
       "max": 100
-    },
-    "satisfactionScore": {
-      "type": "decimal",
-      "min": 0,
-      "max": 100
     }
   }
 }

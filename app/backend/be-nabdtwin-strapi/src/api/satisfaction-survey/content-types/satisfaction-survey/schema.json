@@ -1,0 +1,23 @@
+{
+  "kind": "collectionType",
+  "collectionName": "satisfaction_surveys",
+  "info": {
+    "singularName": "satisfaction-survey",
+    "pluralName": "satisfaction-surveys",
+    "displayName": "Satisfaction Survey"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "date": { "type": "date", "required": true },
+    "score": { "type": "integer", "min": 1, "max": 100, "required": true },
+    "feedback": { "type": "text" },
+    "branch": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::branch.branch",
+      "inversedBy": "customerSurveys"
+    }
+  }
+}

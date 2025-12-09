@@ -4,20 +4,21 @@ import { Separator } from '../externaluicomponents/separator';
 import {useDispatch, useSelector} from "react-redux";
 import {type RootState} from "../store/store.ts";
 import {logoutUser} from "../store/auth/authSlice.ts";
-import {Link, useLocation, useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
+import { usePermissions } from '../hooks/usePermissions';
 
 export function Sidebar() {
     const navigate = useNavigate()
     const dispatch = useDispatch();
     const location = useLocation();
-    console.log(location.pathname)
     const { username, accountType } = useSelector((state: RootState) => state.auth);
-    console.log(accountType);
+    const { canViewReports, canViewInsights, isAdmin } = usePermissions();
+    
     const menuItems = [
-        { icon: Map, label: 'Map View', to: '/homepage', adminOnly: false },
-        { icon: TrendingUp, label: 'Insights', to: '/insights', adminOnly: false },
-        { icon: FileText, label: 'Reports', to: '/reports', adminOnly: false },
-        { icon: Users, label: 'Accounts', to: '/accounts', adminOnly: true }
+        { icon: Map, label: 'Map View', to: '/homepage', visible: true },
+        { icon: TrendingUp, label: 'Insights', to: '/insights', visible: canViewInsights },
+        { icon: FileText, label: 'Reports', to: '/reports', visible: canViewReports },
+        { icon: Users, label: 'Accounts', to: '/accounts', visible: isAdmin }
     ];
 
     const handlLoggout = () => {
@@ -56,7 +57,7 @@ export function Sidebar() {
             {/* Navigation */}
             <nav className="flex-1 p-4 space-y-2">
                 {menuItems.map((item) => {
-                    if (item.adminOnly && accountType !== 'admin') return null;
+                    if (!item.visible) return null;
 
                     return (
                         <Button

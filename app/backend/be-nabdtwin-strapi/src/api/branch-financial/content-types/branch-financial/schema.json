@@ -1,0 +1,23 @@
+{
+  "kind": "collectionType",
+  "collectionName": "branch_financials",
+  "info": {
+    "singularName": "branch-financial",
+    "pluralName": "branch-financials",
+    "displayName": "Branch Financials"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "date": { "type": "date", "required": true },
+    "revenue": { "type": "decimal", "required": true },
+    "expenses": { "type": "decimal" },
+    "branch": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::branch.branch",
+      "inversedBy": "financials"
+    }
+  }
+}

@@ -651,6 +651,38 @@ export interface ApiAuditLogAuditLog extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiBranchFinancialBranchFinancial
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'branch_financials';
+  info: {
+    displayName: 'Branch Financials';
+    pluralName: 'branch-financials';
+    singularName: 'branch-financial';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    branch: Schema.Attribute.Relation<'manyToOne', 'api::branch.branch'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    date: Schema.Attribute.Date & Schema.Attribute.Required;
+    expenses: Schema.Attribute.Decimal;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::branch-financial.branch-financial'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    revenue: Schema.Attribute.Decimal & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiBranchKpiBranchKpi extends Struct.CollectionTypeSchema {
   collectionName: 'branch_kpis';
   info: {
@@ -670,6 +702,8 @@ export interface ApiBranchKpiBranchKpi extends Struct.CollectionTypeSchema {
     date: Schema.Attribute.Date & Schema.Attribute.Required;
     employeeCount: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     growthRate: Schema.Attribute.Decimal;
+    joinedCount: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    leftCount: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -742,11 +776,19 @@ export interface ApiBranchBranch extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    customerSurveys: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::satisfaction-survey.satisfaction-survey'
+    >;
     departments: Schema.Attribute.Relation<
       'oneToMany',
       'api::department.department'
     >;
     employees: Schema.Attribute.Relation<'oneToMany', 'api::employee.employee'>;
+    financials: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::branch-financial.branch-financial'
+    >;
     floors: Schema.Attribute.Relation<'oneToMany', 'api::floor.floor'>;
     insights: Schema.Attribute.Relation<'oneToMany', 'api::insight.insight'>;
     latitude: Schema.Attribute.Decimal;
@@ -1099,6 +1141,7 @@ export interface ApiEmployeeEmployee extends Struct.CollectionTypeSchema {
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 100;
       }>;
+    floor: Schema.Attribute.Relation<'manyToOne', 'api::floor.floor'>;
     gender: Schema.Attribute.Enumeration<
       ['male', 'female', 'other', 'prefer_not_to_say']
     >;
@@ -1133,6 +1176,8 @@ export interface ApiEmployeeEmployee extends Struct.CollectionTypeSchema {
     reports: Schema.Attribute.Relation<'oneToMany', 'api::report.report'>;
     salary: Schema.Attribute.Decimal;
     supervisor: Schema.Attribute.Relation<'oneToOne', 'api::employee.employee'>;
+    tasksInProgress: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    tasksOverdue: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     team: Schema.Attribute.Relation<'manyToOne', 'api::team.team'>;
     terminationDate: Schema.Attribute.Date;
     updatedAt: Schema.Attribute.DateTime;
@@ -1189,14 +1234,6 @@ export interface ApiFloorKpiFloorKpi extends Struct.CollectionTypeSchema {
         number
       >;
     publishedAt: Schema.Attribute.DateTime;
-    satisfactionScore: Schema.Attribute.Decimal &
-      Schema.Attribute.SetMinMax<
-        {
-          max: 100;
-          min: 0;
-        },
-        number
-      >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1220,6 +1257,7 @@ export interface ApiFloorFloor extends Struct.CollectionTypeSchema {
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     description: Schema.Attribute.Text;
+    employees: Schema.Attribute.Relation<'oneToMany', 'api::employee.employee'>;
     floorKpis: Schema.Attribute.Relation<
       'oneToMany',
       'api::floor-kpi.floor-kpi'
@@ -1456,6 +1494,46 @@ export interface ApiReportReport extends Struct.CollectionTypeSchema {
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiSatisfactionSurveySatisfactionSurvey
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'satisfaction_surveys';
+  info: {
+    displayName: 'Satisfaction Survey';
+    pluralName: 'satisfaction-surveys';
+    singularName: 'satisfaction-survey';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    branch: Schema.Attribute.Relation<'manyToOne', 'api::branch.branch'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    date: Schema.Attribute.Date & Schema.Attribute.Required;
+    feedback: Schema.Attribute.Text;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::satisfaction-survey.satisfaction-survey'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    score: Schema.Attribute.Integer &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 100;
+          min: 1;
+        },
+        number
+      >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -2398,6 +2476,7 @@ declare module '@strapi/strapi' {
       'api::app-feature.app-feature': ApiAppFeatureAppFeature;
       'api::attendance-record.attendance-record': ApiAttendanceRecordAttendanceRecord;
       'api::audit-log.audit-log': ApiAuditLogAuditLog;
+      'api::branch-financial.branch-financial': ApiBranchFinancialBranchFinancial;
       'api::branch-kpi.branch-kpi': ApiBranchKpiBranchKpi;
       'api::branch.branch': ApiBranchBranch;
       'api::dashboard.dashboard': ApiDashboardDashboard;
@@ -2412,6 +2491,7 @@ declare module '@strapi/strapi' {
       'api::organization.organization': ApiOrganizationOrganization;
       'api::project.project': ApiProjectProject;
       'api::report.report': ApiReportReport;
+      'api::satisfaction-survey.satisfaction-survey': ApiSatisfactionSurveySatisfactionSurvey;
       'api::skill.skill': ApiSkillSkill;
       'api::task.task': ApiTaskTask;
       'api::team-kpi.team-kpi': ApiTeamKpiTeamKpi;

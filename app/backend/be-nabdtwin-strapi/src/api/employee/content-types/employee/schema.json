@@ -71,6 +71,12 @@
       "target": "api::branch.branch",
       "inversedBy": "employees"
     },
+    "floor": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::floor.floor",
+      "inversedBy": "employees"
+    },
     "workspace": {
       "type": "relation",
       "relation": "manyToOne",
@@ -116,6 +122,14 @@
     },
     "avatarUrl": {
       "type": "text"
+    },
+    "tasksInProgress": {
+      "type": "integer",
+      "default": 0
+    },
+    "tasksOverdue": {
+      "type": "integer",
+      "default": 0
     },
     "employeeKpis": {
       "type": "relation",
