@@ -1,0 +1,44 @@
+{
+  "kind": "collectionType",
+  "collectionName": "team_kpis",
+  "info": {
+    "singularName": "team-kpi",
+    "pluralName": "team-kpis",
+    "displayName": "Team KPI",
+    "description": "Team KPI time-series data"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "team": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::team.team",
+      "inversedBy": "teamKpis"
+    },
+    "date": {
+      "type": "date",
+      "required": true
+    },
+    "tasksCompleted": {
+      "type": "integer",
+      "default": 0
+    },
+    "tasksTotal": {
+      "type": "integer",
+      "default": 0
+    },
+    "avgPerformanceScore": {
+      "type": "decimal",
+      "min": 0,
+      "max": 100
+    },
+    "productivityScore": {
+      "type": "decimal",
+      "min": 0,
+      "max": 100
+    }
+  }
+}

@@ -1,0 +1,125 @@
+{
+  "kind": "collectionType",
+  "collectionName": "branches",
+  "info": {
+    "singularName": "branch",
+    "pluralName": "branches",
+    "displayName": "Branch",
+    "description": "Branch/Location entity"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "organization": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::organization.organization",
+      "inversedBy": "branches"
+    },
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "code": {
+      "type": "string",
+      "unique": true,
+      "maxLength": 50
+    },
+    "address": {
+      "type": "text",
+      "required": true
+    },
+    "city": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "country": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "postalCode": {
+      "type": "string",
+      "maxLength": 20
+    },
+    "latitude": {
+      "type": "decimal"
+    },
+    "longitude": {
+      "type": "decimal"
+    },
+    "totalFloors": {
+      "type": "integer",
+      "default": 0
+    },
+    "totalEmployees": {
+      "type": "integer",
+      "default": 0
+    },
+    "branchStatus": {
+      "type": "enumeration",
+      "columnName": "status",
+      "enum": ["active", "inactive", "maintenance"],
+      "default": "active"
+    },
+    "floors": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::floor.floor",
+      "mappedBy": "branch"
+    },
+    "revenueTarget": {
+      "type": "decimal"
+    },
+    "branchKpis": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::branch-kpi.branch-kpi",
+      "mappedBy": "branch"
+    },
+    "departments": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::department.department",
+      "mappedBy": "branch"
+    },
+    "teams": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::team.team",
+      "mappedBy": "branch"
+    },
+    "employees": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::employee.employee",
+      "mappedBy": "branch"
+    },
+    "userBranchPermissions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::user-branch-permission.user-branch-permission",
+      "mappedBy": "branch"
+    },
+    "reports": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::report.report",
+      "mappedBy": "branch"
+    },
+    "alerts": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::alert.alert",
+      "mappedBy": "branch"
+    },
+    "insights": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::insight.insight",
+      "mappedBy": "branch"
+    }
+  }
+}

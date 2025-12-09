@@ -1,0 +1,80 @@
+{
+  "kind": "collectionType",
+  "collectionName": "reports",
+  "info": {
+    "singularName": "report",
+    "pluralName": "reports",
+    "displayName": "Report",
+    "description": "Report entity"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "description": {
+      "type": "text"
+    },
+    "reportType": {
+      "type": "enumeration",
+      "columnName": "type",
+      "enum": ["performance", "attendance", "project", "kpi", "financial", "custom"]
+    },
+    "scope": {
+      "type": "enumeration",
+      "enum": ["organization", "branch", "department", "team", "employee"]
+    },
+    "organization": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::organization.organization",
+      "inversedBy": "reports"
+    },
+    "branch": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::branch.branch",
+      "inversedBy": "reports"
+    },
+    "department": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::department.department",
+      "inversedBy": "reports"
+    },
+    "team": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::team.team",
+      "inversedBy": "reports"
+    },
+    "employee": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::employee.employee",
+      "inversedBy": "reports"
+    },
+    "generatedBy": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "reportData": {
+      "type": "json"
+    },
+    "fileUrl": {
+      "type": "text"
+    },
+    "dateFrom": {
+      "type": "date"
+    },
+    "dateTo": {
+      "type": "date"
+    }
+  }
+}

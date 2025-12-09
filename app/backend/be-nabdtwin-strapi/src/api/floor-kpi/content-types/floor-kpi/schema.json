@@ -1,0 +1,41 @@
+{
+  "kind": "collectionType",
+  "collectionName": "floor_kpis",
+  "info": {
+    "singularName": "floor-kpi",
+    "pluralName": "floor-kpis",
+    "displayName": "Floor KPI",
+    "description": "Floor KPI time-series data"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "floor": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::floor.floor",
+      "inversedBy": "floorKpis"
+    },
+    "date": {
+      "type": "date",
+      "required": true
+    },
+    "occupancyRate": {
+      "type": "decimal",
+      "min": 0,
+      "max": 100
+    },
+    "productivityScore": {
+      "type": "decimal",
+      "min": 0,
+      "max": 100
+    },
+    "satisfactionScore": {
+      "type": "decimal",
+      "min": 0,
+      "max": 100
+    }
+  }
+}

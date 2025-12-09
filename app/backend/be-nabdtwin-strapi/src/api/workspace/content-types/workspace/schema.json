@@ -1,0 +1,59 @@
+{
+  "kind": "collectionType",
+  "collectionName": "workspaces",
+  "info": {
+    "singularName": "workspace",
+    "pluralName": "workspaces",
+    "displayName": "Workspace",
+    "description": "Workspace/Office entity"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "floor": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::floor.floor",
+      "inversedBy": "workspaces"
+    },
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "workspaceType": {
+      "type": "enumeration",
+      "columnName": "type",
+      "enum": ["office", "meeting", "open-space", "lab", "cafeteria", "recreation"]
+    },
+    "capacity": {
+      "type": "integer"
+    },
+    "area": {
+      "type": "decimal"
+    },
+    "positionX": {
+      "type": "decimal"
+    },
+    "positionY": {
+      "type": "decimal"
+    },
+    "positionZ": {
+      "type": "decimal"
+    },
+    "employees": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::employee.employee",
+      "mappedBy": "workspace"
+    },
+    "workspaceKpis": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::workspace-kpi.workspace-kpi",
+      "mappedBy": "workspace"
+    }
+  }
+}

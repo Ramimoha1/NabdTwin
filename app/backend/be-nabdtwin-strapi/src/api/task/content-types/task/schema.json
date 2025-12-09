@@ -1,0 +1,64 @@
+{
+  "kind": "collectionType",
+  "collectionName": "tasks",
+  "info": {
+    "singularName": "task",
+    "pluralName": "tasks",
+    "displayName": "Task",
+    "description": "Task entity"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "project": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::project.project",
+      "inversedBy": "tasks"
+    },
+    "title": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "description": {
+      "type": "text"
+    },
+    "assignedTo": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::employee.employee",
+      "inversedBy": "assignedTasks"
+    },
+    "taskStatus": {
+    "type": "enumeration",
+    "columnName": "status",
+    "enum": [
+        "todo",
+        "in-progress",
+        "review",
+        "completed",
+        "cancelled"
+    ],
+    "default": "todo"
+    },
+    "priority": {
+      "type": "enumeration",
+      "enum": ["low", "medium", "high", "critical"]
+    },
+    "dueDate": {
+      "type": "date"
+    },
+    "completedDate": {
+      "type": "date"
+    },
+    "estimatedHours": {
+      "type": "decimal"
+    },
+    "actualHours": {
+      "type": "decimal"
+    }
+  }
+}

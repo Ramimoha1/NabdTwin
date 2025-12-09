@@ -1,0 +1,36 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_branch_permissions",
+  "info": {
+    "singularName": "user-branch-permission",
+    "pluralName": "user-branch-permissions",
+    "displayName": "User Branch Permission",
+    "description": "User branch access permission"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "userBranchPermissions"
+    },
+    "branch": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::branch.branch",
+      "inversedBy": "userBranchPermissions"
+    },
+    "grantedAt": {
+      "type": "datetime"
+    },
+    "grantedBy": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}
