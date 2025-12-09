@@ -73,3 +73,23 @@ export const getBranchById = async (id: string): Promise<Branch> => {
         throw error;
     }
 };
+export const getBranchByIdKPI = async (id: string): Promise<Branch | null> => {
+    try {
+        const response = await api.get('/api/branches', {
+            params: {
+                populate: 'branchKpis',
+                filters: {
+                    id: id
+                }
+            }
+        });
+
+        console.log('Branch by ID Response:', response.data);
+
+        const branches = response.data.data || [];
+        return branches.length > 0 ? normalizeBranchData(branches[0]) : null;
+    } catch (error) {
+        console.error('Error fetching branch by ID:', error);
+        throw error;
+    }
+};
