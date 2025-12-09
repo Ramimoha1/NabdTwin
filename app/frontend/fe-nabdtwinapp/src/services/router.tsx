@@ -3,10 +3,10 @@ import LoginPage from "../pages/LoginPage.tsx";
 import MapViewPage from "../pages/MapViewPage.tsx";
 import InsightsPage from "../pages/InsightsPage.tsx";
 import ReportsPage from "../pages/ReportsPage.tsx";
-import AccountsPage from "../pages/AccountsPage.tsx";
 import NotFoundPage from "../pages/PageNotFound.tsx";
 import MainLayout from "../layout/MainLayout.tsx";
 import AdminPage from "../pages/AdminPage.tsx";
+import { ProtectedRoute } from "../components/ProtectedRoute.tsx";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -14,12 +14,28 @@ const router = createBrowserRouter(
             {/* Login page at /login */}
             <Route index element={<LoginPage />} />
 
-            {/* Main layout routes */}
+            {/* Main layout routes - all protected */}
             <Route element={<MainLayout />}>
-                <Route path="homepage" element={<MapViewPage />} />
-                <Route path="insights" element={<InsightsPage />} />
-                <Route path="reports" element={<ReportsPage />} />
-                <Route path="accounts" element={<AdminPage />} />
+                <Route path="homepage" element={
+                    <ProtectedRoute>
+                        <MapViewPage />
+                    </ProtectedRoute>
+                } />
+                <Route path="insights" element={
+                    <ProtectedRoute requirePermission="viewInsights">
+                        <InsightsPage />
+                    </ProtectedRoute>
+                } />
+                <Route path="reports" element={
+                    <ProtectedRoute requirePermission="viewReports">
+                        <ReportsPage />
+                    </ProtectedRoute>
+                } />
+                <Route path="accounts" element={
+                    <ProtectedRoute requirePermission="admin">
+                        <AdminPage />
+                    </ProtectedRoute>
+                } />
             </Route>
 
             {/* Catch-all */}

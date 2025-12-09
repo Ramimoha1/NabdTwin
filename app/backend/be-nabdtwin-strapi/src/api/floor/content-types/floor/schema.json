@@ -45,6 +45,12 @@
       "target": "api::workspace.workspace",
       "mappedBy": "floor"
     },
+    "employees": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::employee.employee",
+      "mappedBy": "floor"
+    },
     "floorKpis": {
       "type": "relation",
       "relation": "oneToMany",

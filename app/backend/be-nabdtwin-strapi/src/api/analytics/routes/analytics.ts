@@ -24,5 +24,36 @@ export default {
         auth: false,
       },
     },
+    {
+      method: 'GET',
+      path: '/analytics/branch/:id/history', 
+      handler: 'analytics.getBranchHistory',
+      config: {
+        auth: false,
+      },
+    },
+    {
+      method: 'GET',
+      path: '/analytics/floor/:id/history',
+      handler: 'analytics.getFloorHistory',
+      config: { auth: false },
+    },
+    {
+      method: 'GET',
+      path: '/analytics/employee/:id/history',
+      handler: 'analytics.getEmployeeHistory',
+      config: {
+        auth: false,
+      },
+    },
+    {
+      method: 'GET',
+      path: '/analytics/employee/:id/performance',
+      handler: 'analytics.getEmployeePerformance',
+      config: {
+        auth: false,
+      },
+    },
+    
   ],
 };
