@@ -1,0 +1,60 @@
+<!--CONNECTS REACT WITH BLUEPRINT3D-->
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+  <title>Blueprint Viewer</title>
+
+  <link href="/blueprint3d/css/bootstrap.css" rel="stylesheet">
+  <link href="/blueprint3d/css/example.css" rel="stylesheet">
+
+  <script src="/blueprint3d/js/three.min.js"></script>
+  <script src="/blueprint3d/js/blueprint3d.js"></script>
+  <script src="/blueprint3d/js/jquery.js"></script>
+  <script src="/blueprint3d/js/bootstrap.js"></script>
+  <script src="/blueprint3d/js/items.js"></script>
+  <script src="/blueprint3d/js/example.js"></script>
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    iframe {
+      width: 100vw;
+      height: 100vh;
+      border: none;
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <script>
+    // Function to read URL params
+    function getUrlParameter(name) {
+      const url = new URL(window.location.href);
+      return url.searchParams.get(name) || "1";
+    }
+
+    const currentFloor = getUrlParameter("floor");
+
+    document.addEventListener("DOMContentLoaded", () => {
+      // Update page title
+      const title = document.querySelector("h1");
+      if (title) title.textContent = "Viewing Floor " + currentFloor;
+
+      // Set iframe src with the current floor
+      const iframe = document.createElement("iframe");
+      iframe.src = `/blueprint3d/example/index.html?floor=${currentFloor}`;
+      document.body.appendChild(iframe);
+    });
+  </script>
+</body>
+
+</html>
