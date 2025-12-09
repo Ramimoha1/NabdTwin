@@ -1,7 +1,5 @@
 import { api } from "./api";
 import type {Branch} from "../../model";
-import {useSelector} from "react-redux";
-import {selectSelectedBranchId} from "../../store/visual/visualSelectors.ts";
 
 export const getBranches = () => {
     const mockBranches: Branch[] = [
@@ -109,10 +107,3 @@ export const getBranches = () => {
     return new Promise(resolve => setTimeout(() => resolve(mockBranches), 300));
     // return api.get("/branches").then(res => res.data);
 };
-
-export const getBranchById = () =>{
-    const id = useSelector(selectSelectedBranchId)
-    return api.get(`/api/branches/${id}`).then(res => res.data);
-
-
-}

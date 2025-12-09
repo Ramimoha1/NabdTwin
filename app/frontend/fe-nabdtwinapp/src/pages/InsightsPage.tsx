@@ -1,352 +1,435 @@
-import { useState, useEffect } from 'react';
-import type { Branch } from '../model/index.tsx';
-import { Card } from '../externaluicomponents/Card';
-import { Badge } from '../externaluicomponents/badge';
-import { Button } from '../externaluicomponents/button';
-import { TrendingUp, TrendingDown, AlertTriangle, CheckCircle, Sparkles, RefreshCw } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
-import { toast } from 'sonner';
-import {
-    getInsights,
-    type Insight,
-    type TrendData,
-    type Recommendation,
-    refreshInsights
-} from '../services/API/insights.ts';
-import { useQuery } from '@tanstack/react-query';
-import { getBranches } from '../services/API/branches.ts';
+import { useEffect, useState } from "react";
+import { createPortal } from 'react-dom';
+import MainPageHeader from "../components/MainPageHeader.tsx";
+import { Menu, Bell, Search, User, Settings, TrendingUp, TrendingDown, Info, CheckCircle, Clock, XCircle, Loader, Building2, Calendar, Users, Award, X, UserPlus, UserMinus } from 'lucide-react';
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
 
-export default function InsightsPage() {
-    const [insights, setInsights] = useState<Insight[]>([]);
-    const [trends, setTrends] = useState<TrendData[]>([]);
-    const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [refreshing, setRefreshing] = useState(false);
-    const [lastUpdated, setLastUpdated] = useState<string>('');
+// Type definitions
+type Kpi = {
+    title?: string;
+    value: number;
+    target?: number;
+    unit?: string;
+    trend?: 'up' | 'down';
+    trendValue?: string;
+    explanation?: string;
+    color?: string;
+    code?: string;
+    label?: string;
+    name?: string;
+    [key: string]: any;
+};
 
-    const { data: branches, isLoading: branchesLoading, isError: branchesError } = useQuery<Branch[]>({
-        queryKey: ['branches'],
-        queryFn: getBranches,
-    });
+// Mock Data
+const MOCK_KPIS = [
+    { title: 'Productivity', value: 87, target: 90, unit: '%', trend: 'up' as const, trendValue: '+5.2%', explanation: 'Calculated as (Completed Tasks / Total Assigned Tasks) × 100. Measures the efficiency of task completion across all branches.', color: 'bg-blue-600' },
+    { title: 'On-time Delivery', value: 92, target: 95, unit: '%', trend: 'up' as const, trendValue: '+3.1%', explanation: 'Percentage of tasks completed before or on the due date. Critical indicator of operational reliability and customer satisfaction.', color: 'bg-green-600' },
+    { title: 'Quality Score', value: 89, target: 85, unit: '%', trend: 'up' as const, trendValue: '+2.8%', explanation: 'Average quality rating based on task reviews and approval rates. Higher scores indicate better work output quality.', color: 'bg-purple-600' },
+    { title: 'Late Tasks', value: 24, unit: '', trend: 'down' as const, trendValue: '-12%', explanation: 'Number of tasks that exceeded their deadline. Lower values indicate better time management and resource allocation.', color: 'bg-red-600' },
+    { title: 'Tasks In Progress', value: 156, unit: '', trend: 'up' as const, trendValue: '+8%', explanation: 'Current active tasks across all branches. Indicates workload distribution and operational capacity utilization.', color: 'bg-amber-600' },
+    { title: 'Employees Joined', value: 12, unit: '', trend: 'up' as const, trendValue: '+4', explanation: 'New employees onboarded during the selected period. Reflects organizational growth and hiring activity.', color: 'bg-emerald-600' },
+    { title: 'Employees Resigned', value: 3, unit: '', trend: 'down' as const, trendValue: '-2', explanation: 'Employees who left during the selected period. Lower attrition rates indicate better employee satisfaction and retention.', color: 'bg-slate-600' }
+];
 
-    useEffect(() => {
-        loadInsights();
-    }, []);
+const MOCK_BRANCHES = [
+    { name: 'HQ', score: 88, tasks: 245, employees: 42, color: '#3b82f6' },
+    { name: 'East', score: 85, tasks: 198, employees: 35, color: '#8b5cf6' },
+    { name: 'West', score: 91, tasks: 223, employees: 38, color: '#10b981' },
+    { name: 'North', score: 82, tasks: 176, employees: 29, color: '#f59e0b' },
+    { name: 'South', score: 87, tasks: 201, employees: 33, color: '#ec4899' }
+];
 
-    const loadInsights = async () => {
-        try {
-            setLoading(true);
-            const data = await getInsights();
-            setInsights(data.insights);
-            setTrends(data.trends);
-            setRecommendations(data.recommendations);
-            setLastUpdated(data.lastUpdated);
-        } catch (error) {
-            toast.error('Failed to load insights');
-            console.error('Error loading insights:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
+const MOCK_EMPLOYEES = [
+    { id: 1, name: 'Sara Ahmed', branch: 'HQ', score: 95, tasks: 48, avatar: 'SA' },
+    { id: 2, name: 'Omar Khalil', branch: 'West', score: 92, tasks: 45, avatar: 'OK' },
+    { id: 3, name: 'Laila Hassan', branch: 'East', score: 91, tasks: 42, avatar: 'LH' },
+    { id: 4, name: 'Noor Ibrahim', branch: 'HQ', score: 89, tasks: 44, avatar: 'NI' },
+    { id: 5, name: 'Hassan Mohamed', branch: 'South', score: 88, tasks: 41, avatar: 'HM' },
+    { id: 6, name: 'Fatima Ali', branch: 'West', score: 87, tasks: 43, avatar: 'FA' },
+    { id: 7, name: 'Kareem Yousef', branch: 'North', score: 86, tasks: 39, avatar: 'KY' },
+    { id: 8, name: 'Maha Salem', branch: 'East', score: 85, tasks: 40, avatar: 'MS' }
+];
 
-    const handleRefresh = async () => {
-        try {
-            setRefreshing(true);
-            toast.info('Refreshing AI insights...');
-            const data = await refreshInsights();
-            setInsights(data.insights);
-            setTrends(data.trends);
-            setRecommendations(data.recommendations);
-            setLastUpdated(data.lastUpdated);
-            toast.success('Insights refreshed successfully');
-        } catch (error) {
-            toast.error('Failed to refresh insights');
-            console.error('Error refreshing insights:', error);
-        } finally {
-            setRefreshing(false);
-        }
-    };
+const TASK_METRICS = [
+    { label: 'Total Tasks', value: 867, change: '+12%', trend: 'up' as const, status: 'neutral' as const, icon: Clock },
+    { label: 'Completed Tasks', value: 743, change: '+8%', trend: 'up' as const, status: 'success' as const, icon: CheckCircle },
+    { label: 'Delayed Tasks', value: 24, change: '-15%', trend: 'down' as const, status: 'warning' as const, icon: Clock },
+    { label: 'Tasks In Progress', value: 156, change: '+5%', trend: 'up' as const, status: 'info' as const, icon: Loader },
+    { label: 'On-time Delivery Rate', value: '92%', change: '+3%', trend: 'up' as const, status: 'success' as const, icon: CheckCircle }
+];
 
-    if (branchesLoading || loading) {
-        return (
-            <div className="h-full flex items-center justify-center">
-                <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
-                    <p className="text-gray-600">Loading AI insights...</p>
+const EMPLOYEE_CHANGES = {
+    joined: { count: 12, change: '+4', trend: 'up' as const, details: [{ branch: 'HQ', count: 4 }, { branch: 'West', count: 3 }, { branch: 'East', count: 3 }, { branch: 'South', count: 2 }] },
+    resigned: { count: 3, change: '-2', trend: 'down' as const, details: [{ branch: 'North', count: 2 }, { branch: 'East', count: 1 }] }
+};
+
+// Components
+function KPICard({ title, value, target, unit = '', trend, trendValue, explanation, color }: any) {
+    const isPositive = trend === 'up';
+
+    return (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+            <div className="flex items-start justify-between mb-4">
+                <h3 className="text-sm text-slate-600">{title}</h3>
+                <div className="group relative">
+                    <Info className="w-4 h-4 text-slate-400 cursor-help" />
+                    <div className="absolute right-0 top-6 w-64 bg-slate-900 text-white text-xs p-3 rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10 shadow-xl">
+                        {explanation}
+                    </div>
                 </div>
             </div>
+
+            <div className="flex items-end justify-between">
+                <div>
+                    <div className="flex items-baseline gap-2">
+                        <span className="text-3xl text-slate-900">{value}</span>
+                        <span className="text-lg text-slate-500">{unit}</span>
+                    </div>
+                    {target && <div className="text-xs text-slate-500 mt-1">Target: {target}{unit}</div>}
+                </div>
+
+                <div className={`flex items-center gap-1 px-2.5 py-1 rounded-full ${isPositive ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                    {isPositive ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+                    <span className="text-sm">{trendValue}</span>
+                </div>
+            </div>
+
+            <div className="mt-4 pt-4 border-t border-gray-100">
+                <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                    <div className={`h-full ${color} rounded-full transition-all duration-500`} style={{ width: `${target ? Math.min((Number(value) / target) * 100, 100) : 75}%` }} />
+                </div>
+            </div>
+        </div>
+    );
+}
+
+export default function InsightsPage() {
+    const [selectedBranch, setSelectedBranch] = useState('HQ');
+    const [selectedKPI, setSelectedKPI] = useState('productivity');
+    const [dateRange, setDateRange] = useState('last30days');
+    const [selectedEmployee, setSelectedEmployee] = useState<string | null>(null);
+
+    const generateTrendData = () => {
+        const days = dateRange === 'last7days' ? 7 : dateRange === 'last30days' ? 30 : 90;
+        const data = [];
+        for (let i = 0; i < days; i++) {
+            const date = new Date();
+            date.setDate(date.getDate() - (days - i));
+            data.push({
+                date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                productivity: 75 + Math.random() * 20,
+                delivery: 80 + Math.random() * 15,
+                quality: 82 + Math.random() * 12,
+                lateTasks: 30 - Math.random() * 10
+            });
+        }
+        return data;
+    };
+
+    const trendData = generateTrendData();
+    const kpiConfig: Record<string, any> = {
+        productivity: { label: 'Productivity', color: '#2563eb' },
+        delivery: { label: 'On-time Delivery', color: '#16a34a' },
+        quality: { label: 'Quality', color: '#9333ea' },
+        lateTasks: { label: 'Late Tasks', color: '#dc2626' }
+    };
+
+    const getStatusColor = (status: string) => {
+        switch (status) {
+            case 'success': return { bg: 'bg-green-50', text: 'text-green-700', border: 'border-green-200', icon: 'text-green-600' };
+            case 'warning': return { bg: 'bg-amber-50', text: 'text-amber-700', border: 'border-amber-200', icon: 'text-amber-600' };
+            case 'info': return { bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200', icon: 'text-blue-600' };
+            default: return { bg: 'bg-slate-50', text: 'text-slate-700', border: 'border-slate-200', icon: 'text-slate-600' };
+        }
+    };
+
+    const [kpis, setKpis] = useState<Kpi[]>([]);
+    const [err, setErr] = useState("");
+
+    useEffect(() => {
+        const API = import.meta.env.VITE_API_BASE || "http://localhost:3001";
+        const token = localStorage.getItem("jwt") ||
+            localStorage.getItem("token") ||
+            (() => {
+                try {
+                    const root = JSON.parse(localStorage.getItem("persist:root") || "{}");
+                    return (root.token || "").replace(/^"+|"+$/g, "");
+                } catch {
+                    return "";
+                }
+            })();
+
+        fetch(`${API}/api/insights`, {
+            headers: token ? { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" } : { "Content-Type": "application/json" },
+            credentials: "include"
+        })
+            .then(r => r.ok ? r.json() : Promise.reject(new Error(`API ${r.status}`)))
+            .then(d => {
+                const extracted = Array.isArray(d) ? d : (d.data ?? d.kpis ?? []);
+                setKpis(extracted.length > 0 ? extracted : MOCK_KPIS);
+            })
+            .catch(() => setKpis(MOCK_KPIS));
+    }, []);
+
+    const title = "Insights";
+    const description = "Here are your insights";
+
+    if (err) return (
+        <div>
+            <MainPageHeader title={title} description={description} />
+            <div style={{ padding: 20, color: "crimson" }}>Error: {err}</div>
+        </div>
+    );
+    if (!kpis.length) return (
+        <div>
+            <MainPageHeader title={title} description={description} />
+            <div style={{ padding: 20 }}>Loading…</div>
+        </div>
+    );
+
+    const EmployeeDetailsModal = () => {
+        if (!selectedEmployee) return null;
+
+        const employee = MOCK_EMPLOYEES.find(emp => emp.id === parseInt(selectedEmployee));
+        if (!employee) return null;
+
+        const generateEmployeeData = () => {
+            const days = 30;
+            const data = [];
+            for (let i = 0; i < days; i++) {
+                const date = new Date();
+                date.setDate(date.getDate() - (days - i));
+                data.push({
+                    date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                    completion: 75 + Math.random() * 20,
+                    utilization: 60 + Math.random() * 30,
+                    lateTasks: Math.floor(Math.random() * 5),
+                    inProgress: Math.floor(3 + Math.random() * 8)
+                });
+            }
+            return data;
+        };
+
+        const employeeData = generateEmployeeData();
+
+        return createPortal(
+            <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+                <div className="bg-white rounded-xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-auto">
+                    <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-lg">
+                                {employee.avatar}
+                            </div>
+                            <div>
+                                <h3 className="text-lg text-slate-900">{employee.name}</h3>
+                                <p className="text-sm text-slate-500">{employee.branch} Branch • Score: {employee.score}%</p>
+                            </div>
+                        </div>
+                        <button onClick={() => setSelectedEmployee(null)} className="p-2 hover:bg-gray-100 rounded-lg">
+                            <X className="w-5 h-5" />
+                        </button>
+                    </div>
+
+                    <div className="p-6 space-y-6">
+                        <div className="grid grid-cols-4 gap-4">
+                            <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
+                                <div className="text-sm text-blue-600">Total Tasks</div>
+                                <div className="text-2xl text-blue-900 mt-1">{employee.tasks}</div>
+                            </div>
+                            <div className="p-4 bg-green-50 rounded-lg border border-green-100">
+                                <div className="text-sm text-green-600">Completion Rate</div>
+                                <div className="text-2xl text-green-900 mt-1">96%</div>
+                            </div>
+                            <div className="p-4 bg-purple-50 rounded-lg border border-purple-100">
+                                <div className="text-sm text-purple-600">Quality Score</div>
+                                <div className="text-2xl text-purple-900 mt-1">92%</div>
+                            </div>
+                            <div className="p-4 bg-amber-50 rounded-lg border border-amber-100">
+                                <div className="text-sm text-amber-600">Avg. Response</div>
+                                <div className="text-2xl text-amber-900 mt-1">2.3h</div>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            {[
+                                { title: 'Task Completion Trend', dataKey: 'completion', color: '#3b82f6' },
+                                { title: 'Utilization Rate', dataKey: 'utilization', color: '#10b981' },
+                                { title: 'Late Tasks', dataKey: 'lateTasks', color: '#ef4444' },
+                                { title: 'Tasks In Progress', dataKey: 'inProgress', color: '#f59e0b' }
+                            ].map(chart => (
+                                <div key={chart.title} className="border border-gray-200 rounded-lg p-4">
+                                    <h4 className="text-sm text-slate-900 mb-4">{chart.title}</h4>
+                                    <ResponsiveContainer width="100%" height={180}>
+                                        <LineChart data={employeeData}>
+                                            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                                            <XAxis dataKey="date" stroke="#9ca3af" style={{ fontSize: '10px' }} interval={6} />
+                                            <YAxis stroke="#9ca3af" style={{ fontSize: '10px' }} width={35} />
+                                            <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '6px', color: '#fff', fontSize: '11px' }} />
+                                            <Line type="monotone" dataKey={chart.dataKey} stroke={chart.color} strokeWidth={2} dot={false} />
+                                        </LineChart>
+                                    </ResponsiveContainer>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>,
+            document.body
         );
-    }
-
-    if (branchesError) {
-        return <p>Error loading branches</p>
-    }
-
-    // Prepare data for charts
-    const revenueData = branches.map(b => ({
-        name: b.name.split(' ')[0],
-        revenue: b.kpis.revenue / 1000,
-        growth: b.kpis.growth
-    }));
-
-    const performanceData = branches.map(b => ({
-        name: b.name.split(' ')[0],
-        productivity: b.kpis.productivity,
-        satisfaction: b.kpis.satisfaction
-    }));
-
-    const employeeDistribution = branches.map(b => ({
-        name: b.name.split(' ')[0],
-        value: b.kpis.employees
-    }));
-
-    const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
-
-    const getInsightIcon = (type: string) => {
-        switch (type) {
-            case 'positive':
-            case 'opportunity':
-                return CheckCircle;
-            case 'warning':
-            case 'alert':
-                return AlertTriangle;
-            default:
-                return TrendingUp;
-        }
     };
 
-    const getInsightColor = (type: string) => {
-        switch (type) {
-            case 'positive':
-                return { text: 'text-green-600', bg: 'bg-green-50' };
-            case 'warning':
-                return { text: 'text-orange-600', bg: 'bg-orange-50' };
-            case 'opportunity':
-                return { text: 'text-blue-600', bg: 'bg-blue-50' };
-            case 'alert':
-                return { text: 'text-red-600', bg: 'bg-red-50' };
-            default:
-                return { text: 'text-gray-600', bg: 'bg-gray-50' };
-        }
-    };
-
-    const getImpactBadgeColor = (impact: string) => {
-        switch (impact) {
-            case 'High':
-                return 'bg-red-100 text-red-800';
-            case 'Medium':
-                return 'bg-yellow-100 text-yellow-800';
-            case 'Low':
-                return 'bg-green-100 text-green-800';
-            default:
-                return 'bg-gray-100 text-gray-800';
-        }
-    };
-
-    const getTrendIcon = (trend: string) => {
-        return trend === 'up' ? TrendingUp : TrendingDown;
-    };
-
-    const getTrendColor = (trend: string) => {
-        return trend === 'up' ? 'text-green-600' : 'text-red-600';
-    };
-
-    const formatLastUpdated = (dateString: string) => {
-        if (!dateString) return '';
-        const date = new Date(dateString);
-        const now = new Date();
-        const diffMs = now.getTime() - date.getTime();
-        const diffMins = Math.floor(diffMs / (1000 * 60));
-
-        if (diffMins < 1) return 'Just now';
-        if (diffMins < 60) return `${diffMins} minutes ago`;
-        const diffHours = Math.floor(diffMins / 60);
-        if (diffHours < 24) return `${diffHours} hours ago`;
-        return date.toLocaleDateString();
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
     };
 
     return (
-        <div className="h-full overflow-auto">
+        <div className="p-6 space-y-6 max-w-[1800px] mx-auto">
             {/* Header */}
-            <div className="p-6 bg-white border-b border-gray-200">
-                <div className="flex items-start justify-between">
-                    <div>
-                        <h1 className="text-2xl mb-1">AI-Driven Insights</h1>
-                        <p className="text-gray-600">
-                            Intelligent analysis and recommendations for your organization
-                        </p>
-                        {lastUpdated && (
-                            <p className="text-sm text-gray-500 mt-1">
-                                Last updated: {formatLastUpdated(lastUpdated)}
-                            </p>
-                        )}
-                    </div>
-                    <div className="flex items-center gap-3">
-                        <Badge className="bg-purple-100 text-purple-800">
-                            <Sparkles className="h-3 w-3 mr-1" />
-                            AI Powered
-                        </Badge>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={handleRefresh}
-                            disabled={refreshing}
-                        >
-                            <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-                            {refreshing ? 'Refreshing...' : 'Refresh'}
-                        </Button>
-                    </div>
-                </div>
+            <div>
+                <h2 className="text-2xl text-slate-900">Organizational Performance Dashboard</h2>
+                <p className="text-sm text-slate-500 mt-1">Monitor KPIs and drill down into branches and employees</p>
             </div>
 
-            <div className="p-6 space-y-6">
-                {/* Key Insights */}
-                <div>
-                    <h2 className="text-xl mb-4">Key Insights</h2>
-                    {insights.length === 0 ? (
-                        <Card className="p-6 text-center">
-                            <p className="text-gray-600">No insights available at the moment.</p>
-                        </Card>
-                    ) : (
-                        <div className="space-y-4">
-                            {insights.map((insight) => {
-                                const Icon = getInsightIcon(insight.type);
-                                const colors = getInsightColor(insight.type);
-                                return (
-                                    <Card key={insight.id} className="p-6 hover:shadow-md transition-shadow">
-                                        <div className="flex items-start gap-4">
-                                            <div className={`p-3 rounded-lg ${colors.bg}`}>
-                                                <Icon className={`h-6 w-6 ${colors.text}`} />
-                                            </div>
-                                            <div className="flex-1">
-                                                <div className="flex items-start justify-between mb-2">
-                                                    <h3 className="mb-1">{insight.title}</h3>
-                                                    <Badge className={getImpactBadgeColor(insight.impact)}>
-                                                        {insight.impact} Impact
-                                                    </Badge>
-                                                </div>
-                                                <p className="text-gray-600">{insight.description}</p>
-                                            </div>
-                                        </div>
-                                    </Card>
-                                );
-                            })}
-                        </div>
-                    )}
+            {/* Filters */}
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                    <select value={dateRange} onChange={(e) => setDateRange(e.target.value)} className="px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
+                        <option value="last7days">Last 7 Days</option>
+                        <option value="last30days">Last 30 Days</option>
+                        <option value="last90days">Last 90 Days</option>
+                    </select>
+                    <select value={selectedKPI} onChange={(e) => setSelectedKPI(e.target.value)} className="px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
+                        <option value="productivity">Productivity</option>
+                        <option value="delivery">On-time Delivery</option>
+                        <option value="quality">Quality</option>
+                        <option value="lateTasks">Late Tasks</option>
+                    </select>
                 </div>
+                <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm">Export Report</button>
+            </div>
 
-                {/* Revenue Analysis */}
-                <div>
-                    <h2 className="text-xl mb-4">Revenue & Growth Analysis</h2>
-                    <Card className="p-6">
-                        <ResponsiveContainer width="100%" height={300}>
-                            <BarChart data={revenueData}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="name" />
-                                <YAxis yAxisId="left" label={{ value: 'Revenue (K)', angle: -90, position: 'insideLeft' }} />
-                                <YAxis yAxisId="right" orientation="right" label={{ value: 'Growth %', angle: 90, position: 'insideRight' }} />
-                                <Tooltip />
-                                <Legend />
-                                <Bar yAxisId="left" dataKey="revenue" fill="#3b82f6" name="Revenue (K)" />
-                                <Bar yAxisId="right" dataKey="growth" fill="#10b981" name="Growth %" />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </Card>
-                </div>
+            {/* KPI Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {MOCK_KPIS.map((kpi) => <KPICard key={kpi.title} {...kpi} />)}
+            </div>
 
-                {/* Performance Comparison */}
-                <div>
-                    <h2 className="text-xl mb-4">Branch Performance Comparison</h2>
-                    <Card className="p-6">
-                        <ResponsiveContainer width="100%" height={300}>
-                            <LineChart data={performanceData}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="name" />
-                                <YAxis domain={[0, 100]} />
-                                <Tooltip />
-                                <Legend />
-                                <Line type="monotone" dataKey="productivity" stroke="#8b5cf6" strokeWidth={2} name="Productivity %" />
-                                <Line type="monotone" dataKey="satisfaction" stroke="#f59e0b" strokeWidth={2} name="Satisfaction %" />
-                            </LineChart>
-                        </ResponsiveContainer>
-                    </Card>
-                </div>
+            {/* Trend Chart */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <h3 className="text-lg text-slate-900 mb-4">Overall Trend Analysis</h3>
+                <ResponsiveContainer width="100%" height={350}>
+                    <LineChart data={trendData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                        <XAxis dataKey="date" stroke="#6b7280" style={{ fontSize: '12px' }} />
+                        <YAxis stroke="#6b7280" style={{ fontSize: '12px' }} />
+                        <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px', color: '#fff' }} />
+                        <Line type="monotone" dataKey={selectedKPI} stroke={kpiConfig[selectedKPI].color} strokeWidth={3} dot={{ r: 4 }} />
+                    </LineChart>
+                </ResponsiveContainer>
+            </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {/* Employee Distribution */}
-                    <Card className="p-6">
-                        <h3 className="mb-4">Employee Distribution</h3>
-                        <ResponsiveContainer width="100%" height={250}>
-                            <PieChart>
-                                <Pie
-                                    data={employeeDistribution}
-                                    cx="50%"
-                                    cy="50%"
-                                    labelLine={false}
-                                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                                    outerRadius={80}
-                                    fill="#8884d8"
-                                    dataKey="value"
-                                >
-                                    {employeeDistribution.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                    ))}
-                                </Pie>
-                                <Tooltip />
-                            </PieChart>
-                        </ResponsiveContainer>
-                    </Card>
-
-                    {/* Recommendations */}
-                    <Card className="p-6">
-                        <h3 className="mb-4">AI Recommendations</h3>
-                        {recommendations.length === 0 ? (
-                            <p className="text-gray-600 text-sm">No recommendations available.</p>
-                        ) : (
-                            <div className="space-y-4">
-                                {recommendations.map((rec, index) => {
-                                    const colors = ['bg-blue-100 text-blue-600', 'bg-green-100 text-green-600', 'bg-purple-100 text-purple-600', 'bg-orange-100 text-orange-600'];
-                                    return (
-                                        <div key={rec.id} className="flex items-start gap-3">
-                                            <div className={`h-6 w-6 rounded-full ${colors[index % colors.length]} flex items-center justify-center flex-shrink-0`}>
-                                                <span className="text-xs">{rec.priority}</span>
-                                            </div>
-                                            <div>
-                                                <p className="text-sm mb-1">{rec.title}</p>
-                                                <p className="text-xs text-gray-500">Estimated impact: {rec.estimatedImpact}</p>
-                                            </div>
-                                        </div>
-                                    );
-                                })}
+            {/* Employee Changes & Task Metrics */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Employee Changes */}
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <h3 className="text-lg text-slate-900 mb-4">Employee Changes</h3>
+                    <div className="space-y-4">
+                        <div className="p-4 bg-gradient-to-r from-emerald-50 to-green-50 border border-emerald-200 rounded-lg">
+                            <div className="flex items-center gap-3 mb-2">
+                                <UserPlus className="w-5 h-5 text-emerald-600" />
+                                <div className="text-2xl text-slate-900">{EMPLOYEE_CHANGES.joined.count}</div>
+                                <span className="text-sm text-emerald-700">Joined</span>
                             </div>
-                        )}
-                    </Card>
+                        </div>
+                        <div className="p-4 bg-gradient-to-r from-slate-50 to-gray-50 border border-slate-200 rounded-lg">
+                            <div className="flex items-center gap-3 mb-2">
+                                <UserMinus className="w-5 h-5 text-slate-600" />
+                                <div className="text-2xl text-slate-900">{EMPLOYEE_CHANGES.resigned.count}</div>
+                                <span className="text-sm text-slate-700">Resigned</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                {/* Trend Analysis */}
-                <div>
-                    <h2 className="text-xl mb-4">Trend Analysis</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        {trends.map((trend) => {
-                            const TrendIcon = getTrendIcon(trend.trend);
-                            const trendColor = getTrendColor(trend.trend);
+                {/* Task Metrics */}
+                <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <h3 className="text-lg text-slate-900 mb-4">Task Metrics Overview</h3>
+                    <div className="space-y-3">
+                        {TASK_METRICS.map((metric) => {
+                            const colors = getStatusColor(metric.status);
+                            const Icon = metric.icon;
                             return (
-                                <Card key={trend.metric} className="p-6">
-                                    <div className="flex items-start justify-between mb-4">
-                                        <div>
-                                            <p className="text-sm text-gray-600 mb-1 capitalize">{trend.metric} Trend</p>
-                                            <p className="text-2xl mb-1">
-                                                {trend.value > 0 ? '+' : ''}{trend.value}%
-                                            </p>
-                                        </div>
-                                        <TrendIcon className={`h-6 w-6 ${trendColor}`} />
+                                <div key={metric.label} className={`flex items-center justify-between p-4 rounded-lg border ${colors.border} ${colors.bg}`}>
+                                    <div className="flex items-center gap-4">
+                                        <Icon className={`w-5 h-5 ${colors.icon}`} />
+                                        <div className="text-sm text-slate-900">{metric.label}</div>
                                     </div>
-                                    <p className="text-sm text-gray-600">{trend.description}</p>
-                                </Card>
+                                    <div className="text-2xl text-slate-900">{metric.value}</div>
+                                </div>
                             );
                         })}
                     </div>
                 </div>
             </div>
+
+            {/* Branch Overview */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <h3 className="text-lg text-slate-900 mb-4 flex items-center gap-2">
+                    <Building2 className="w-5 h-5 text-blue-600" />
+                    Branch Performance Comparison
+                </h3>
+                <ResponsiveContainer width="100%" height={320}>
+                    <BarChart data={MOCK_BRANCHES}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                        <XAxis dataKey="name" stroke="#6b7280" style={{ fontSize: '12px' }} />
+                        <YAxis stroke="#6b7280" style={{ fontSize: '12px' }} domain={[0, 100]} />
+                        <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px', color: '#fff' }} />
+                        <Bar dataKey="score" radius={[8, 8, 0, 0]} onClick={(data: any) => data?.name && setSelectedBranch(data.name)} cursor="pointer">
+                            {MOCK_BRANCHES.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
+                        </Bar>
+                    </BarChart>
+                </ResponsiveContainer>
+            </div>
+
+            {/* Top Employees */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <h3 className="text-lg text-slate-900 mb-4 flex items-center gap-2">
+                    <Users className="w-5 h-5 text-emerald-600" />
+                    Top Performing Employees
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {MOCK_EMPLOYEES.slice(0, 8).map((employee, index) => (
+                        <button
+                            key={employee.id}
+                            onClick={() => setSelectedEmployee(employee.id.toString())}
+                            className="text-left p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-md transition-all cursor-pointer"
+                        >
+                            <div className="flex items-center gap-3 mb-3">
+                                <div className="relative">
+                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-sm">{employee.avatar}</div>
+                                    {index < 3 && <div className="absolute -top-1 -right-1 w-5 h-5 bg-amber-400 rounded-full flex items-center justify-center"><Award className="w-3 h-3 text-white" /></div>}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <div className="text-sm text-slate-900 truncate">{employee.name}</div>
+                                    <div className="text-xs text-slate-500">{employee.branch}</div>
+                                </div>
+                            </div>
+                            <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                                <div>
+                                    <div className="text-xs text-slate-500">Score</div>
+                                    <div className="text-lg text-slate-900">{employee.score}%</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-slate-500">Tasks</div>
+                                    <div className="text-lg text-slate-900">{employee.tasks}</div>
+                                </div>
+                                <TrendingUp className="w-4 h-4 text-green-600" />
+                            </div>
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            {selectedEmployee && <EmployeeDetailsModal />}
         </div>
     );
+}

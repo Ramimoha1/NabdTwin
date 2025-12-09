@@ -28,12 +28,10 @@ import type {
 
 
 const AdminPage = () => {
+    const mockBranches =getBranches();
     const accountType = useSelector(selectAccountType);
-    const isLoggedIn = useSelector(selectIslogin)
+    const isLoggedIn = useSelector(selectIslogin);
 
-    if (accountType !=="admin" || !isLoggedIn) {
-        return <PageNotAuthorized />;
-    }
     // State for users list
     const [users, setUsers] = useState<UserAccount[]>([]);
     const [loading, setLoading] = useState(true);
