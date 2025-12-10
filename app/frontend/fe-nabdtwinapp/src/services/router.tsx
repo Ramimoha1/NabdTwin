@@ -7,6 +7,7 @@ import NotFoundPage from "../pages/PageNotFound.tsx";
 import MainLayout from "../layout/MainLayout.tsx";
 import AdminPage from "../pages/AdminPage.tsx";
 import { ProtectedRoute } from "../components/ProtectedRoute.tsx";
+import DetailPage from "../pages/DetailPage.tsx";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -21,11 +22,17 @@ const router = createBrowserRouter(
                         <MapViewPage />
                     </ProtectedRoute>
                 } />
+                <Route path="branch/:id" element={
+                            <ProtectedRoute requirePermission="viewInsights">
+                            <DetailPage />
+                            </ProtectedRoute>
+                } />
                 <Route path="insights" element={
                     <ProtectedRoute requirePermission="viewInsights">
                         <InsightsPage />
                     </ProtectedRoute>
                 } />
+
                 <Route path="reports" element={
                     <ProtectedRoute requirePermission="viewReports">
                         <ReportsPage />

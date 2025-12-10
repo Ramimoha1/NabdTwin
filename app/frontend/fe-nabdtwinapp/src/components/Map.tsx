@@ -39,13 +39,13 @@ function getPerformanceBadgeColor(performance: string) {
     }
 }
 
-function Map({ branches }: { branches: Branch[] }) {
+function Map({ branches, onBranchClick }: { branches: Branch[], onBranchClick: (branchId: string) => void }) {
     const [hoveredBranch, setHoveredBranch] = useState<string | null>(null);
     const mapRef = useRef<GoogleMap | null>(null);
-    
+
     // Default center: Riyadh, Saudi Arabia
     const defaultCenter = { lat: 24.7136, lng: 46.6753 };
-    
+
     const formatCurrency = (value: number) => {
         // Format with Saudi Riyal symbol (﷼)
         return `﷼${new Intl.NumberFormat('en-US', {
@@ -56,10 +56,9 @@ function Map({ branches }: { branches: Branch[] }) {
 
     // Auto-fit map bounds to show all branches
     useEffect(() => {
-        if (!mapRef.current || branches.length === 0 || typeof GoogleMap === 'undefined') return;
+        if (!mapRef.current || branches.length === 0 || typeof google === 'undefined') return;
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const bounds = new (GoogleMap as any).maps.LatLngBounds();
+        const bounds = new google.maps.LatLngBounds();
         branches.forEach((branch) => {
             bounds.extend({
                 lat: branch.location.lat,
@@ -73,9 +72,9 @@ function Map({ branches }: { branches: Branch[] }) {
 
     return (
         <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
-            <GoogleMap 
-                defaultCenter={defaultCenter} 
-                defaultZoom={6} 
+            <GoogleMap
+                defaultCenter={defaultCenter}
+                defaultZoom={6}
                 mapId={import.meta.env.VITE_MAP_ID}
                 onLoad={(map: GoogleMap) => { mapRef.current = map; }}
             >
@@ -89,7 +88,7 @@ function Map({ branches }: { branches: Branch[] }) {
                             className="relative cursor-pointer"
                             onMouseEnter={() => setHoveredBranch(branch.id)}
                             onMouseLeave={() => setHoveredBranch(null)}
-                            onClick={() => console.log("Clicked branch:", branch.name)}
+                            onClick={() => onBranchClick(branch.id)}
                             style={{ zIndex: hoveredBranch === branch.id ? 1000 : 1 }}
                         >
                             {/* Marker */}
