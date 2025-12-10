@@ -108,7 +108,7 @@
     },
     "currency": {
       "type": "string",
-      "default": "USD",
+      "default": "SAR",
       "maxLength": 3
     },
     "positionX": {

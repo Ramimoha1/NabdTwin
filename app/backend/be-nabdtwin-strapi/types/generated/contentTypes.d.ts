@@ -710,6 +710,7 @@ export interface ApiBranchKpiBranchKpi extends Struct.CollectionTypeSchema {
       'api::branch-kpi.branch-kpi'
     > &
       Schema.Attribute.Private;
+    overdueTaskCount: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     performanceRating: Schema.Attribute.Enumeration<
       ['excellent', 'good', 'average', 'poor']
     >;
@@ -1107,7 +1108,7 @@ export interface ApiEmployeeEmployee extends Struct.CollectionTypeSchema {
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 3;
       }> &
-      Schema.Attribute.DefaultTo<'USD'>;
+      Schema.Attribute.DefaultTo<'SAR'>;
     dateOfBirth: Schema.Attribute.Date;
     department: Schema.Attribute.Relation<
       'manyToOne',

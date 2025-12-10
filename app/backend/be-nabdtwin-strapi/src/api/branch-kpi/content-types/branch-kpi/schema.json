@@ -42,6 +42,10 @@
       "type": "integer",
       "default": 0
     },
+    "overdueTaskCount": {
+      "type": "integer",
+      "default": 0
+    },
     "satisfactionScore": {
       "type": "decimal",
       "min": 0,

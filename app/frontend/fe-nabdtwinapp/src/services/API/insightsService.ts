@@ -1,106 +1,145 @@
-const parseJsonSafe = (raw: string | null) => {
-    if (!raw) return null;
-    try { return JSON.parse(raw); } catch { return null; }
+import { api } from "./api";
+
+// Type definitions
+type Kpi = {
+    title?: string;
+    value: number;
+    target?: number;
+    unit?: string;
+    trend?: 'up' | 'down';
+    trendValue?: string;
+    explanation?: string;
+    color?: string;
+    code?: string;
+    label?: string;
+    name?: string;
+    [key: string]: any;
 };
 
-const stripQuotes = (val: unknown) =>
-    typeof val === "string" ? val.replace(/^"+|"+$/g, "") : "";
-
-const resolveToken = () => {
-    const direct =
-        localStorage.getItem("jwt") ||
-        localStorage.getItem("token") ||
-        localStorage.getItem("authToken") ||
-        sessionStorage.getItem("jwt") ||
-        sessionStorage.getItem("token");
-    if (direct) return stripQuotes(direct);
-
-    const userRaw = localStorage.getItem("user") || sessionStorage.getItem("user");
-    const userParsed = parseJsonSafe(userRaw);
-    if (userParsed?.jwt || userParsed?.token) return stripQuotes(userParsed.jwt || userParsed.token);
-
-    const persistedRoot = parseJsonSafe(localStorage.getItem("persist:root"));
-    if (persistedRoot) {
-        const fromRoot = stripQuotes(persistedRoot.token || persistedRoot.jwt || persistedRoot.accessToken);
-        if (fromRoot) return fromRoot;
-
-        const authSliceRaw = persistedRoot?.auth;
-        const authSlice = typeof authSliceRaw === "string" ? parseJsonSafe(authSliceRaw) : authSliceRaw;
-        const fromPersist =
-            authSlice?.jwt ||
-            authSlice?.token ||
-            authSlice?.accessToken ||
-            authSlice?.user?.jwt ||
-            authSlice?.user?.token;
-        if (fromPersist) return stripQuotes(fromPersist);
-    }
-    return "";
-};
-
-const MOCK_KPIS = [
-    { code: "KPI001", label: "Total Revenue", name: "Revenue", value: 1250000, target: 1500000, unit: "$" },
-    { code: "KPI002", label: "Active Users", name: "Users", value: 8750, target: 10000, unit: "" },
-    { code: "KPI003", label: "Conversion Rate", name: "Conversion", value: 3.45, target: 4.5, unit: "%" },
-    { code: "KPI004", label: "Customer Satisfaction", name: "CSAT", value: 4.8, target: 4.9, unit: "/5" },
-];
-
-export async function fetchInsightsKpis() {
-    const API = import.meta.env.VITE_API_BASE || "http://localhost:3001";
-    const token = resolveToken();
-    console.log("Auth token detected:", token ? `${token.slice(0, 8)}...` : "none");
-
+/**
+ * Fetch global KPI insights
+ */
+export const fetchInsightsKpis = async (): Promise<Kpi[]> => {
     try {
-        console.log("Fetching insights from:", `${API}/api/insights`);
-
-        const headers: HeadersInit = { "Content-Type": "application/json" };
-        if (token) headers["Authorization"] = `Bearer ${token}`;
-        const requestInit: RequestInit = { headers, credentials: "include" };
-
-        const response = await fetch(`${API}/api/insights`, requestInit);
-        if (response.ok) {
-            const data = await response.json();
-            console.log("Full insights response:", data);
-
-            // Extract KPIs from nested structure
-            const kpis = Array.isArray(data)
-                ? data
-                : Array.isArray(data?.data)
-                    ? data.data
-                    : Array.isArray(data?.kpis)
-                        ? data.kpis
-                        : Array.isArray(data?.attributes?.kpis)
-                            ? data.attributes.kpis
-                            : [];
-
-            console.log("Extracted KPIs:", kpis);
-
-            // Use mock data if empty
-            if (kpis.length === 0) {
-                console.log("No KPIs from API, using mock data");
-                return MOCK_KPIS;
-            }
-            return kpis;
-        }
-
-        if (response.status === 401 || response.status === 403) {
-            throw new Error("Access is forbidden. Please ensure your Strapi role has permission to access insights.");
-        }
-
-        console.warn(`Primary endpoint failed with status: ${response.status}`);
-        const fallbackResponse = await fetch(`${API}/api/analytics`, requestInit);
-
-        if (!fallbackResponse.ok) {
-            throw new Error(`API endpoints unavailable. Primary: ${response.status}, Fallback: ${fallbackResponse.status}`);
-        }
-
-        const fallbackData = await fallbackResponse.json();
-        console.log("Fallback data received:", fallbackData);
-        return Array.isArray(fallbackData) ? fallbackData : (fallbackData.data ?? fallbackData.kpis ?? []);
+        const response = await api.get('/api/insights');
+        console.log('Insights KPIs Response:', response.data);
+        
+        const data = Array.isArray(response.data) 
+            ? response.data 
+            : response.data.data || [];
+        
+        return data;
     } catch (error) {
-        console.error("Insights fetch error:", error);
-        if (error instanceof TypeError && error.message.includes("fetch")) {
-            throw new Error(`Cannot connect to API at ${API}. Is the backend running?`);
-        }
+        console.error('Error fetching insights KPIs:', error);
         throw error;
     }
-}
+};
+
+/**
+ * Fetch trend data (historical analytics)
+ */
+export const fetchTrends = async (): Promise<any[]> => {
+    try {
+        const response = await api.get('/api/analytics/trends');
+        console.log('Trends Response:', response.data);
+        
+        const data = Array.isArray(response.data) 
+            ? response.data 
+            : response.data.data || [];
+        
+        return data;
+    } catch (error) {
+        console.error('Error fetching trends:', error);
+        throw error;
+    }
+};
+
+/**
+ * Fetch employee changes data
+ */
+export const fetchEmployeeChanges = async (): Promise<any> => {
+    try {
+        const response = await api.get('/api/analytics/employee-changes');
+        console.log('Employee Changes Response:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching employee changes:', error);
+        throw error;
+    }
+};
+
+/**
+ * Fetch task metrics
+ */
+export const fetchTaskMetrics = async (): Promise<any[]> => {
+    try {
+        const response = await api.get('/api/analytics/task-metrics');
+        console.log('Task Metrics Response:', response.data);
+        
+        const data = Array.isArray(response.data) 
+            ? response.data 
+            : response.data.data || [];
+        
+        return data;
+    } catch (error) {
+        console.error('Error fetching task metrics:', error);
+        throw error;
+    }
+};
+
+/**
+ * Fetch branch comparison data
+ */
+export const fetchBranchComparison = async (): Promise<any[]> => {
+    try {
+        const response = await api.get('/api/analytics/branch-comparison');
+        console.log('Branch Comparison Response:', response.data);
+        
+        const data = Array.isArray(response.data) 
+            ? response.data 
+            : response.data.data || [];
+        
+        return data;
+    } catch (error) {
+        console.error('Error fetching branch comparison:', error);
+        throw error;
+    }
+};
+
+/**
+ * Fetch top performing employees
+ */
+export const fetchTopEmployees = async (): Promise<any[]> => {
+    try {
+        const response = await api.get('/api/analytics/top-employees');
+        console.log('Top Employees Response:', response.data);
+        
+        const data = Array.isArray(response.data) 
+            ? response.data 
+            : response.data.data || [];
+        
+        return data;
+    } catch (error) {
+        console.error('Error fetching top employees:', error);
+        throw error;
+    }
+};
+
+/**
+ * Fetch employee performance history (30 days)
+ */
+export const fetchEmployeePerformance = async (employeeId: number): Promise<any[]> => {
+    try {
+        const response = await api.get(`/api/analytics/employee/${employeeId}/performance`);
+        console.log('Employee Performance Response:', response.data);
+        
+        const data = Array.isArray(response.data) 
+            ? response.data 
+            : response.data.data || [];
+        
+        return data;
+    } catch (error) {
+        console.error('Error fetching employee performance:', error);
+        throw error;
+    }
+};

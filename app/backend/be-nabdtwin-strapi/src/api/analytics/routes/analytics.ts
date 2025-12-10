@@ -46,5 +46,14 @@ export default {
         auth: false,
       },
     },
+    {
+      method: 'GET',
+      path: '/analytics/employee/:id/performance',
+      handler: 'analytics.getEmployeePerformance',
+      config: {
+        auth: false,
+      },
+    },
+    
   ],
 };
