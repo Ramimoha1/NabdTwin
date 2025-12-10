@@ -8,11 +8,16 @@ import {PerformanceHeatmap} from "../components/PerformanceHeatMap.tsx";
 import Map from "../components/Map.tsx";
 import { usePermissions } from "../hooks/usePermissions";
 import { AlertCircle } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { setSelectedBranch } from "../store/visual/visualSlice.ts";
+import { useNavigate } from "react-router-dom";
 
 function MapViewPage() {
     const title = "HomePage";
     const description = "Welcome to the HomePage";
     const { filterBranches, isAdmin } = usePermissions();
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const {  data , isLoading, isError } =  useQuery<Branch[]>({
         queryKey: ["branches"],
@@ -21,6 +26,11 @@ function MapViewPage() {
 
     // Filter branches based on user permissions
     const branches: Branch[] = filterBranches(data ?? []);
+
+    const handleBranchSelection = (branchId: string) => {
+        dispatch(setSelectedBranch(branchId));
+        navigate(`/branch/${branchId}`);
+    };
 
 
     if (isLoading) return <p>Loading...wait bro</p>;
@@ -77,7 +87,7 @@ function MapViewPage() {
             {/* Map Area */}
             <div className="flex-1 p-6 overflow-auto">
                 <div className="bg-gradient-to-br from-blue-50 to-gray-50 rounded-lg border border-gray-200 h-full min-h-[600px] relative">
-                    <Map branches={branches} />
+                    <Map branches={branches} onBranchClick={handleBranchSelection} />
                 </div>
             </div>
 
@@ -93,9 +103,7 @@ function MapViewPage() {
                         <Card
                             key={branch.id}
                             className="p-4 cursor-pointer hover:shadow-md transition-shadow"
-                            onClick={() => {
-                                console.log("clickyy haha")
-                            }}
+                            onClick={() => handleBranchSelection(branch.id)}
                         >
                             <div className="flex items-start justify-between mb-2">
                                 <h4 className="font-medium">{branch.name}</h4>

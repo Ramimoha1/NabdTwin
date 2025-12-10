@@ -20,6 +20,7 @@ export interface UserAccount {
 export interface CreateUserRequest {
     name: string;
     email: string;
+    password?: string;
     role: 'admin' | 'user';
 }
 
@@ -111,31 +112,31 @@ export const createUser = async (userData: CreateUserRequest): Promise<UserAccou
     try {
         const rolesResponse = await api.get('/api/users-permissions/roles');
         const authenticatedRole = rolesResponse.data.roles?.find((r: any) => r.type === 'authenticated');
-        
+
         if (!authenticatedRole) {
             throw new Error('Authenticated role not found');
         }
-        
+
         const response = await api.post('/api/users', {
-            username: userData.email, 
+            username: userData.email,
             email: userData.email,
-            password: 'TempPassword123!', 
-            role: authenticatedRole.id, 
-            type: userData.role, 
+            password: userData.password,
+            role: authenticatedRole.id,
+            type: userData.role,
             confirmed: true,
             blocked: false
         });
-        
+
         console.log('Create user response:', response.data);
         return normalizeUserData(response.data);
     } catch (error: any) {
         console.error('Error creating user:', error);
         console.error('Error response:', error.response?.data);
-        
+
         if (error.response?.data?.error?.message) {
             throw new Error(error.response.data.error.message);
         }
-        
+
         throw error;
     }
 };
