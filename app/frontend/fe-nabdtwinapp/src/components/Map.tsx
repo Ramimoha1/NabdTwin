@@ -47,12 +47,11 @@ function Map({ branches }: { branches: Branch[] }) {
     const defaultCenter = { lat: 24.7136, lng: 46.6753 };
     
     const formatCurrency = (value: number) => {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
+        // Format with Saudi Riyal symbol (﷼)
+        return `﷼${new Intl.NumberFormat('en-US', {
             minimumFractionDigits: 0,
             maximumFractionDigits: 0
-        }).format(value);
+        }).format(value)}`;
     };
 
     // Auto-fit map bounds to show all branches
@@ -144,7 +143,7 @@ function Map({ branches }: { branches: Branch[] }) {
                                                 <TrendingUp className="h-4 w-4 text-orange-600" />
                                                 <div>
                                                     <p className="text-xs text-gray-500">Growth</p>
-                                                    <p className="text-sm">+{branch.kpis.growth}%</p>
+                                                    <p className="text-sm">{branch.kpis.growth > 0 ? '+' : ''}{branch.kpis.growth}%</p>
                                                 </div>
                                             </div>
                                         </div>
