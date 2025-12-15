@@ -132,6 +132,12 @@
       "relation": "oneToMany",
       "target": "api::satisfaction-survey.satisfaction-survey",
       "mappedBy": "branch"
+    },
+    "alertRules": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::alert-rule.alert-rule",
+      "mappedBy": "branch"
     }
   }
 }
