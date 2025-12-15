@@ -6,6 +6,7 @@ import ReportsPage from "../pages/ReportsPage.tsx";
 import NotFoundPage from "../pages/PageNotFound.tsx";
 import MainLayout from "../layout/MainLayout.tsx";
 import AdminPage from "../pages/AdminPage.tsx";
+import AlertsSummaryPage from "../pages/AlertsSummaryPage.tsx";
 import { ProtectedRoute } from "../components/ProtectedRoute.tsx";
 import DetailPage from "../pages/DetailPage.tsx";
 
@@ -23,9 +24,9 @@ const router = createBrowserRouter(
                     </ProtectedRoute>
                 } />
                 <Route path="branch/:id" element={
-                            <ProtectedRoute requirePermission="viewInsights">
-                            <DetailPage />
-                            </ProtectedRoute>
+                    <ProtectedRoute requirePermission="viewInsights">
+                        <DetailPage />
+                    </ProtectedRoute>
                 } />
                 <Route path="insights" element={
                     <ProtectedRoute requirePermission="viewInsights">
@@ -36,6 +37,11 @@ const router = createBrowserRouter(
                 <Route path="reports" element={
                     <ProtectedRoute requirePermission="viewReports">
                         <ReportsPage />
+                    </ProtectedRoute>
+                } />
+                <Route path="alerts" element={
+                    <ProtectedRoute requirePermission="admin">
+                        <AlertsSummaryPage />
                     </ProtectedRoute>
                 } />
                 <Route path="accounts" element={
