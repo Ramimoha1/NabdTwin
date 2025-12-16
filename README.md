@@ -6,10 +6,9 @@
 
 | Sprint  | Module Name | Frontend                                                      | Backend | Database |
 |---------|-------------|---------------------------------------------------------------|---------|----------|
-| Sprint 1|Data Schema Management| [index.html](/app/frontend/fe-nabdtwinapp/index.html)        | -       | - [Database Folder](/app/backend/be-nabdtwin-strapi/database)
-       |
-| Sprint 2|             | -                                                             | -       | -        |
-| Sprint 3|             | -                                                             | -       | -        |
+| Sprint 1|Data Schema Management|      | -       | - [Database Folder](/app/backend/be-nabdtwin-strapi/database)|
+| Sprint 2|API points created| -                                                             | -  [Api implementation](/backend/be-nabdtwin-strapi/src/api)    | -        |
+| Sprint 3|API points Integeration| -[Api Integeration](/frontend/fe-nabdtwinapp/src/services/API) | -       | -        |
 
 ---
 
