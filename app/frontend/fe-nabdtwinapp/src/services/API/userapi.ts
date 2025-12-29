@@ -34,6 +34,12 @@ export interface UpdatePermissionsRequest {
     };
 }
 
+export interface ChangePasswordRequest {
+    currentPassword?: string;
+    newPassword?: string;
+    newPasswordConfirmation?: string;
+}
+
 /**
  * Normalize Strapi user data to frontend UserAccount format
  */
@@ -141,6 +147,21 @@ export const createUser = async (userData: CreateUserRequest): Promise<UserAccou
     }
 };
 
+export const updateUserPassword = async (passwordData: ChangePasswordRequest): Promise<any> => {
+    try {
+        const response = await api.post('/api/auth/change-password', {
+            currentPassword: passwordData.currentPassword,
+            password: passwordData.newPassword,
+            passwordConfirmation: passwordData.newPasswordConfirmation
+        }
+        );
+
+        return response.data;
+    } catch (error: any) {
+        // Handle incorrect current password or validation errors
+        throw new Error(error.response?.data?.error?.message || 'Failed to update password');
+    }
+};
 
 export const updateUserPermissions = async (data: UpdatePermissionsRequest): Promise<UserAccount> => {
     try {
