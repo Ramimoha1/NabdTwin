@@ -1,12 +1,13 @@
 import { RouterProvider} from 'react-router-dom';
 import router from "./services/router.tsx";
-import {ToastContainer} from "react-toastify";
+import { Toaster } from "./externaluicomponents/sonner";
+
 function App() {
 
   return (
       <>
           <RouterProvider router={router} />
-          <ToastContainer />
+          <Toaster />
       </>
   )
 }

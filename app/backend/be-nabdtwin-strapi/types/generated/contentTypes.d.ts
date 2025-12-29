@@ -467,11 +467,71 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiAlertRuleAlertRule extends Struct.CollectionTypeSchema {
+  collectionName: 'alert_rules';
+  info: {
+    description: 'Configuration for automated KPI threshold monitoring and alerting.';
+    displayName: 'Alert Rule Configuration';
+    pluralName: 'alert-rules';
+    singularName: 'alert-rule';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    activeAlerts: Schema.Attribute.Relation<'oneToMany', 'api::alert.alert'>;
+    alertType: Schema.Attribute.Enumeration<['warning', 'critical']> &
+      Schema.Attribute.Required;
+    branch: Schema.Attribute.Relation<'manyToOne', 'api::branch.branch'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    enabled: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    evaluationPeriod: Schema.Attribute.Enumeration<
+      ['daily', 'weekly', 'monthly']
+    > &
+      Schema.Attribute.Required;
+    kpiName: Schema.Attribute.Enumeration<
+      [
+        'Productivity',
+        'Growth Rate',
+        'Employee Joins',
+        'Employee Resignations',
+        'On-Time Delivery',
+        'Late Tasks',
+      ]
+    > &
+      Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::alert-rule.alert-rule'
+    > &
+      Schema.Attribute.Private;
+    operator: Schema.Attribute.Enumeration<
+      ['less_than', 'greater_than', 'equals']
+    > &
+      Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    threshold: Schema.Attribute.Decimal &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiAlertAlert extends Struct.CollectionTypeSchema {
   collectionName: 'alerts';
   info: {
-    description: 'Alert entity';
-    displayName: 'Alert';
+    description: 'Log of KPI threshold breaches that require managerial attention.';
+    displayName: 'Active Alert Event';
     pluralName: 'alerts';
     singularName: 'alert';
   };
@@ -487,6 +547,7 @@ export interface ApiAlertAlert extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    currentValue: Schema.Attribute.Decimal;
     department: Schema.Attribute.Relation<
       'manyToOne',
       'api::department.department'
@@ -494,6 +555,10 @@ export interface ApiAlertAlert extends Struct.CollectionTypeSchema {
     description: Schema.Attribute.Text;
     employee: Schema.Attribute.Relation<'manyToOne', 'api::employee.employee'>;
     isResolved: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    kpiName: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::alert.alert'> &
       Schema.Attribute.Private;
@@ -509,11 +574,16 @@ export interface ApiAlertAlert extends Struct.CollectionTypeSchema {
     >;
     severity: Schema.Attribute.Enumeration<['critical', 'warning', 'info']>;
     team: Schema.Attribute.Relation<'manyToOne', 'api::team.team'>;
+    threshold: Schema.Attribute.Decimal;
     title: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
+    triggeredByRule: Schema.Attribute.Relation<
+      'oneToOne',
+      'api::alert-rule.alert-rule'
+    >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -752,6 +822,10 @@ export interface ApiBranchBranch extends Struct.CollectionTypeSchema {
   };
   attributes: {
     address: Schema.Attribute.Text & Schema.Attribute.Required;
+    alertRules: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::alert-rule.alert-rule'
+    >;
     alerts: Schema.Attribute.Relation<'oneToMany', 'api::alert.alert'>;
     branchKpis: Schema.Attribute.Relation<
       'oneToMany',
@@ -2473,6 +2547,7 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
+      'api::alert-rule.alert-rule': ApiAlertRuleAlertRule;
       'api::alert.alert': ApiAlertAlert;
       'api::app-feature.app-feature': ApiAppFeatureAppFeature;
       'api::attendance-record.attendance-record': ApiAttendanceRecordAttendanceRecord;
