@@ -1,5 +1,5 @@
-import type {DepartmentData, EmployeeDetail, TeamData} from "../services/API/detailsApi.ts";
-import {Button} from "../externaluicomponents/button.tsx";
+import type {DepartmentData, EmployeeDetail, TeamData} from "../services/API/detailsApi";
+import {Button} from "../externaluicomponents/button";
 import {
     ArrowLeft,
     Award,
@@ -12,11 +12,11 @@ import {
     Phone,
     UserCircle
 } from "lucide-react";
-import {Card} from "../externaluicomponents/Card.tsx";
+import {Card} from "../externaluicomponents/Card";
 import React from "react";
 import {Calendar} from "lucide-react";
-import {Badge} from "../externaluicomponents/badge.tsx";
-import {Progress} from "../externaluicomponents/progress.tsx";
+import {Badge} from "../externaluicomponents/badge";
+import {Progress} from "../externaluicomponents/progress";
 
 export default function  EmployeeDetailView({
                                 employee,
