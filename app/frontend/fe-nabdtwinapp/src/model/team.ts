@@ -1,6 +1,7 @@
 export interface TeamData {
     id: string;
     name: string;
+    branchId: string;
     department: string;
     leaderName: string;
     memberCount: number;
