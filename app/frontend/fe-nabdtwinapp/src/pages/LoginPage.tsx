@@ -1,13 +1,13 @@
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../externaluicomponents/Card.tsx";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../externaluicomponents/Card";
 import { Building2, Lock, Mail, Loader2 } from 'lucide-react';
 import { useState } from "react";
-import {Label} from "../externaluicomponents/label.tsx";
-import {Input} from "../externaluicomponents/input.tsx";
+import {Label} from "../externaluicomponents/label";
+import {Input} from "../externaluicomponents/input";
 import {useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
-import {selectIsLoading, selectIslogin} from "../store/auth/authSelector.ts";
-import {loginUser} from "../store/auth/authThunks.ts";
-import {type AppDispatch} from "../store/store.ts";
+import {selectIsLoading, selectIslogin} from "../store/auth/authSelector";
+import {loginUser} from "../store/auth/authThunks";
+import {type AppDispatch} from "../store/store";
 
 
 

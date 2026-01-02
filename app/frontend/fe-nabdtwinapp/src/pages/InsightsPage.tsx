@@ -1,5 +1,5 @@
 import { useState } from "react";
-import MainPageHeader from "../components/MainPageHeader.tsx";
+import MainPageHeader from "../components/MainPageHeader";
 import { useInsightsData } from "../hooks/useInsightsData";
 import { KPICard } from "../components/KPICard";
 import { EmployeeDetailsModal } from "../components/EmployeeDetailsModal";
