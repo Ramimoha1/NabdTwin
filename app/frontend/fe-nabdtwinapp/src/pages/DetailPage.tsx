@@ -43,6 +43,9 @@ import {
     downloadAttendanceReport,
     downloadEmployeeReport
 } from '../services/API/detailsApi.ts';
+import EmployeeDetailView from "../components/EmployeeDetailView.tsx";
+import {DepartmentDetailView} from "../components/DepartmentDetailView.tsx";
+import TeamDetailView from "../components/TeamDetailView.tsx";
 
 export default function DetailPage() {
     const dispatch = useDispatch();

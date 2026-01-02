@@ -1,0 +1,81 @@
+{
+  "kind": "collectionType",
+  "collectionName": "alert_rules",
+  "info": {
+    "singularName": "alert-rule",
+    "pluralName": "alert-rules",
+    "displayName": "Alert Rule Configuration",
+    "description": "Configuration for automated KPI threshold monitoring and alerting."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "kpiName": {
+      "type": "enumeration",
+      "enum": [
+        "Productivity",
+        "Growth Rate",
+        "Employee Joins",
+        "Employee Resignations",
+        "On-Time Delivery",
+        "Late Tasks"
+      ],
+      "required": true,
+      "description": "The KPI metric being monitored, corresponding to a key in the Analytics Service."
+    },
+    "threshold": {
+      "type": "decimal",
+      "required": true,
+      "min": 0,
+      "description": "The target value that defines the alert boundary (e.g., 70%)."
+    },
+    "operator": {
+      "type": "enumeration",
+      "enum": [
+        "less_than",
+        "greater_than",
+        "equals"
+      ],
+      "required": true,
+      "description": "The comparison operator used against the current KPI value."
+    },
+    "alertType": {
+      "type": "enumeration",
+      "enum": [
+        "warning",
+        "critical"
+      ],
+      "required": true,
+      "description": "The severity level to assign if the threshold is breached."
+    },
+    "evaluationPeriod": {
+      "type": "enumeration",
+      "enum": [
+        "daily",
+        "weekly",
+        "monthly"
+      ],
+      "required": true,
+      "description": "How often the backend service checks this rule against the live data."
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "Toggle to activate or pause the rule."
+    },
+    "branch": {
+    "type": "relation",
+    "relation": "manyToOne",
+    "target": "api::branch.branch",
+    "inversedBy": "alertRules",
+    "description": "Optional: If set, the rule is applied only to this specific branch (local rule)."
+    },
+    "activeAlerts": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::alert.alert",
+      "mappedBy": "triggeredByRule"
+    }
+  }
+}

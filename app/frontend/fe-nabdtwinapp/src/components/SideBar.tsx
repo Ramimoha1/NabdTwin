@@ -6,11 +6,14 @@ import {type RootState} from "../store/store.ts";
 import {logoutUser} from "../store/auth/authSlice.ts";
 import {useLocation, useNavigate} from "react-router-dom";
 import { usePermissions } from '../hooks/usePermissions';
+import { AlertsPanel } from './AlertsPanel';
+import { useState } from 'react';
 
 export function Sidebar() {
     const navigate = useNavigate()
     const dispatch = useDispatch();
     const location = useLocation();
+    const [alertsPanelOpen, setAlertsPanelOpen] = useState(false);
     const { username, accountType } = useSelector((state: RootState) => state.auth);
     const { canViewReports, canViewInsights, isAdmin } = usePermissions();
     
@@ -72,11 +75,23 @@ export function Sidebar() {
                     );
                 })}
 
+                 {isAdmin && (
+                    <Button
+                        variant="ghost"
+                        className="w-full justify-start"
+                        onClick={() => navigate('/alerts')}
+                    >
+                        <Bell className="h-4 w-4 mr-2" />
+                        Alert Settings
+                    </Button>
+                )}
+
                 <Separator className="my-4" />
 
                 <Button
                     variant="ghost"
                     className="w-full justify-start hover:bg-gray-300"
+                    onClick={() => setAlertsPanelOpen(true)}
                 >
                     <Bell className="h-4 w-4 mr-2" />
                     Alerts
@@ -94,6 +109,9 @@ export function Sidebar() {
                     Logout
                 </Button>
             </div>
+
+            {/* Alerts Side Panel */}
+            <AlertsPanel open={alertsPanelOpen} onOpenChange={setAlertsPanelOpen} />
         </div>
     );
 }
