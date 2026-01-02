@@ -1,15 +1,28 @@
-import type { Employee } from './branch';
-
-export interface EmployeeDetail extends Employee {
-    joinDate: Date;
+export interface EmployeeDetail {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone?: string;
+    role: string;
+    department: string;
+    team: string;
+    branchId: string;
+    floorId: string;
+    joinDate: string;
     supervisorName?: string;
     skills: string[];
-    recentReports: { id: string; title: string; date: Date; type: string }[];
     kpis: {
-        performanceScore: number;
         tasksCompleted: number;
         tasksTotal: number;
         attendanceRate: number;
+        performanceScore: number;
         productivityScore: number;
     };
+    recentReports: Array<{
+        id: string;
+        title: string;
+        date: string;
+        type: string;
+    }>;
 }

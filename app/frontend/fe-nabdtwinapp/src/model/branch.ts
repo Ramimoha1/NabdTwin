@@ -47,12 +47,14 @@ export interface Workspace {
 
 export interface Employee {
     id: string;
-    name: string;
+    firstName: string;
+    lastName: string;
     role: string;
-    department: string;
-    workspaceId: string;
+    departmentId?: string;
+    workspaceId?: string;
     email: string;
     phone: string;
+    teamId?: string;
     performance: {
         score: number;
         attendance: number;

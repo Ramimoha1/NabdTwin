@@ -1,70 +1,9 @@
+import type { DepartmentData, EmployeeDetail, TeamData } from "../../model";
 import { api } from "./api";
 
 // ... [Interfaces remain the same] ...
 
-export interface EmployeeDetail {
-    id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone?: string;
-    role: string;
-    department: string;
-    team: string;
-    branchId: string;
-    floorId: string;
-    joinDate: string;
-    supervisorName?: string;
-    skills: string[];
-    kpis: {
-        tasksCompleted: number;
-        tasksTotal: number;
-        attendanceRate: number;
-        performanceScore: number;
-        productivityScore: number;
-    };
-    recentReports: Array<{
-        id: string;
-        title: string;
-        date: string;
-        type: string;
-    }>;
-}
 
-export interface TeamData {
-    id: string;
-    name: string;
-    department: string;
-    branchId: string;
-    leaderName: string;
-    memberCount: number;
-    members: string[];
-    kpis: {
-        avgPerformance: number;
-        tasksCompleted: number;
-        tasksTotal: number;
-        productivity: number;
-    };
-}
-
-export interface DepartmentData {
-    id: string;
-    name: string;
-    branchId: string;
-    headName: string;
-    employeeCount: number;
-    teamCount: number;
-    kpis: {
-        revenue: number;
-        revenueTarget: number;
-        tasksCompleted: number;
-        tasksTotal: number;
-        efficiency: number;
-        satisfaction: number;
-    };
-}
-
-// --- MOCK DATA UPDATED TO MATCH REDUX FORMAT ("1") ---
 
 const mockEmployees: EmployeeDetail[] = [
     {
