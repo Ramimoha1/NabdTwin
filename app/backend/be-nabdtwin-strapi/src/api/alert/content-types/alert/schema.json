@@ -4,8 +4,8 @@
   "info": {
     "singularName": "alert",
     "pluralName": "alerts",
-    "displayName": "Alert",
-    "description": "Alert entity"
+    "displayName": "Active Alert Event",
+    "description": "Log of KPI threshold breaches that require managerial attention."
   },
   "options": {
     "draftAndPublish": false
@@ -15,19 +15,45 @@
     "title": {
       "type": "string",
       "required": true,
-      "maxLength": 255
+      "maxLength": 255,
+      "description": "Short name, usually the KPI that breached (e.g., Productivity Breach)."
     },
     "description": {
-      "type": "text"
+      "type": "text",
+      "description": "Detailed message describing the breach (e.g., 'Aswan branch productivity has fallen below the critical threshold')."
     },
     "severity": {
       "type": "enumeration",
-      "enum": ["critical", "warning", "info"]
+      "enum": ["critical", "warning", "info"],
+      "description": "The severity level based on the Alert Rule."
     },
     "category": {
       "type": "string",
-      "maxLength": 50
+      "maxLength": 50,
+      "description": "General categorization of the alert (e.g., Operational, Financial, HR)."
     },
+    "kpiName": {
+      "type": "string",
+      "maxLength": 100,
+      "description": "The KPI metric that triggered the alert (e.g., Productivity, On-Time Delivery)."
+    },
+    
+    "triggeredByRule": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::alert-rule.alert-rule",
+      "inversedBy": "activeAlerts",
+      "description": "The specific rule configuration that triggered this alert event (UC13/UC15 output)."
+    },
+    "currentValue": {
+      "type": "decimal",
+      "description": "The KPI value recorded at the moment the alert was triggered (e.g., 65%)."
+    },
+    "threshold": {
+      "type": "decimal",
+      "description": "The threshold value from the rule at the moment the alert was triggered (e.g., 70%)."
+    },
+    
     "organization": {
       "type": "relation",
       "relation": "manyToOne",
@@ -58,17 +84,21 @@
       "target": "api::employee.employee",
       "inversedBy": "alerts"
     },
+    
     "isResolved": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "description": "Indicates if the alert has been dismissed by a manager."
     },
     "resolvedAt": {
-      "type": "datetime"
+      "type": "datetime",
+      "description": "Timestamp when the alert was resolved/dismissed."
     },
     "resolvedBy": {
       "type": "relation",
       "relation": "oneToOne",
-      "target": "plugin::users-permissions.user"
+      "target": "plugin::users-permissions.user",
+      "description": "User who dismissed the alert."
     },
     "userAlertStatuses": {
       "type": "relation",

@@ -17,11 +17,13 @@ import { toast } from 'sonner';
 import {
     getUsers,
     createUser,
+    updateUserPassword,
     updateUserPermissions,
     toggleUserStatus,
     type UserAccount,
     type CreateUserRequest,
-    type UpdatePermissionsRequest
+    type UpdatePermissionsRequest,
+    type ChangePasswordRequest,
 } from '../services/API/userapi.ts';
 
 
@@ -38,6 +40,8 @@ const AdminPage = () => {
 
     // State for create dialog
     const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+    const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
+    const [updatedPassword, setUpdatedPassword] = useState('');
     const [newUserName, setNewUserName] = useState('');
     const [newUserEmail, setNewUserEmail] = useState('');
     const [newUserPassword, setNewUserPassword] = useState('');
@@ -46,6 +50,7 @@ const AdminPage = () => {
     // State for permissions dialog
     const [isPermissionsDialogOpen, setIsPermissionsDialogOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState<UserAccount | null>(null);
+    const [userToUpdate, setUserToUpdate] = useState<UserAccount | null>(null);
     const [permissionBranches, setPermissionBranches] = useState<string[]>([]);
     const [permissionReports, setPermissionReports] = useState(false);
     const [permissionInsights, setPermissionInsights] = useState(false);
@@ -80,7 +85,25 @@ const AdminPage = () => {
         }
     };
     const handleUpdate = async () => {
+        if (!updatedPassword.trim()) {
+            toast.error('Please fill in the password field');
+            return;
+        }
+        if (!userToUpdate) return;
 
+        try {
+            const passwordData: ChangePasswordRequest = {
+                newPassword: updatedPassword,
+                newPasswordConfirmation: updatedPassword,
+            };
+            await updateUserPassword(passwordData);
+            setUpdatedPassword('');
+            setIsUpdateDialogOpen(false);
+            toast.success(`Password updated successfully for ${userToUpdate.name}`);
+        } catch (error) {
+            toast.error('Failed to update password');
+            console.error('Error updating password:', error);
+        }
     }
 
     const generateRandomPassword = () => {
@@ -115,7 +138,9 @@ const AdminPage = () => {
             };
 
             const newUser = await createUser(userData);
+            setUpdatedPassword('')
             setUsers([...users, newUser]);
+
 
             // Reset form
             setNewUserName('');
@@ -300,6 +325,32 @@ const AdminPage = () => {
                                 </div>
                             </DialogContent>
                         </Dialog>
+                        <Dialog open={isUpdateDialogOpen} onOpenChange={setIsUpdateDialogOpen}>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>Update Account Password</DialogTitle>
+                                    <DialogDescription>
+                                        change user Password
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <div className="space-y-4 pt-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="userPassword">Password</Label>
+                                        <Input
+                                            id="userPassword"
+                                            type="password"
+                                            placeholder="user@nabdtwin.com"
+                                            value={updatedPassword}
+                                            onChange={(e) => setUpdatedPassword(e.target.value)}
+                                        />
+                                    </div>
+                                    
+                                    <Button onClick={handleUpdate} className="w-full">
+                                        Update Password
+                                    </Button>
+                                </div>
+                            </DialogContent>
+                        </Dialog>
                     </div>
                 </div>
 
@@ -401,7 +452,10 @@ const AdminPage = () => {
                                             <Button
                                                 variant="outline"
                                                 size="sm"
-                                                onClick={() => handleUpdate(user)}
+                                                onClick={() => {
+                                                    setUserToUpdate(user);
+                                                    setIsUpdateDialogOpen(true);
+                                                }}
                                             >
                                                 <Settings className="h-4 w-4 mr-2" />
                                                 update
