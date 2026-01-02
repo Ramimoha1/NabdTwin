@@ -1,15 +1,15 @@
-import MainPageHeader from "../components/MainPageHeader.tsx";
-import {Badge} from "../externaluicomponents/badge.tsx";
-import {Card} from "../externaluicomponents/Card.tsx";
-import {getBranches} from "../services/API/branches.ts";
+import MainPageHeader from "../components/MainPageHeader";
+import {Badge} from "../externaluicomponents/badge";
+import {Card} from "../externaluicomponents/Card";
+import {getBranches} from "../services/API/branches";
 import {useQuery} from "@tanstack/react-query";
 import type {Branch} from "../model";
-import {PerformanceHeatmap} from "../components/PerformanceHeatMap.tsx";
-import Map from "../components/Map.tsx";
+import {PerformanceHeatmap} from "../components/PerformanceHeatMap";
+import Map from "../components/Map";
 import { usePermissions } from "../hooks/usePermissions";
 import { AlertCircle } from "lucide-react";
 import { useDispatch } from "react-redux";
-import { setSelectedBranch } from "../store/visual/visualSlice.ts";
+import { setSelectedBranch } from "../store/visual/visualSlice";
 import { useNavigate } from "react-router-dom";
 
 function MapViewPage() {
