@@ -2,8 +2,8 @@ import { Building2, Map, FileText, TrendingUp, Bell, LogOut, User as UserIcon, U
 import { Button } from '../externaluicomponents/button';
 import { Separator } from '../externaluicomponents/separator';
 import {useDispatch, useSelector} from "react-redux";
-import {type RootState} from "../store/store.ts";
-import {logoutUser} from "../store/auth/authSlice.ts";
+import {type RootState} from "../store/store";
+import {logoutUser} from "../store/auth/authSlice";
 import {useLocation, useNavigate} from "react-router-dom";
 import { usePermissions } from '../hooks/usePermissions';
 import { AlertsPanel } from './AlertsPanel';

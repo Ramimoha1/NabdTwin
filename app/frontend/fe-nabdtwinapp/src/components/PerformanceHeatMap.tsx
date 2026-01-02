@@ -1,4 +1,4 @@
-import { Card } from '../externaluicomponents/Card.tsx';
+import { Card } from '../externaluicomponents/Card';
 import type {Branch} from "../model";
 
 interface PerformanceHeatmapProps {
