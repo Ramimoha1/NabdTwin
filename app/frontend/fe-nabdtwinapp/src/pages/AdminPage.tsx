@@ -106,6 +106,16 @@ const AdminPage = () => {
         }
     }
 
+    const generateRandomPassword = () => {
+        const length = 12;
+        const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~`|}{[]:;?><,./-=";
+        let password = "";
+        for (let i = 0, n = charset.length; i < length; ++i) {
+            password += charset.charAt(Math.floor(Math.random() * n));
+        }
+        setNewUserPassword(password);
+    };
+
     const handleCreateUser = async () => {
         if (!newUserName.trim() || !newUserEmail.trim()) {
             toast.error('Please fill in all fields');
@@ -278,16 +288,25 @@ const AdminPage = () => {
                                             onChange={(e) => setNewUserEmail(e.target.value)}
                                         />
                                     </div>
+                                
                                     <div className="space-y-2">
                                         <Label htmlFor="userPassword">Password</Label>
+                                        <div className='flex gap-2'>
                                         <Input
+                                            className='w-3/4'
                                             id="userPassword"
-                                            type="password"
+                                            type="text"
                                             placeholder="user@nabdtwin.com"
                                             value={newUserPassword}
                                             onChange={(e) => setNewUserPassword(e.target.value)}
                                         />
+                                        <Button  onClick={generateRandomPassword}>
+                                            Generate Password
+                                        </Button>
+                                        </div>
                                     </div>
+
+
                                     <div className="space-y-2">
                                         <Label htmlFor="userRole">Role</Label>
                                         <Select value={newUserRole} onValueChange={(value: 'admin' | 'user') => setNewUserRole(value)}>
