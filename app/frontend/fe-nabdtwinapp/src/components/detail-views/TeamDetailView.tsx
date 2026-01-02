@@ -1,4 +1,4 @@
-import { Card } from '../../externaluicomponents/Card.tsx';
+import { Card } from '../../externaluicomponents/Card';
 import { Button } from '../../externaluicomponents/button';
 import { Progress } from '../../externaluicomponents/progress';
 import { useDetailViewNavigation } from '../../hooks/useDetailViewNavigation';
@@ -6,7 +6,7 @@ import {
     ArrowLeft,
     Briefcase
 } from 'lucide-react';
-import { type EmployeeDetail, type TeamData } from '../../services/API/detailsApi.ts';
+import { type EmployeeDetail, type TeamData } from '../../services/API/detailsApi';
 
 interface TeamDetailViewProps {
     team: TeamData;
