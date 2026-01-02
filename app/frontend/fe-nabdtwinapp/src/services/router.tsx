@@ -8,6 +8,7 @@ import MainLayout from "../layout/MainLayout.tsx";
 import AdminPage from "../pages/AdminPage.tsx";
 import { ProtectedRoute } from "../components/ProtectedRoute.tsx";
 import DetailPage from "../pages/DetailPage.tsx";
+import { VisualizationPage } from '../pages/VisualizationPage.tsx';
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -43,9 +44,13 @@ const router = createBrowserRouter(
                         <AdminPage />
                     </ProtectedRoute>
                 } />
-            </Route>
+                 <Route path="branch/visualization/:id" element={
+                    <ProtectedRoute requirePermission="viewEmployees">
+                        <VisualizationPage />
+                    </ProtectedRoute>
+                } />
 
-            {/* Catch-all */}
+            </Route>
             <Route path="*" element={<NotFoundPage />} />
         </Route>
     )

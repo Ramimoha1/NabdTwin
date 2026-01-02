@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '../externaluicomponents/Card.tsx';
@@ -16,16 +16,13 @@ import {
     Target,
     Award,
     Briefcase,
-    Layers,
-    Mail,
-    Phone,
-    Calendar,
-    UserCircle,
-    BarChart3,
-    FileText,
-    Download
+    Layers
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { EmployeeDetailView } from '../components/detail-views/EmployeeDetailView';
+import { TeamDetailView } from '../components/detail-views/TeamDetailView';
+import { DepartmentDetailView } from '../components/detail-views/DepartmentDetailView';
+import { useBranchData } from '../hooks/useBranchData';
 import {
     selectSelectedBranchId,
     selectSelectedEmployeeId,
@@ -42,16 +39,9 @@ import {
     setSelectedDepartment,
     clearSelection
 } from '../store/visual/visualSlice';
-import {getBranchByIdKPI} from '../services/API/branches';
 import {
-    getEmployeesByBranch,
-    getTeamsByBranch,
-    getDepartmentsByBranch,
     downloadAttendanceReport,
-    downloadEmployeeReport,
-    type EmployeeDetail,
-    type TeamData,
-    type DepartmentData
+    downloadEmployeeReport
 } from '../services/API/detailsApi.ts';
 
 export default function DetailPage() {
@@ -64,67 +54,31 @@ export default function DetailPage() {
     const selectedTeamId = useSelector(selectSelectedTeamId);
     const selectedDepartmentId = useSelector(selectSelectedDepartmentId);
 
+    // Use the custom hook to fetch branch data
+    const { branch, employees, teams, departments, loading } = useBranchData(selectedBranchId);
+
     // Local state
     const [searchQuery, setSearchQuery] = useState('');
     const [activeTab, setActiveTab] = useState('employees');
-    const [branch, setBranch] = useState<any>(null);
-    const [employees, setEmployees] = useState<EmployeeDetail[]>([]);
-    const [teams, setTeams] = useState<TeamData[]>([]);
-    const [departments, setDepartments] = useState<DepartmentData[]>([]);
-    const [loading, setLoading] = useState(true);
 
     // Derived state for detail views
     const selectedEmployee = employees.find(e => e.id === selectedEmployeeId) || null;
     const selectedTeam = teams.find(t => t.id === selectedTeamId) || null;
     const selectedDepartment = departments.find(d => d.id === selectedDepartmentId) || null;
 
-    // Load data when component mounts or branchId changes
+    // Redirect if no branch selected
     useEffect(() => {
         if (!selectedBranchId) {
             navigate('/homepage');
-            return;
         }
-
-        loadBranchData();
-    }, [selectedBranchId]);
-
-    const loadBranchData = async () => {
-        if (!selectedBranchId) return;
-
-        try {
-            setLoading(true);
-
-            // FIX: Use selectedBranchId directly (e.g., "1")
-            // REMOVED: const branchid = `branch-${selectedEmployeeId}`
-
-            console.log("Fetching details for Branch ID:", selectedBranchId);
-
-            // Load all data in parallel passing the raw ID ("1")
-            const [branchData, employeesData, teamsData, departmentsData] = await Promise.all([
-                getBranchByIdKPI(selectedBranchId),
-                getEmployeesByBranch(selectedBranchId),
-                getTeamsByBranch(selectedBranchId),
-                getDepartmentsByBranch(selectedBranchId)
-            ]);
-
-            setBranch(branchData);
-            setEmployees(employeesData);
-            setTeams(teamsData);
-            setDepartments(departmentsData);
-        } catch (error) {
-            toast.error('Failed to load branch details');
-            console.error('Error loading branch data:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    }, [selectedBranchId, navigate]);
     const onBack = () => {
         dispatch(clearSelection());
         navigate('/homepage');
     };
 
     const onView3D = () => {
-        navigate(`/visualize/${selectedBranchId}`);
+        navigate(`/branch/visualization/${selectedBranchId}`, { replace: true });
     };
 
     const handleEmployeeClick = (employeeId: string) => {
@@ -137,10 +91,6 @@ export default function DetailPage() {
 
     const handleDepartmentClick = (deptId: string) => {
         dispatch(setSelectedDepartment(deptId));
-    };
-
-    const handleBackToList = () => {
-        dispatch(clearSubSelections());
     };
 
     const handleDownloadAttendance = async (employeeId: string) => {
@@ -325,7 +275,6 @@ export default function DetailPage() {
                         {selectedEmployee ? (
                             <EmployeeDetailView
                                 employee={selectedEmployee}
-                                onBack={handleBackToList}
                                 onDownloadAttendance={handleDownloadAttendance}
                                 onDownloadReport={handleDownloadReport}
                             />
@@ -376,7 +325,6 @@ export default function DetailPage() {
                             <TeamDetailView
                                 team={selectedTeam}
                                 employees={employees}
-                                onBack={handleBackToList}
                             />
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -422,7 +370,6 @@ export default function DetailPage() {
                             <DepartmentDetailView
                                 department={selectedDepartment}
                                 teams={teams}
-                                onBack={handleBackToList}
                             />
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -460,212 +407,5 @@ export default function DetailPage() {
     );
 }
 
-function EmployeeDetailView({
-                                employee,
-                                onBack,
-                                onDownloadAttendance,
-                                onDownloadReport
-                            }: {
-    employee: EmployeeDetail;
-    onBack: () => void;
-    onDownloadAttendance: (id: string) => void;
-    onDownloadReport: (id: string) => void;
-}) {
-    const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric'
-        });
-    };
 
-    return (
-        <div>
-            <Button variant="ghost" size="sm" onClick={onBack} className="mb-4">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to List
-            </Button>
-
-            <div className="grid grid-cols-3 gap-6">
-                {/* Left Column - Personal Info */}
-                <div className="col-span-1 space-y-4">
-                    <Card className="p-6">
-                        <div className="text-center mb-6">
-                            <div className="h-24 w-24 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center mx-auto mb-4">
-                                <span className="text-white text-2xl">
-                                    {employee.firstName[0]}{employee.lastName[0]}
-                                </span>
-                            </div>
-                            <h2 className="text-xl mb-1">{employee.firstName} {employee.lastName}</h2>
-                            <p className="text-gray-600">{employee.role}</p>
-                        </div>
-
-                        <div className="space-y-3">
-                            <div className="flex items-center gap-3 text-sm">
-                                <Mail className="h-4 w-4 text-gray-400" />
-                                <span className="text-gray-700">{employee.email}</span>
-                            </div>
-                            {employee.phone && (
-                                <div className="flex items-center gap-3 text-sm">
-                                    <Phone className="h-4 w-4 text-gray-400" />
-                                    <span className="text-gray-700">{employee.phone}</span>
-                                </div>
-                            )}
-                            <div className="flex items-center gap-3 text-sm">
-                                <Building2 className="h-4 w-4 text-gray-400" />
-                                <span className="text-gray-700">{employee.department}</span>
-                            </div>
-                            <div className="flex items-center gap-3 text-sm">
-                                <Briefcase className="h-4 w-4 text-gray-400" />
-                                <span className="text-gray-700">{employee.team}</span>
-                            </div>
-                            <div className="flex items-center gap-3 text-sm">
-                                <Calendar className="h-4 w-4 text-gray-400" />
-                                <span className="text-gray-700">Joined {formatDate(employee.joinDate)}</span>
-                            </div>
-                            {employee.supervisorName && (
-                                <div className="flex items-center gap-3 text-sm">
-                                    <UserCircle className="h-4 w-4 text-gray-400" />
-                                    <span className="text-gray-700">Reports to {employee.supervisorName}</span>
-                                </div>
-                            )}
-                        </div>
-                    </Card>
-
-                    <Card className="p-6">
-                        <h3 className="mb-4 flex items-center gap-2">
-                            <Award className="h-5 w-5" />
-                            Skills
-                        </h3>
-                        <div className="flex flex-wrap gap-2">
-                            {employee.skills.map((skill, index) => (
-                                <Badge key={index} variant="secondary">{skill}</Badge>
-                            ))}
-                        </div>
-                    </Card>
-                </div>
-
-                {/* Right Column - Performance & Reports */}
-                <div className="col-span-2 space-y-4">
-                    <Card className="p-6">
-                        <h3 className="mb-4 flex items-center gap-2">
-                            <BarChart3 className="h-5 w-5" />
-                            Performance KPIs
-                        </h3>
-                        <div className="grid grid-cols-2 gap-6">
-                            <div>
-                                <div className="flex items-center justify-between mb-2">
-                                    <span className="text-sm text-gray-600">Task Completion</span>
-                                    <span className="font-medium">
-                                        {employee.kpis.tasksCompleted}/{employee.kpis.tasksTotal}
-                                    </span>
-                                </div>
-                                <Progress value={(employee.kpis.tasksCompleted / employee.kpis.tasksTotal) * 100} />
-                            </div>
-                            <div>
-                                <div className="flex items-center justify-between mb-2">
-                                    <span className="text-sm text-gray-600">Attendance Rate</span>
-                                    <span className="font-medium">{employee.kpis.attendanceRate}%</span>
-                                </div>
-                                <Progress value={employee.kpis.attendanceRate} />
-                            </div>
-                            <div>
-                                <div className="flex items-center justify-between mb-2">
-                                    <span className="text-sm text-gray-600">Performance Score</span>
-                                    <span className="font-medium">{employee.kpis.performanceScore}%</span>
-                                </div>
-                                <Progress value={employee.kpis.performanceScore} />
-                            </div>
-                            <div>
-                                <div className="flex items-center justify-between mb-2">
-                                    <span className="text-sm text-gray-600">Productivity</span>
-                                    <span className="font-medium">{employee.kpis.productivityScore}%</span>
-                                </div>
-                                <Progress value={employee.kpis.productivityScore} />
-                            </div>
-                        </div>
-                    </Card>
-
-                    <Card className="p-6">
-                        <div className="flex items-center justify-between mb-4">
-                            <h3 className="flex items-center gap-2">
-                                <FileText className="h-5 w-5" />
-                                Reports & Documents
-                            </h3>
-                            <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => onDownloadAttendance(employee.id)}
-                            >
-                                <Download className="h-4 w-4 mr-2" />
-                                Attendance Report
-                            </Button>
-                        </div>
-                        <div className="space-y-3">
-                            {employee.recentReports.map((report) => (
-                                <div
-                                    key={report.id}
-                                    className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50"
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <FileText className="h-5 w-5 text-gray-400" />
-                                        <div>
-                                            <p className="font-medium">{report.title}</p>
-                                            <p className="text-sm text-gray-500">{formatDate(report.date)}</p>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <Badge variant="outline">{report.type}</Badge>
-                                        <Button
-                                            size="sm"
-                                            variant="ghost"
-                                            onClick={() => onDownloadReport(report.id)}
-                                        >
-                                            <Download className="h-4 w-4" />
-                                        </Button>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </Card>
-                </div>
-            </div>
-        </div>
-    );
-}
-
-// Team and Department Detail Views remain similar but simplified for brevity
-function TeamDetailView({ team, employees, onBack }: { team: TeamData; employees: EmployeeDetail[]; onBack: () => void }) {
-    const teamMembers = employees.filter(e => team.members.includes(e.id));
-
-    return (
-        <div>
-            <Button variant="ghost" size="sm" onClick={onBack} className="mb-4">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Teams
-            </Button>
-            <Card className="p-6">
-                <h2 className="text-2xl mb-4">{team.name}</h2>
-                <p className="text-gray-600 mb-4">{team.department} Department</p>
-                {/* Add team details here */}
-            </Card>
-        </div>
-    );
-}
-
-function DepartmentDetailView({ department, teams, onBack }: { department: DepartmentData; teams: TeamData[]; onBack: () => void }) {
-    return (
-        <div>
-            <Button variant="ghost" size="sm" onClick={onBack} className="mb-4">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Departments
-            </Button>
-            <Card className="p-6">
-                <h2 className="text-2xl mb-4">{department.name}</h2>
-                <p className="text-gray-600 mb-4">Head: {department.headName}</p>
-                {/* Add department details here */}
-            </Card>
-        </div>
-    );
-}
 
