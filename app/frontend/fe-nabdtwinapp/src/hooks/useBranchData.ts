@@ -2,15 +2,15 @@ import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import {
     getBranchByIdKPI
-} from '../services/API/branches.ts';
-import { getEmployeesByBranch ,getTeamsByBranch , getDepartmentsByBranch } from '../services/API/detailsApi.ts';
-import type { EmployeeDetail } from '../model/employee.ts';
-import type { TeamData } from '../model/team.ts';
-import type { DepartmentData } from '../model/department.ts';
-import type { Branch } from '../model/branch.ts';
+} from '../services/API/branches';
+import { getEmployeesByBranch ,getTeamsByBranch , getDepartmentsByBranch } from '../services/API/detailsApi';
+import type { EmployeeDetail } from '../model/employee';
+import type { TeamData } from '../model/team';
+import type { DepartmentData } from '../model/department';
+import type { Branch } from '../model/branch';
 
 export function useBranchData(branchId: string | null) {
-    const [branch, setBranch] = useState<Branch>(null);
+    const [branch, setBranch] = useState<Branch | null>(null);
     const [employees, setEmployees] = useState<EmployeeDetail[]>([]);
     const [teams, setTeams] = useState<TeamData[]>([]);
     const [departments, setDepartments] = useState<DepartmentData[]>([]);

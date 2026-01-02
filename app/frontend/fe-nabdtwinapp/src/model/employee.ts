@@ -1,4 +1,4 @@
-import { Employee } from './branch';
+import type { Employee } from './branch';
 
 export interface EmployeeDetail extends Employee {
     joinDate: Date;
