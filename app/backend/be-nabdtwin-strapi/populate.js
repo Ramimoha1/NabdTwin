@@ -1,56 +1,8 @@
 
 const API_URL = 'http://localhost:3001/api'; 
 // ⚠️ Since we are bypassing auth, make sure your POST routes are set to auth: false!
-
-async function deleteAllData() {
-    console.log("🗑️  Deleting all existing data...");
-    
-    const get = async (endpoint) => {
-        const res = await fetch(`${API_URL}/${endpoint}?pagination[pageSize]=1000`);
-        return res.json();
-    };
-    
-    const deleteItem = async (endpoint, id) => {
-        await fetch(`${API_URL}/${endpoint}/${id}`, { method: 'DELETE' });
-    };
-    
-    // Delete in reverse order of dependencies
-    const collections = [
-        'employee-kpis',
-        'team-kpis',
-        'department-kpis',
-        'branch-kpis',
-        'tasks',
-        'workspaces',
-        'floors',
-        'employees',
-        'teams',
-        'departments',
-        'branches',
-        'organizations'
-    ];
-    
-    for (const collection of collections) {
-        try {
-            const data = await get(collection);
-            if (data.data && Array.isArray(data.data)) {
-                console.log(`  Deleting ${data.data.length} ${collection}...`);
-                for (const item of data.data) {
-                    await deleteItem(collection, item.id);
-                }
-            }
-        } catch (err) {
-            console.log(`  Skipped ${collection}: ${err.message}`);
-        }
-    }
-    console.log("✅ All data deleted!\n");
-}
-
 async function seed() {
     console.log("🚀 Starting Data Population...");
-    
-    // Delete all existing data first
-    await deleteAllData();
 
     // We modify the post function to remove the 'Authorization' header.
     const post = async (endpoint, data) => {
@@ -67,13 +19,12 @@ async function seed() {
   const orgRes = await post('organizations', { name: "TechCorp Saudi", industry: "Technology" });
   const orgId = orgRes.data?.id;
 
-  // 3. CREATE BRANCHES (For Map View) - 4 branches
+  // 3. CREATE BRANCHES (For Map View)
   console.log("📍 Creating Branches...");
   const branches = [
     { name: "Riyadh HQ", city: "Riyadh", lat: 24.7136, lng: 46.6753, target: 5000000 },
     { name: "Jeddah Hub", city: "Jeddah", lat: 21.5433, lng: 39.1728, target: 3000000 },
-    { name: "Dammam Port", city: "Dammam", lat: 26.4207, lng: 50.0888, target: 2000000 },
-    { name: "Tabuk Office", city: "Tabuk", lat: 28.3838, lng: 36.5550, target: 1500000 }
+    { name: "Dammam Port", city: "Dammam", lat: 26.4207, lng: 50.0888, target: 2000000 }
   ];
 
   const branchIds = [];
@@ -92,61 +43,7 @@ async function seed() {
     if(res.data) branchIds.push({ id: res.data.id, name: b.name, target: b.target });
   }
 
-  // 4. CREATE DEPARTMENTS (Before Employees)
-  console.log("🏢 Creating Departments...");
-  const departments = [
-    { name: "Engineering", code: "ENG" },
-    { name: "Design", code: "DES" },
-    { name: "Sales", code: "SAL" },
-    { name: "HR", code: "HR" },
-    { name: "Operations", code: "OPS" }
-  ];
-  
-  const deptIds = [];
-  for (const dept of departments) {
-    const randomBranch = branchIds[Math.floor(Math.random() * branchIds.length)];
-    const res = await post('departments', {
-      name: dept.name,
-      code: dept.code,
-      description: `${dept.name} Department`,
-      organization: orgId,
-      branch: randomBranch.id // Randomly assign to one of 4 branches
-    });
-    if(res.data) deptIds.push({ id: res.data.id, name: dept.name });
-  }
-
-  // 4.5 CREATE TEAMS (After Departments)
-  console.log("👥 Creating Teams...");
-  const teamDefs = [
-    // Engineering teams
-    { name: "Backend Team", dept: 0 },
-    { name: "Frontend Team", dept: 0 },
-    { name: "DevOps Team", dept: 0 },
-    // Design teams
-    { name: "UI/UX Team", dept: 1 },
-    { name: "Brand Team", dept: 1 },
-    // Sales teams
-    { name: "Enterprise Sales", dept: 2 },
-    { name: "Regional Sales", dept: 2 },
-    // HR team
-    { name: "Recruitment", dept: 3 },
-    // Operations team
-    { name: "Infrastructure", dept: 4 }
-  ];
-
-  const teamIds = [];
-  for (const team of teamDefs) {
-    const randomBranch = branchIds[Math.floor(Math.random() * branchIds.length)];
-    const res = await post('teams', {
-      name: team.name,
-      description: `${team.name} - Team`,
-      department: deptIds[team.dept].id,
-      branch: randomBranch.id // Randomly assign to one of 4 branches
-    });
-    if(res.data) teamIds.push({ id: res.data.id, name: team.name, deptIdx: team.dept });
-  }
-
-  // 4.6 CREATE FLOORS AND WORKSPACES (Required for KPI calculations)
+  // 4. CREATE FLOORS AND WORKSPACES (Required for KPI calculations)
   console.log("🏢 Creating Floors and Workspaces...");
   const floorIds = [];
   for (const b of branchIds) {
@@ -197,44 +94,17 @@ async function seed() {
   const today = new Date();
   const thirtyDaysAgo = new Date(); thirtyDaysAgo.setDate(today.getDate() - 30);
 
-  // Employee to department/team mapping
-  const empDeptTeamMap = [
-    // Riyadh Engineering (Backend Team)
-    { dept: 0, team: 0 }, { dept: 0, team: 0 }, { dept: 0, team: 0 }, { dept: 0, team: 0 }, { dept: 0, team: 0 },
-    // Riyadh Engineering (Frontend Team)
-    { dept: 0, team: 1 }, { dept: 0, team: 1 }, { dept: 0, team: 1 },
-    // Riyadh Design
-    { dept: 1, team: 3 }, { dept: 1, team: 3 }, { dept: 1, team: 3 },
-    // Riyadh Sales
-    { dept: 2, team: 5 }, { dept: 2, team: 5 },
-    // Riyadh HR
-    { dept: 3, team: 7 },
-    
-    // Jeddah Sales (Regional)
-    { dept: 2, team: 6 }, { dept: 2, team: 6 }, { dept: 2, team: 6 }, { dept: 2, team: 6 },
-    // Jeddah Design (Brand)
-    { dept: 1, team: 4 }, { dept: 1, team: 4 }, { dept: 1, team: 4 },
-    // Jeddah Operations
-    { dept: 4, team: 8 }, { dept: 4, team: 8 }, { dept: 4, team: 8 }, { dept: 4, team: 8 },
-    // Jeddah Engineering
-    { dept: 0, team: 2 }, { dept: 0, team: 2 },
-    
-    // Dammam Mixed teams
-    { dept: 0, team: 0 }, { dept: 0, team: 0 }, { dept: 0, team: 1 }, { dept: 0, team: 1 },
-    { dept: 2, team: 6 }, { dept: 2, team: 6 }, { dept: 4, team: 8 }, { dept: 4, team: 8 }
-  ];
-
   for (let i = 0; i < names.length; i++) {
     const [first, last] = names[i].split(" ");
     
-    // Randomly assign to one of the 4 branches
-    const randomBranch = branchIds[Math.floor(Math.random() * branchIds.length)];
-    const floor = floorIds[Math.floor(Math.random() * floorIds.length)]; // Random floor
+    // Assign to branches to match realistic distribution
+    let branchIndex;
+    if (i < 15) branchIndex = 0; // First 15 to Riyadh
+    else if (i < 27) branchIndex = 1; // Next 12 to Jeddah
+    else branchIndex = 2; // Last 8 to Dammam
     
-    // Get department and team assignment
-    const deptTeamAssignment = empDeptTeamMap[i];
-    const dept = deptIds[deptTeamAssignment.dept];
-    const team = teamIds[deptTeamAssignment.team];
+    const branch = branchIds[branchIndex];
+    const floor = floorIds[(branchIndex * 2) + (i % 2)]; // Distribute across branch floors
     
     // Make some join recently (for "Joined" metric) - in current month (December)
     const isNew = i >= 30 && i < 40; // 10 recent hires
@@ -262,14 +132,14 @@ async function seed() {
     
     const jobTitle = jobTitles[i % jobTitles.length];
 
+
     const res = await post('employees', {
       firstName: first,
       lastName: last,
       email: `${first.toLowerCase()}.${last.toLowerCase()}@techcorp.sa`,
-      branch: randomBranch.id,
+
+      branch: branch.id,
       floor: floor,
-      department: dept.id,
-      team: team.id,
       jobTitle: jobTitle,
       hireDate: hireDate.toISOString().split('T')[0],
       terminationDate: termDate ? termDate.toISOString().split('T')[0] : null,
@@ -408,15 +278,11 @@ async function seed() {
       // Branch-specific satisfaction trends (Riyadh higher, Dammam improving)
       const empIndex = employeeIds.indexOf(empId);
       let baseScore;
-      // Distribute across 4 branches randomly since employees are randomly assigned
-      const empBranchIdx = Math.floor(Math.random() * branchIds.length);
+      if (empIndex < 15) baseScore = 85; // Riyadh: high satisfaction
+      else if (empIndex < 27) baseScore = 78; // Jeddah: medium satisfaction
+      else baseScore = 72; // Dammam: lower but improving
       
-      if (empBranchIdx === 0) baseScore = 85; // Riyadh: high satisfaction
-      else if (empBranchIdx === 1) baseScore = 78; // Jeddah: medium satisfaction
-      else if (empBranchIdx === 2) baseScore = 72; // Dammam: lower satisfaction
-      else baseScore = 80; // Tabuk: good satisfaction
-      
-      const branchId = branchIds[empBranchIdx].id;
+      const branchId = empIndex < 15 ? branchIds[0].id : (empIndex < 27 ? branchIds[1].id : branchIds[2].id);
       
       await post('satisfaction-surveys', {
         branch: branchId,
@@ -450,14 +316,10 @@ async function seed() {
         prodBase = 82;
         satisfactionBase = 80;
         growthBase = 1;
-      } else if (bIdx === 2) { // Dammam - lower but improving over time
+      } else { // Dammam - lower but improving over time
         prodBase = 75 + (i <= 10 ? 5 : 0); // Boost in recent days
         satisfactionBase = 74 + (i <= 10 ? 4 : 0); // Improving trend
         growthBase = 2 + (i <= 10 ? 2 : 0); // Growth accelerating
-      } else { // Tabuk - new office, growing steadily
-        prodBase = 78 + (i <= 15 ? 3 : 0); // Gradual improvement
-        satisfactionBase = 81;
-        growthBase = 3;
       }
       
       // Add realistic daily variance
@@ -470,11 +332,11 @@ async function seed() {
       const dailyRevenue = Math.round((b.target / 30) * variance);
       
       // Distribute late tasks across branches proportionally
-      const branchLateShare = bIdx === 0 ? 12 : (bIdx === 1 ? 18 : (bIdx === 2 ? 15 : 10)); // Tabuk has fewest late tasks
+      const branchLateShare = bIdx === 0 ? 12 : (bIdx === 1 ? 18 : 15); // Riyadh best, Jeddah worst
       const lateCount = Math.round(branchLateShare * (0.85 + Math.random() * 0.3)); // ±15% variance
 
-      // Employee counts distributed across 4 branches
-      const employeeCount = Math.floor(names.length / branchIds.length) + (bIdx === 0 ? 3 : 0); // Riyadh slightly larger
+      // Employee counts (realistic for each branch)
+      const employeeCount = bIdx === 0 ? 15 : (bIdx === 1 ? 12 : 8);
       
       // Employee changes - reflect realistic hiring/attrition
       const joinedCount = (i <= 9 && bIdx < 2) ? Math.floor(Math.random() * 2) : 0; // 10 hires spread across Dec 1-9
@@ -501,117 +363,10 @@ async function seed() {
 
   console.log("\n✅ DONE! Backend is populated with realistic, presentation-ready data.");
   console.log("\n📊 Summary:");
-  console.log(`   - ${names.length} employees across 4 branches (Riyadh, Jeddah, Dammam, Tabuk)`);
-  console.log(`   - ${deptIds.length} departments with ${teamIds.length} teams`);
+  console.log(`   - ${names.length} employees across 3 branches`);
   console.log(`   - ${totalTasks} tasks (${completedTasks} completed, ${lateTasks} late, ${inProgressTasks} in-progress)`);
   console.log(`   - 30 days of historical KPI data with realistic trends`);
   console.log(`   - Branch-specific performance patterns`);
-  console.log(`   - Department and Team assignments randomly distributed`);
 }
 
-// CREATE DEPARTMENT KPIs (30-day history)
-async function createDepartmentKPIs() {
-  console.log("📊 Creating Department KPIs...");
-  
-  const deptKPIData = [
-    { name: "Engineering", baseEfficiency: 92, baseSatisfaction: 88, baseRevenue: 500000 },
-    { name: "Design", baseEfficiency: 95, baseSatisfaction: 90, baseRevenue: 150000 },
-    { name: "Sales", baseEfficiency: 85, baseSatisfaction: 82, baseRevenue: 800000 },
-    { name: "HR", baseEfficiency: 88, baseSatisfaction: 85, baseRevenue: 50000 },
-    { name: "Operations", baseEfficiency: 90, baseSatisfaction: 87, baseRevenue: 200000 }
-  ];
-
-  const post = async (endpoint, data) => {
-    const res = await fetch(`${API_URL}/${endpoint}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ data })
-    });
-    return res.json();
-  };
-
-  const today = new Date();
-  
-  // Fetch departments and teams first
-  const deptRes = await fetch(`${API_URL}/departments?pagination[pageSize]=100`);
-  const depts = await deptRes.json();
-  
-  const teamRes = await fetch(`${API_URL}/teams?pagination[pageSize]=100`);
-  const teams = await teamRes.json();
-
-  // Debug: Check what we got
-  console.log(`   Found ${depts.data?.length || 0} departments`);
-  console.log(`   Found ${teams.data?.length || 0} teams`);
-
-  // Create 30 days of department KPIs
-  for (const dept of depts.data || []) {
-    // Safety check - departments may have flat or nested structure
-    const deptName = dept.attributes?.name || dept.name;
-    if (!deptName) {
-      console.log(`   ⚠️  Skipping department with no name: ${JSON.stringify(dept)}`);
-      continue;
-    }
-    
-    const deptData = deptKPIData.find(d => d.name === deptName);
-    if (!deptData) {
-      console.log(`   ⚠️  No KPI data defined for department: ${deptName}`);
-      continue;
-    }
-
-    for (let day = 29; day >= 0; day--) {
-      const kpiDate = new Date();
-      kpiDate.setDate(today.getDate() - day);
-
-      await post('department-kpis', {
-        department: dept.id,
-        date: kpiDate.toISOString().split('T')[0],
-        revenue: Math.round(deptData.baseRevenue * (0.85 + Math.random() * 0.3)),
-        revenueTarget: deptData.baseRevenue,
-        employeeCount: Math.floor(5 + Math.random() * 10),
-        teamCount: 2,
-        tasksCompleted: Math.floor(15 + Math.random() * 15),
-        tasksTotal: Math.floor(25 + Math.random() * 10),
-        efficiencyScore: Math.round(deptData.baseEfficiency + (Math.random() * 8 - 4)),
-        satisfactionScore: Math.round(deptData.baseSatisfaction + (Math.random() * 8 - 4))
-      });
-    }
-  }
-
-  // Create 30 days of team KPIs
-  for (const team of teams.data || []) {
-    // Safety check - teams may have flat or nested structure
-    const teamName = team.attributes?.name || team.name;
-    if (!teamName) {
-      console.log(`   ⚠️  Skipping team with no name: ${JSON.stringify(team)}`);
-      continue;
-    }
-    
-    for (let day = 29; day >= 0; day--) {
-      const kpiDate = new Date();
-      kpiDate.setDate(today.getDate() - day);
-
-      await post('team-kpis', {
-        team: team.id,
-        date: kpiDate.toISOString().split('T')[0],
-        tasksCompleted: Math.floor(8 + Math.random() * 12),
-        tasksTotal: Math.floor(15 + Math.random() * 10),
-        avgPerformanceScore: Math.round(85 + (Math.random() * 10 - 5)),
-        productivityScore: Math.round(82 + (Math.random() * 12 - 6))
-      });
-    }
-  }
-
-  console.log("✅ Department and Team KPIs created!");
-}
-
-// Run both seed and KPI creation
-async function runFullSeed() {
-  try {
-    await seed();
-    await createDepartmentKPIs();
-  } catch (err) {
-    console.error("❌ Error during seeding:", err);
-  }
-}
-
-runFullSeed();
+seed();

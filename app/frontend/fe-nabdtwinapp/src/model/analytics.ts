@@ -1,3 +1,4 @@
+// Analytics-specific types
 export interface AnalyticsDataPoint {
     date: string;
     value: number;
