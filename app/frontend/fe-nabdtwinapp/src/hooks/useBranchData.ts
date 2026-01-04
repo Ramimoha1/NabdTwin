@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { getBranchDetails } from '../services/API/detailsApi';
+import {
+    getBranchByIdKPI
+} from '../services/API/branches';
+import { getEmployeesByBranch ,getTeamsByBranch , getDepartmentsByBranch } from '../services/API/detailsApi';
 import type { EmployeeDetail } from '../model/employee';
 import type { TeamData } from '../model/team';
 import type { DepartmentData } from '../model/department';
@@ -27,22 +30,17 @@ export function useBranchData(branchId: string | null) {
 
                 console.log("Fetching details for Branch ID:", branchId);
 
-                // Fetch all data from the single endpoint
-                const response = await getBranchDetails(branchId);
+                const [branchData, employeesData, teamsData, departmentsData] = await Promise.all([
+                    getBranchByIdKPI(branchId),
+                    getEmployeesByBranch(branchId),
+                    getTeamsByBranch(branchId),
+                    getDepartmentsByBranch(branchId)
+                ]);
 
-                // Transform branch response to match Branch type
-                const transformedBranch: Branch = {
-                    id: response.branch.id,
-                    name: response.branch.name,
-                    location: response.branch.location,
-                    address: response.branch.location.address,
-                    kpis: response.branch.kpis,
-                };
-
-                setBranch(transformedBranch);
-                setEmployees(response.employees);
-                setTeams(response.teams);
-                setDepartments(response.departments);
+                setBranch(branchData);
+                setEmployees(employeesData);
+                setTeams(teamsData);
+                setDepartments(departmentsData);
             } catch (err) {
                 const error = err as Error;
                 setError(error);
