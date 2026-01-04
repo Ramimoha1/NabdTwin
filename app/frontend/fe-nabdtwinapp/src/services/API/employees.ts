@@ -1,10 +1,10 @@
 import { api } from "./api";
-import type { Employee } from "../../model";
+import type { EmployeeDetail } from "../../model/employee";
 
 /**
  * Normalize backend employee data to match frontend Employee interface
  */
-const normalizeEmployeeData = (rawEmployee: any): Employee => {
+const normalizeEmployeeData = (rawEmployee: any) => {
     const latestKpi = rawEmployee.attributes?.employeeKpis?.data?.[0]?.attributes;
     const attrs = rawEmployee.attributes;
     
@@ -125,6 +125,28 @@ export const getEmployeesByWorkspace = async (workspaceId: string): Promise<Empl
  * Fetch a single employee by ID
  */
 export const getEmployeeById = async (id: string): Promise<Employee> => {
+    try {
+        const response = await api.get(`/api/employees/${id}`, {
+            params: {
+                'populate[employeeKpis][sort]': 'date:desc',
+                'populate[employeeKpis][pagination][limit]': 1,
+                'populate[department]': true,
+                'populate[workspace]': true,
+                'populate[branch]': true,
+                'populate[floor]': true,
+                'populate[profilePicture]': true
+            }
+        });
+
+        return normalizeEmployeeData(response.data.data);
+    } catch (error) {
+        console.error(`Error fetching employee ${id}:`, error);
+        throw error;
+    }
+};
+
+
+export const getEmployeeDetailById = async (id: string): Promise<Employee> => {
     try {
         const response = await api.get(`/api/employees/${id}`, {
             params: {

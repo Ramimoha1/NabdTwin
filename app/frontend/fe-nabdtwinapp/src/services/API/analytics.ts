@@ -1,49 +1,9 @@
+import type { BranchAnalytics, EmployeeAnalytics, FloorAnalytics } from "../../model/analytics";
 import { api } from "./api";
 
 // ============================================================
 // TYPES & INTERFACES
 // ============================================================
-
-export interface BranchAnalytics {
-    id: string;
-    branchId: string;
-    date: string;
-    revenue: number;
-    revenueTarget: number;
-    productivityScore: number;
-    satisfactionScore: number;
-    growthRate: number;
-    performanceRating: 'excellent' | 'good' | 'average' | 'poor';
-    employeeCount: number;
-    joinedCount: number;
-    leftCount: number;
-}
-
-export interface FloorAnalytics {
-    id: string;
-    floorId: string;
-    date: string;
-    occupancyRate: number;
-    productivityScore: number;
-}
-
-export interface EmployeeAnalytics {
-    id: string;
-    employeeId: string;
-    date: string;
-    tasksCompleted: number;
-    tasksTotal: number;
-    attendanceRate: number;
-    performanceScore: number;
-    productivityScore: number;
-    projectsCompleted: number;
-}
-
-export interface HistoryDataPoint {
-    date: string;
-    [key: string]: any;
-}
-
 // ============================================================
 // BRANCH ANALYTICS
 // ============================================================
