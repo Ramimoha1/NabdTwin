@@ -2,7 +2,7 @@ export interface DepartmentData {
     id: string;
     name: string;
     headName: string;
-    branchId?: string;
+    branchId?: string;    //just added temporarily for mock data
     employeeCount: number;
     teamCount: number;
     kpis: {

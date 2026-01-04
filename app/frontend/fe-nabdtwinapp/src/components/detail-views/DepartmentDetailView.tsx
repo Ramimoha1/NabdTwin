@@ -7,8 +7,8 @@ import {
     ArrowLeft,
     Building2
 } from 'lucide-react';
-import { type TeamData, type DepartmentData } from '../../services/API/detailsApi';
-
+import type { TeamData } from '../../model/team';
+import type { DepartmentData } from '../../model/department';
 interface DepartmentDetailViewProps {
     department: DepartmentData;
     teams: TeamData[];

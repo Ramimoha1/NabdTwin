@@ -5,10 +5,12 @@ export interface EmployeeDetail {
     email: string;
     phone?: string;
     role: string;
-    department: string;
-    team: string;
-    branchId: string;
-    floorId: string;
+    department?: string;
+    team?: string;
+    departmentId?: string;
+    teamId?: string;
+    branchId?: string;
+    floorId?: string;
     joinDate: string;
     supervisorName?: string;
     skills: string[];

@@ -17,17 +17,20 @@ import {
     Download
 } from 'lucide-react';
 import type { EmployeeDetail } from '../../model/employee';
+import { getEmployeeById } from '../../services/API';
+import { getEmployeeDetailById } from '../../services/API/employees';
 interface EmployeeDetailViewProps {
-    employee: EmployeeDetail;
+    employeeId: string;
     onDownloadAttendance: (id: string) => void;
     onDownloadReport: (id: string) => void;
 }
 
 export function EmployeeDetailView({
-    employee,
+    employeeId,
     onDownloadAttendance,
     onDownloadReport
-}: EmployeeDetailViewProps) {
+}: EmployeeDetailViewProps)
+ {
     const { back } = useDetailViewNavigation();
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString('en-US', {
@@ -36,6 +39,14 @@ export function EmployeeDetailView({
             day: 'numeric'
         });
     };
+    try{
+        const employee : EmployeeDetail = getEmployeeDetailById(employeeId); // Assume synchronous for simplicity  
+
+    }
+    catch(error){
+        console.error(`Error fetching employee details for ${employeeId}:`, error);
+        throw error;
+    }
 
     return (
         <div>
