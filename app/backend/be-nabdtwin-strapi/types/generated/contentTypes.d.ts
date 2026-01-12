@@ -467,6 +467,42 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiAdvisoryLogAdvisoryLog extends Struct.CollectionTypeSchema {
+  collectionName: 'advisory_logs';
+  info: {
+    displayName: 'Advisory Log';
+    pluralName: 'advisory-logs';
+    singularName: 'advisory-log';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    ai_response: Schema.Attribute.Text;
+    context_target: Schema.Attribute.String;
+    context_type: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::advisory-log.advisory-log'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    timestamp: Schema.Attribute.DateTime;
+    token_usage: Schema.Attribute.Integer;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    user: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+  };
+}
+
 export interface ApiAlertRuleAlertRule extends Struct.CollectionTypeSchema {
   collectionName: 'alert_rules';
   info: {
@@ -2474,6 +2510,10 @@ export interface PluginUsersPermissionsUser
     draftAndPublish: false;
   };
   attributes: {
+    advisory_logs: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::advisory-log.advisory-log'
+    >;
     blocked: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     confirmationToken: Schema.Attribute.String & Schema.Attribute.Private;
     confirmed: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
@@ -2547,6 +2587,7 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
+      'api::advisory-log.advisory-log': ApiAdvisoryLogAdvisoryLog;
       'api::alert-rule.alert-rule': ApiAlertRuleAlertRule;
       'api::alert.alert': ApiAlertAlert;
       'api::app-feature.app-feature': ApiAppFeatureAppFeature;
