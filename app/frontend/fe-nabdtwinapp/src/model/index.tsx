@@ -13,10 +13,32 @@ export interface Branch {
         productivity: number;
         growth: number;
     };
+    branchKpis?: BranchKPI[]; 
+    financials?: BranchFinancial[];
+    alerts?: Alert[];
+    
     floors: Floor[];
     performance: 'excellent' | 'good' | 'average' | 'poor';
     totalFloors?: number;
     totalEmployees?: number;
+    branchStatus?: 'active' | 'inactive' | 'maintenance';
+}
+
+export interface BranchKPI {
+    id: string;
+    date?: string;
+    productivityScore?: number;
+    satisfactionScore?: number;
+    revenue?: number;
+    revenueTarget?: number;
+}
+
+export interface BranchFinancial {
+    id: string;
+    date?: string;
+    revenue: number;
+    expenses: number;
+    profitMargin: number;
 }
 
 export interface Floor {
@@ -121,8 +143,8 @@ export interface Alert {
     title: string;
     description: string;
     severity: 'critical' | 'warning' | 'info';
-    timestamp: Date;
-    branchId?: string;
+    timestamp: Date | string;
+    branchId?: string; 
     read: boolean;
 }
 
