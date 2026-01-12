@@ -44,17 +44,20 @@ export function Sidebar() {
 
             {/* User Info */}
             <div className="p-4 border-b border-gray-200">
-                <div className="flex items-center gap-3">
+                <button 
+                    onClick={() => navigate('/profile')}
+                    className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+                >
                     <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
                         <UserIcon className="h-5 w-5 text-blue-600" />
                     </div>
-                    <div className="flex-1 min-w-0">
-                        <p className="truncate">{username}</p>
+                    <div className="flex-1 min-w-0 text-left">
+                        <p className="truncate font-medium">{username}</p>
                         <p className="text-sm text-gray-500 capitalize">
                             {accountType === 'admin' ? 'Administrator' : 'User'}
                         </p>
                     </div>
-                </div>
+                </button>
             </div>
 
             {/* Navigation */}

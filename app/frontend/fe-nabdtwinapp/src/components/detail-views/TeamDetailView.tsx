@@ -18,7 +18,10 @@ export function TeamDetailView({
     employees
 }: TeamDetailViewProps) {
     const { back } = useDetailViewNavigation();
-    const teamMembers = employees.filter(e => team.members.includes(e.id));
+    console.log('Team Detail View - Team:', team);
+    console.log('Team Detail View - Employees:', employees);
+    const teamMembers = employees.filter(e => team.members.includes(String(e.id)));
+    console.log('Team Members:', teamMembers);
 
     return (
         <div>
