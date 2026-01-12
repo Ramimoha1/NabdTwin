@@ -594,6 +594,7 @@ $(document).ready(function() {
   function loadSceneFromQuery() {
     var params = new URLSearchParams(window.location.search);
     var sceneUrl = params.get('scene');
+    var floorData = params.get('floorData');
     var readonly = params.get('readonly') === '1';
 
     if (readonly) {
@@ -602,20 +603,33 @@ $(document).ready(function() {
       $("#floorplanner, #add-items").hide();
     }
 
-    if (!sceneUrl) {
-      blueprint3d.model.loadSerialized(defaultScene);
+    // Priority: floorData from database > scene URL > default
+    if (floorData) {
+      try {
+        var decodedData = decodeURIComponent(floorData);
+        // decodedData is already a JSON string, load it directly
+        blueprint3d.model.loadSerialized(decodedData);
+        return;
+      } catch (err) {
+        console.error('Failed to load floor data:', err);
+      }
+    }
+
+    if (sceneUrl) {
+      fetch(sceneUrl)
+        .then(function(res) { return res.text(); })
+        .then(function(data) {
+          blueprint3d.model.loadSerialized(data);
+        })
+        .catch(function(err) {
+          console.error('Failed to load scene from', sceneUrl, err);
+          blueprint3d.model.loadSerialized(defaultScene);
+        });
       return;
     }
 
-    fetch(sceneUrl)
-      .then(function(res) { return res.text(); })
-      .then(function(data) {
-        blueprint3d.model.loadSerialized(data);
-      })
-      .catch(function(err) {
-        console.error('Failed to load scene from', sceneUrl, err);
-        blueprint3d.model.loadSerialized(defaultScene);
-      });
+    // Fallback to default scene
+    blueprint3d.model.loadSerialized(defaultScene);
   }
 
   loadSceneFromQuery();

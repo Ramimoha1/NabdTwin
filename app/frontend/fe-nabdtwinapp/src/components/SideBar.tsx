@@ -1,4 +1,4 @@
-import { Building2, Map, FileText, TrendingUp, Bell, LogOut, User as UserIcon, Users, Sparkles } from 'lucide-react'; // 1. Added Sparkles
+import { Building2, Map, FileText, TrendingUp, Bell, LogOut, User as UserIcon, Users, Sparkles, Edit3 } from 'lucide-react'; // 1. Added Sparkles, Edit3
 import { Button } from '../externaluicomponents/button';
 import { Separator } from '../externaluicomponents/separator';
 import {useDispatch, useSelector} from "react-redux";
@@ -26,7 +26,8 @@ export function Sidebar({ onOpenAI }: SidebarProps) { // 3. Destructured Prop
         { icon: Map, label: 'Map View', to: '/homepage', visible: true },
         { icon: TrendingUp, label: 'Insights', to: '/insights', visible: canViewInsights },
         { icon: FileText, label: 'Reports', to: '/reports', visible: canViewReports },
-        { icon: Users, label: 'Accounts', to: '/accounts', visible: isAdmin }
+        { icon: Users, label: 'Accounts', to: '/accounts', visible: isAdmin },
+        { icon: Edit3, label: 'Edit Visualization', to: '/edit-visualization', visible: isAdmin }
     ];
 
     const handlLoggout = () => {
