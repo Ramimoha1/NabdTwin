@@ -25,9 +25,7 @@ import {
 } from '../externaluicomponents/select';
 import { selectSelectedBranchId } from '../store/visual/visualSelector';
 import { useBranchData } from '../hooks/useBranchData';
-import floor1Url from '../assets/floor1.blueprint3d?url';
-import floor2Url from '../assets/floor2.blueprint3d?url';
-import floor3Url from '../assets/floor3.blueprint3d?url';
+import { getFloorsByBranchRaw } from '../services/API/floors';
 import type { EmployeeDetail } from '../model';
 import { getEmployeeById } from '../services/API/detailsApi';
 import type { DepartmentData } from '../model/department';
@@ -39,14 +37,8 @@ type BlueprintFloorSource = {
   elevation: number;
   color: string;
   accent: string;
-  url: string;
+  floorData: string | null; // JSON string from database
 };
-
-const BLUEPRINT_FLOORS: BlueprintFloorSource[] = [
-  { id: 'ground', name: 'Ground Floor', elevation: 0, color: '#e0f2fe', accent: '#0ea5e9', url: floor1Url },
-  { id: 'level1', name: 'Level 1', elevation: 4, color: '#ecfccb', accent: '#65a30d', url: floor2Url },
-  { id: 'level2', name: 'Level 2', elevation: 8, color: '#f3e8ff', accent: '#7c3aed', url: floor3Url },
-];
 
 type PanelView =
   | { type: 'empty' }
@@ -60,20 +52,66 @@ export function VisualizationPage() {
   const branchId = useSelector(selectSelectedBranchId);
   const { branch, employees, teams, departments, loading } = useBranchData(branchId);
 
-  const [activeFloorId, setActiveFloorId] = useState(BLUEPRINT_FLOORS[0]?.id ?? '');
+  const [blueprintFloors, setBlueprintFloors] = useState<BlueprintFloorSource[]>([]);
+  const [floorsLoading, setFloorsLoading] = useState(true);
+  const [activeFloorId, setActiveFloorId] = useState<string>('');
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string | null>(null);
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeDetail | null>(null);
   const [employeeError, setEmployeeError] = useState<string | null>(null);
-  const [panelNav, setPanelNav] = useState<{ history: PanelView[]; current: PanelView }>(
-    { history: [], current: { type: 'empty' } }
-  );
+  const [panelNav, setPanelNav] = useState<{ history: PanelView[]; current: PanelView }>({
+    history: [],
+    current: { type: 'empty' },
+  });
+
+  // Load floors from API
+  useEffect(() => {
+    if (!branchId) {
+      setBlueprintFloors([]);
+      setFloorsLoading(false);
+      return;
+    }
+
+    const loadFloors = async () => {
+      setFloorsLoading(true);
+      try {
+        const floorsData = await getFloorsByBranchRaw(branchId);
+        
+        // Define colors for floors
+        const colors = [
+          { color: '#e0f2fe', accent: '#0ea5e9' },
+          { color: '#ecfccb', accent: '#65a30d' },
+          { color: '#f3e8ff', accent: '#7c3aed' },
+          { color: '#fef3c7', accent: '#d97706' },
+          { color: '#fee2e2', accent: '#dc2626' },
+        ];
+
+        const blueprintData = floorsData.map((floor, index) => ({
+          id: floor.documentId,
+          name: floor.name,
+          elevation: floor.floorNumber * 4,
+          color: colors[index % colors.length].color,
+          accent: colors[index % colors.length].accent,
+          floorData: floor.floors,
+        }));
+
+        setBlueprintFloors(blueprintData);
+        if (blueprintData.length > 0) {
+          setActiveFloorId(blueprintData[0].id);
+        }
+      } catch (error) {
+        console.error('Failed to load floors:', error);
+        setBlueprintFloors([]);
+      } finally {
+        setFloorsLoading(false);
+      }
+    };
+
+    loadFloors();
+  }, [branchId]);
+
   const displayFloors = useMemo(() => {
-    if (!branch) return BLUEPRINT_FLOORS;
-    return BLUEPRINT_FLOORS.map((floor, index) => ({
-      ...floor,
-      name: branch.totalFloors ? `${branch.name} — Floor ${index + 1}` : floor.name,
-    }));
-  }, [branch]);
+    return blueprintFloors;
+  }, [blueprintFloors]);
 
   useEffect(() => {
     setActiveFloorId((current) => (displayFloors.find((f) => f.id === current) ? current : displayFloors[0]?.id ?? ''));
@@ -99,12 +137,15 @@ export function VisualizationPage() {
   }, [selectedEmployee]);
 
   const legacySceneUrl = useMemo(() => {
-    const target = BLUEPRINT_FLOORS.find((f) => f.id === activeFloorId) ?? BLUEPRINT_FLOORS[0];
-    if (!target) return '';
-    const sceneParam = encodeURIComponent(target.url);
+    const target = displayFloors.find((f) => f.id === activeFloorId) ?? displayFloors[0];
+    if (!target || !target.floorData) return '';
+    
+    // Stringify the floor data object if it's not already a string, then encode
+    const floorDataStr = typeof target.floorData === 'string' ? target.floorData : JSON.stringify(target.floorData);
+    const floorDataEncoded = encodeURIComponent(floorDataStr);
     // Use same-origin absolute path so postMessage works without sandbox issues
-    return `/legacy-viewer/index.html?scene=${sceneParam}&readonly=1`;
-  }, [activeFloorId]);
+    return `/legacy-viewer/index.html?floorData=${floorDataEncoded}&readonly=1`;
+  }, [activeFloorId, displayFloors]);
 
   useEffect(() => {
     function handleLegacyMessage(event: MessageEvent) {

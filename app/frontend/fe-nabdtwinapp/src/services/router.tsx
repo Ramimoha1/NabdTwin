@@ -12,6 +12,8 @@ import DetailPage from "../pages/DetailPage";
 import { VisualizationPage } from '../pages/VisualizationPage';
 import ProfilePage from '../pages/ProfilePage';
 import ForgotPasswordPage from '../pages/ForgotPasswordPage';
+import EditVisualizationPage from '../pages/EditVisualizationPage';
+import FloorPlanEditorPage from '../pages/FloorPlanEditorPage';
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -52,6 +54,16 @@ const router = createBrowserRouter(
                 <Route path="accounts" element={
                     <ProtectedRoute requirePermission="admin">
                         <AdminPage />
+                    </ProtectedRoute>
+                } />
+                <Route path="edit-visualization" element={
+                    <ProtectedRoute requirePermission="admin">
+                        <EditVisualizationPage />
+                    </ProtectedRoute>
+                } />
+                <Route path="edit-visualization/editor/:branchId/:floorId" element={
+                    <ProtectedRoute requirePermission="admin">
+                        <FloorPlanEditorPage />
                     </ProtectedRoute>
                 } />
                  <Route path="branch/visualization/:id" element={

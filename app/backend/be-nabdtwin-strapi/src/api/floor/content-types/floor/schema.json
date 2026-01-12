@@ -39,6 +39,10 @@
     "floorPlanUrl": {
       "type": "text"
     },
+    "floors": {
+      "type": "json",
+      "required": false
+    },
     "workspaces": {
       "type": "relation",
       "relation": "oneToMany",
