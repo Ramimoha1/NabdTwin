@@ -1,4 +1,4 @@
-import MainPageHeader from "../components/MainPageHeader.tsx";
+import MainPageHeader from "../components/MainPageHeader";
 
 function ReportsPage() {
     const title = "Reports";

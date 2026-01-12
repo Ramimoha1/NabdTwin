@@ -1,7 +1,7 @@
-import type {DepartmentData, TeamData} from "../services/API/detailsApi.ts";
-import {Button} from "../externaluicomponents/button.tsx";
+import type {DepartmentData, TeamData} from "../services/API/detailsApi";
+import {Button} from "../externaluicomponents/button";
 import {ArrowLeft} from "lucide-react";
-import {Card} from "../externaluicomponents/Card.tsx";
+import {Card} from "../externaluicomponents/Card";
 
 export function DepartmentDetailView({ department, teams, onBack }: { department: DepartmentData; teams: TeamData[]; onBack: () => void }) {
     return (
