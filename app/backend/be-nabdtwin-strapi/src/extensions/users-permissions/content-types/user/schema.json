@@ -110,6 +110,12 @@
       "relation": "oneToMany",
       "target": "api::dashboard.dashboard",
       "mappedBy": "user"
+    },
+    "advisory_logs": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::advisory-log.advisory-log",
+      "mappedBy": "user"
     }
   }
 }
