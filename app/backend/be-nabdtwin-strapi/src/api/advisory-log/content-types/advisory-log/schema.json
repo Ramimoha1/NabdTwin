@@ -1,0 +1,36 @@
+{
+  "kind": "collectionType",
+  "collectionName": "advisory_logs",
+  "info": {
+    "singularName": "advisory-log",
+    "pluralName": "advisory-logs",
+    "displayName": "Advisory Log"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "advisory_logs"
+    },
+    "timestamp": {
+      "type": "datetime"
+    },
+    "context_type": {
+      "type": "string"
+    },
+    "context_target": {
+      "type": "string"
+    },
+    "ai_response": {
+      "type": "text"
+    },
+    "token_usage": {
+      "type": "integer"
+    }
+  }
+}

@@ -1,15 +1,20 @@
-import { Building2, Map, FileText, TrendingUp, Bell, LogOut, User as UserIcon, Users } from 'lucide-react';
+import { Building2, Map, FileText, TrendingUp, Bell, LogOut, User as UserIcon, Users, Sparkles } from 'lucide-react'; // 1. Added Sparkles
 import { Button } from '../externaluicomponents/button';
 import { Separator } from '../externaluicomponents/separator';
-import {useDispatch, useSelector} from "react-redux";
-import {type RootState} from "../store/store.ts";
-import {logoutUser} from "../store/auth/authSlice.ts";
-import {useLocation, useNavigate} from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { type RootState } from "../store/store.ts";
+import { logoutUser } from "../store/auth/authSlice.ts";
+import { useLocation, useNavigate } from "react-router-dom";
 import { usePermissions } from '../hooks/usePermissions';
 import { AlertsPanel } from './AlertsPanel';
 import { useState } from 'react';
 
-export function Sidebar() {
+// 2. Added Props Interface
+interface SidebarProps {
+  onOpenAI?: () => void;
+}
+
+export function Sidebar({ onOpenAI }: SidebarProps) { // 3. Destructured Prop
     const navigate = useNavigate()
     const dispatch = useDispatch();
     const location = useLocation();
@@ -30,7 +35,7 @@ export function Sidebar() {
     }
 
     return (
-        <div className="w-64 bg-white border-r border-gray-200 flex flex-col flex-shrink-0">
+        <div className="w-64 bg-white border-r border-gray-200 flex flex-col shrink-0">
             {/* Header */}
             <div className="p-6 border-b border-gray-200">
                 <div className="flex items-center gap-2 mb-2">
@@ -87,6 +92,16 @@ export function Sidebar() {
                 )}
 
                 <Separator className="my-4" />
+
+                {/* --- 4. NEW AI BUTTON (Matches your exact style) --- */}
+                <Button
+                    variant="ghost"
+                    className="w-full justify-start hover:bg-gray-300"
+                    onClick={onOpenAI}
+                >
+                    <Sparkles className="h-4 w-4 mr-2 text-blue-600" /> {/* Added color to icon only */}
+                    AI Assistant
+                </Button>
 
                 <Button
                     variant="ghost"

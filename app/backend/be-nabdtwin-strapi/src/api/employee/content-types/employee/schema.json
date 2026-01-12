@@ -47,7 +47,12 @@
     },
     "gender": {
       "type": "enumeration",
-      "enum": ["male", "female", "other", "prefer_not_to_say"]
+      "enum": [
+        "male",
+        "female",
+        "other",
+        "prefer_not_to_say"
+      ]
     },
     "jobTitle": {
       "type": "string",
@@ -90,11 +95,21 @@
     },
     "employmentType": {
       "type": "enumeration",
-      "enum": ["full-time", "part-time", "contract", "intern"]
+      "enum": [
+        "full-time",
+        "part-time",
+        "contract",
+        "intern"
+      ]
     },
     "employmentStatus": {
       "type": "enumeration",
-      "enum": ["active", "inactive", "on-leave", "terminated"],
+      "enum": [
+        "active",
+        "inactive",
+        "on-leave",
+        "terminated"
+      ],
       "default": "active"
     },
     "hireDate": {
