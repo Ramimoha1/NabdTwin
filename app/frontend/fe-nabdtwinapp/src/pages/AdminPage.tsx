@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from "react-redux";
-import { selectAccountType, selectIslogin } from "../store/auth/authSelector.ts";
-import PageNotAuthorized from "./PageNotAuthorized.tsx";
-import { Card } from '../externaluicomponents/Card.tsx';
+import { selectAccountType, selectIslogin } from "../store/auth/authSelector";
+import PageNotAuthorized from "./PageNotAuthorized";
+import { Card } from '../externaluicomponents/Card';
 import { Button } from '../externaluicomponents/button';
 import { Input } from '../externaluicomponents/input';
 import { Label } from '../externaluicomponents/label';
@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../externaluicomponents/select';
 import { Checkbox } from '../externaluicomponents/checkbox';
 import { UserPlus, Mail, User as UserIcon, Calendar, Clock, Shield, Settings } from 'lucide-react';
-import { getBranches } from '../services/API/branches.ts';
+import { getBranches } from '../services/API/branches';
 import type { Branch } from '../model';
 import { toast } from 'sonner';
 import {

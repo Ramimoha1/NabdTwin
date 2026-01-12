@@ -2,6 +2,7 @@ export interface DepartmentData {
     id: string;
     name: string;
     headName: string;
+    branchId?: string;
     employeeCount: number;
     teamCount: number;
     kpis: {
@@ -13,3 +14,5 @@ export interface DepartmentData {
         tasksTotal: number;
     };
 }
+
+

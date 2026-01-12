@@ -1,7 +1,7 @@
-import type {EmployeeDetail, TeamData} from "../services/API/detailsApi.ts";
-import {Button} from "../externaluicomponents/button.tsx";
+import type {EmployeeDetail, TeamData} from "../services/API/detailsApi";
+import {Button} from "../externaluicomponents/button";
 import {ArrowLeft} from "lucide-react";
-import {Card} from "../externaluicomponents/Card.tsx";
+import {Card} from "../externaluicomponents/Card";
 import React from "react";
 
 export default function TeamDetailView({ team, employees, onBack }: { team: TeamData; employees: EmployeeDetail[]; onBack: () => void }) {

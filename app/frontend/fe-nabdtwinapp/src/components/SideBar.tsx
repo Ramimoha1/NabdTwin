@@ -1,10 +1,10 @@
 import { Building2, Map, FileText, TrendingUp, Bell, LogOut, User as UserIcon, Users, Sparkles } from 'lucide-react'; // 1. Added Sparkles
 import { Button } from '../externaluicomponents/button';
 import { Separator } from '../externaluicomponents/separator';
-import { useDispatch, useSelector } from "react-redux";
-import { type RootState } from "../store/store.ts";
-import { logoutUser } from "../store/auth/authSlice.ts";
-import { useLocation, useNavigate } from "react-router-dom";
+import {useDispatch, useSelector} from "react-redux";
+import {type RootState} from "../store/store";
+import {logoutUser} from "../store/auth/authSlice";
+import {useLocation, useNavigate} from "react-router-dom";
 import { usePermissions } from '../hooks/usePermissions';
 import { AlertsPanel } from './AlertsPanel';
 import { useState } from 'react';
@@ -49,17 +49,20 @@ export function Sidebar({ onOpenAI }: SidebarProps) { // 3. Destructured Prop
 
             {/* User Info */}
             <div className="p-4 border-b border-gray-200">
-                <div className="flex items-center gap-3">
+                <button 
+                    onClick={() => navigate('/profile')}
+                    className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+                >
                     <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
                         <UserIcon className="h-5 w-5 text-blue-600" />
                     </div>
-                    <div className="flex-1 min-w-0">
-                        <p className="truncate">{username}</p>
+                    <div className="flex-1 min-w-0 text-left">
+                        <p className="truncate font-medium">{username}</p>
                         <p className="text-sm text-gray-500 capitalize">
                             {accountType === 'admin' ? 'Administrator' : 'User'}
                         </p>
                     </div>
-                </div>
+                </button>
             </div>
 
             {/* Navigation */}
