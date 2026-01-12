@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '../externaluicomponents/Card.tsx';
@@ -16,16 +16,13 @@ import {
     Target,
     Award,
     Briefcase,
-    Layers,
-    Mail,
-    Phone,
-    Calendar,
-    UserCircle,
-    BarChart3,
-    FileText,
-    Download
+    Layers
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { EmployeeDetailView } from '../components/detail-views/EmployeeDetailView';
+import { TeamDetailView } from '../components/detail-views/TeamDetailView';
+import { DepartmentDetailView } from '../components/detail-views/DepartmentDetailView';
+import { useBranchData } from '../hooks/useBranchData';
 import {
     selectSelectedBranchId,
     selectSelectedEmployeeId,
@@ -42,16 +39,9 @@ import {
     setSelectedDepartment,
     clearSelection
 } from '../store/visual/visualSlice';
-import {getBranchByIdKPI} from '../services/API/branches';
 import {
-    getEmployeesByBranch,
-    getTeamsByBranch,
-    getDepartmentsByBranch,
     downloadAttendanceReport,
-    downloadEmployeeReport,
-    type EmployeeDetail,
-    type TeamData,
-    type DepartmentData
+    downloadEmployeeReport
 } from '../services/API/detailsApi.ts';
 import EmployeeDetailView from "../components/EmployeeDetailView.tsx";
 import {DepartmentDetailView} from "../components/DepartmentDetailView.tsx";
@@ -67,67 +57,31 @@ export default function DetailPage() {
     const selectedTeamId = useSelector(selectSelectedTeamId);
     const selectedDepartmentId = useSelector(selectSelectedDepartmentId);
 
+    // Use the custom hook to fetch branch data
+    const { branch, employees, teams, departments, loading } = useBranchData(selectedBranchId);
+
     // Local state
     const [searchQuery, setSearchQuery] = useState('');
     const [activeTab, setActiveTab] = useState('employees');
-    const [branch, setBranch] = useState<any>(null);
-    const [employees, setEmployees] = useState<EmployeeDetail[]>([]);
-    const [teams, setTeams] = useState<TeamData[]>([]);
-    const [departments, setDepartments] = useState<DepartmentData[]>([]);
-    const [loading, setLoading] = useState(true);
 
     // Derived state for detail views
     const selectedEmployee = employees.find(e => e.id === selectedEmployeeId) || null;
     const selectedTeam = teams.find(t => t.id === selectedTeamId) || null;
     const selectedDepartment = departments.find(d => d.id === selectedDepartmentId) || null;
 
-    // Load data when component mounts or branchId changes
+    // Redirect if no branch selected
     useEffect(() => {
         if (!selectedBranchId) {
             navigate('/homepage');
-            return;
         }
-
-        loadBranchData();
-    }, [selectedBranchId]);
-
-    const loadBranchData = async () => {
-        if (!selectedBranchId) return;
-
-        try {
-            setLoading(true);
-
-            // FIX: Use selectedBranchId directly (e.g., "1")
-            // REMOVED: const branchid = `branch-${selectedEmployeeId}`
-
-            console.log("Fetching details for Branch ID:", selectedBranchId);
-
-            // Load all data in parallel passing the raw ID ("1")
-            const [branchData, employeesData, teamsData, departmentsData] = await Promise.all([
-                getBranchByIdKPI(selectedBranchId),
-                getEmployeesByBranch(selectedBranchId),
-                getTeamsByBranch(selectedBranchId),
-                getDepartmentsByBranch(selectedBranchId)
-            ]);
-
-            setBranch(branchData);
-            setEmployees(employeesData);
-            setTeams(teamsData);
-            setDepartments(departmentsData);
-        } catch (error) {
-            toast.error('Failed to load branch details');
-            console.error('Error loading branch data:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    }, [selectedBranchId, navigate]);
     const onBack = () => {
         dispatch(clearSelection());
         navigate('/homepage');
     };
 
     const onView3D = () => {
-        navigate(`/visualize/${selectedBranchId}`);
+        navigate(`/branch/visualization/${selectedBranchId}`, { replace: true });
     };
 
     const handleEmployeeClick = (employeeId: string) => {
@@ -140,10 +94,6 @@ export default function DetailPage() {
 
     const handleDepartmentClick = (deptId: string) => {
         dispatch(setSelectedDepartment(deptId));
-    };
-
-    const handleBackToList = () => {
-        dispatch(clearSubSelections());
     };
 
     const handleDownloadAttendance = async (employeeId: string) => {
@@ -328,7 +278,6 @@ export default function DetailPage() {
                         {selectedEmployee ? (
                             <EmployeeDetailView
                                 employee={selectedEmployee}
-                                onBack={handleBackToList}
                                 onDownloadAttendance={handleDownloadAttendance}
                                 onDownloadReport={handleDownloadReport}
                             />
@@ -379,7 +328,6 @@ export default function DetailPage() {
                             <TeamDetailView
                                 team={selectedTeam}
                                 employees={employees}
-                                onBack={handleBackToList}
                             />
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -425,7 +373,6 @@ export default function DetailPage() {
                             <DepartmentDetailView
                                 department={selectedDepartment}
                                 teams={teams}
-                                onBack={handleBackToList}
                             />
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -464,5 +411,4 @@ export default function DetailPage() {
 }
 
 
-// Team and Department Detail Views remain similar but simplified for brevity
 
