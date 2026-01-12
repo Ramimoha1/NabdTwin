@@ -10,12 +10,16 @@ import AlertsSummaryPage from "../pages/AlertsSummaryPage";
 import { ProtectedRoute } from "../components/ProtectedRoute";
 import DetailPage from "../pages/DetailPage";
 import { VisualizationPage } from '../pages/VisualizationPage';
+import ProfilePage from '../pages/ProfilePage';
+import ForgotPasswordPage from '../pages/ForgotPasswordPage';
 
 const router = createBrowserRouter(
     createRoutesFromElements(
         <Route path="/">
             {/* Login page at /login */}
             <Route index element={<LoginPage />} />
+            {/* Forgot Password page */}
+            <Route path="forgot-password" element={<ForgotPasswordPage />} />
 
             {/* Main layout routes - all protected */}
             <Route element={<MainLayout />}>
@@ -53,6 +57,11 @@ const router = createBrowserRouter(
                  <Route path="branch/visualization/:id" element={
                     <ProtectedRoute requirePermission="viewEmployees">
                         <VisualizationPage />
+                    </ProtectedRoute>
+                } />
+                <Route path="profile" element={
+                    <ProtectedRoute>
+                        <ProfilePage />
                     </ProtectedRoute>
                 } />
 

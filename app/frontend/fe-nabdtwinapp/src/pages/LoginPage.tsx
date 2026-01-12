@@ -85,6 +85,15 @@ function LoginPage() {
                                     />
                                 </div>
                             </div>
+                            <div className="flex items-center justify-between text-sm">
+                                <span></span>
+                                <a
+                                    href="/forgot-password"
+                                    className="text-blue-600 hover:text-blue-700 hover:underline"
+                                >
+                                    Forgot Password?
+                                </a>
+                            </div>
                             <button
                                 type="submit"
                                 className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg flex items-center justify-center disabled:opacity-50"
