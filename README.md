@@ -14,11 +14,11 @@
 
 ## Ammar's Contributions
 
-| Sprint  | Module Name | Frontend                                                      | Backend | Database |
-|---------|-------------|---------------------------------------------------------------|---------|----------|
-| Sprint 1|KPI and Metric Calculation| [index.html](/app/frontend/fe-nabdtwinapp/index.html)        | -       | -        |
-| Sprint 2|             | -                                                             | -       | -        |
-| Sprint 3|             | -                                                             | -       | -        |
+| Sprint | Module Name | Frontend | Backend | Database |
+| :--- | :--- | :--- | :--- | :--- |
+| **1** | **KPI and Metric Calculation** | **Page:**<br>- [MapViewPage.tsx](/app/frontend/fe-nabdtwinapp/src/pages/MapViewPage.tsx)<br>*(Consumes Employee & Floor Data)*|**Controller:**<br>- [analytics.ts](/app/backend/be-nabdtwin-strapi/src/api/analytics/controllers/analytics.ts)<br><br>**Routes:**<br>- [analytics.ts](/app/backend/be-nabdtwin-strapi/src/api/analytics/routes/analytics.ts)<br><br>**Service:**<br>- [analytics.ts](/app/backend/be-nabdtwin-strapi/src/api/analytics/services/analytics.ts)<br>*(Calculates Employee, Floor, and Branch KPIs)*| - |
+| **2** | **Performance Aggregation Module** |**Page:**<br>- [InsightsPage.tsx](/app/frontend/fe-nabdtwinapp/src/pages/InsightsPage.tsx)<br>*(Consumes Global Stats, Trend & History APIs)*|**Controller:**<br>- [analytics.ts](/app/backend/be-nabdtwin-strapi/src/api/analytics/controllers/analytics.ts)<br><br>**Routes:**<br>- [analytics.ts](/app/backend/be-nabdtwin-strapi/src/api/analytics/routes/analytics.ts)<br><br>**Service:**<br>- [analytics.ts](/app/backend/be-nabdtwin-strapi/src/api/analytics/services/analytics.ts)<br>*(Calculates Global Aggregates, Branch Benchmarking & History, Employee Performance History & Trends)*| - |
+| **3** | **Advisory/Analytics AI Module** | **Components:**<br>- [AdvisorPanel.tsx](/app/frontend/fe-nabdtwinapp/src/components/AdvisorPanel.tsx)<br>*(Chat UI, Markdown Rendering, Tool Visualization)*<br><br>**State:**<br>- [advisorSlice.ts](/app/frontend/fe-nabdtwinapp/src/store/slices/advisorSlice.ts)<br>*(Manages Chat History & API States)* | **Controller:**<br>- [advisory.ts](/app/backend/be-nabdtwin-strapi/src/api/advisory/controllers/advisory.ts)<br><br>**Routes:**<br>- [advisory.ts](/app/backend/be-nabdtwin-strapi/src/api/advisory/routes/advisory.ts)<br><br>**Service:**<br>- [advisory.ts](/app/backend/be-nabdtwin-strapi/src/api/advisory/services/advisory.ts)<br>*(AI Agent Logic, Tool Execution, Gemini API Integration, JSON Parsing)* | **Content Type:**<br>- [advisory-log](/app/backend/be-nabdtwin-strapi/src/api/advisory-log/content-types/advisory-log/schema.json)<br>*(Stores User Questions & AI Responses)* |
 
 ---
 
