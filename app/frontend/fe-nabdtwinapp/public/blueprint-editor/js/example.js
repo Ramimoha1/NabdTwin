@@ -634,9 +634,12 @@ $(document).ready(function() {
 
   // Add employee selector enhancement to context menu
   var originalItemSelected = contextMenu ? contextMenu.itemSelected : null;
+  var currentSelectedItem = null; // Track currently selected item
   
   // Enhance context menu for employee items
   blueprint3d.three.itemSelectedCallbacks.add(function(item) {
+    currentSelectedItem = item; // Update reference to current item
+    
     if (item && item.metadata && item.metadata.itemName === 'Employee') {
       // Add employee selector to context menu if not already there
       if ($('#employee-selector-container').length === 0) {
@@ -654,16 +657,24 @@ $(document).ready(function() {
         
         $('#context-menu').append(selectorHtml);
         
-        // Populate with employees
-        $('#employee-selector').change(function() {
+        // Populate with employees - use currentSelectedItem reference
+        $('#employee-selector').off('change').on('change', function() {
           var selectedId = $(this).val();
-          if (item) {
-            // Set in both locations for compatibility
-            item.metadata.employeeId = selectedId;
-            if (item.customProperties) {
-              item.customProperties.employeeId = selectedId;
+          if (currentSelectedItem) {
+            // Ensure metadata exists
+            if (!currentSelectedItem.metadata) {
+              currentSelectedItem.metadata = {};
             }
-            console.log('Assigned employee ID:', selectedId, 'to item');
+            // Set in metadata
+            currentSelectedItem.metadata.employeeId = selectedId;
+            
+            // Ensure customProperties exists and set there too
+            if (!currentSelectedItem.customProperties) {
+              currentSelectedItem.customProperties = {};
+            }
+            currentSelectedItem.customProperties.employeeId = selectedId;
+            
+            console.log('Assigned employee ID:', selectedId, 'to item:', currentSelectedItem);
           }
         });
       }
@@ -693,6 +704,7 @@ $(document).ready(function() {
   });
   
   blueprint3d.three.itemUnselectedCallbacks.add(function() {
+    currentSelectedItem = null; // Clear reference when item is unselected
     $('#employee-selector-container').hide();
   });
 });
