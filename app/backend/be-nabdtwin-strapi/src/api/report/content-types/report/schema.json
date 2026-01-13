@@ -23,11 +23,26 @@
     "reportType": {
       "type": "enumeration",
       "columnName": "type",
-      "enum": ["performance", "attendance", "project", "kpi", "financial", "custom"]
+      "enum": [
+        "performance",
+        "attendance",
+        "project",
+        "kpi",
+        "financial",
+        "custom"
+      ],
+      "required": true
     },
     "scope": {
       "type": "enumeration",
-      "enum": ["organization", "branch", "department", "team", "employee"]
+      "enum": [
+        "organization",
+        "branch",
+        "department",
+        "team",
+        "employee"
+      ],
+      "required": true
     },
     "organization": {
       "type": "relation",
@@ -61,7 +76,7 @@
     },
     "generatedBy": {
       "type": "relation",
-      "relation": "oneToOne",
+      "relation": "manyToOne",
       "target": "plugin::users-permissions.user"
     },
     "reportData": {
