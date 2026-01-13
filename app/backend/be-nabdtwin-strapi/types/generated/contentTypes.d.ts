@@ -1553,6 +1553,49 @@ export interface ApiProjectProject extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiReportTemplateReportTemplate
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'report_templates';
+  info: {
+    description: 'Saved report templates for Branch and Employee reports';
+    displayName: 'Report Template';
+    pluralName: 'report-templates';
+    singularName: 'report-template';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    branches: Schema.Attribute.JSON & Schema.Attribute.DefaultTo<[]>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    createdDate: Schema.Attribute.String & Schema.Attribute.Required;
+    dateRange: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'Last 30 days'>;
+    employees: Schema.Attribute.JSON & Schema.Attribute.DefaultTo<[]>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::report-template.report-template'
+    > &
+      Schema.Attribute.Private;
+    metrics: Schema.Attribute.JSON & Schema.Attribute.DefaultTo<[]>;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    publishedAt: Schema.Attribute.DateTime;
+    type: Schema.Attribute.Enumeration<['Branch', 'Employee']> &
+      Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiReportReport extends Struct.CollectionTypeSchema {
   collectionName: 'reports';
   info: {
@@ -1579,7 +1622,7 @@ export interface ApiReportReport extends Struct.CollectionTypeSchema {
     employee: Schema.Attribute.Relation<'manyToOne', 'api::employee.employee'>;
     fileUrl: Schema.Attribute.Text;
     generatedBy: Schema.Attribute.Relation<
-      'oneToOne',
+      'manyToOne',
       'plugin::users-permissions.user'
     >;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
@@ -1596,10 +1639,12 @@ export interface ApiReportReport extends Struct.CollectionTypeSchema {
     reportData: Schema.Attribute.JSON;
     reportType: Schema.Attribute.Enumeration<
       ['performance', 'attendance', 'project', 'kpi', 'financial', 'custom']
-    >;
+    > &
+      Schema.Attribute.Required;
     scope: Schema.Attribute.Enumeration<
       ['organization', 'branch', 'department', 'team', 'employee']
-    >;
+    > &
+      Schema.Attribute.Required;
     team: Schema.Attribute.Relation<'manyToOne', 'api::team.team'>;
     title: Schema.Attribute.String &
       Schema.Attribute.Required &
@@ -2609,6 +2654,7 @@ declare module '@strapi/strapi' {
       'api::insight.insight': ApiInsightInsight;
       'api::organization.organization': ApiOrganizationOrganization;
       'api::project.project': ApiProjectProject;
+      'api::report-template.report-template': ApiReportTemplateReportTemplate;
       'api::report.report': ApiReportReport;
       'api::satisfaction-survey.satisfaction-survey': ApiSatisfactionSurveySatisfactionSurvey;
       'api::skill.skill': ApiSkillSkill;
