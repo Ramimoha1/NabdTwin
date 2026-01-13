@@ -1375,6 +1375,7 @@ export interface ApiFloorFloor extends Struct.CollectionTypeSchema {
     >;
     floorNumber: Schema.Attribute.Integer & Schema.Attribute.Required;
     floorPlanUrl: Schema.Attribute.Text;
+    floors: Schema.Attribute.JSON;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::floor.floor'> &
       Schema.Attribute.Private;

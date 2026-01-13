@@ -591,9 +591,24 @@ $(document).ready(function() {
   // Default simple rectangle scene used as a fallback
   var defaultScene = '{"floorplan":{"corners":{"f90da5e3-9e0e-eba7-173d-eb0b071e838e":{"x":204.85099999999989,"y":289.052},"da026c08-d76a-a944-8e7b-096b752da9ed":{"x":672.2109999999999,"y":289.052},"4e3d65cb-54c0-0681-28bf-bddcc7bdb571":{"x":672.2109999999999,"y":-178.308},"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2":{"x":204.85099999999989,"y":-178.308}},"walls":[{"corner1":"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2","corner2":"f90da5e3-9e0e-eba7-173d-eb0b071e838e","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0}},{"corner1":"f90da5e3-9e0e-eba7-173d-eb0b071e838e","corner2":"da026c08-d76a-a944-8e7b-096b752da9ed","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0}},{"corner1":"da026c08-d76a-a944-8e7b-096b752da9ed","corner2":"4e3d65cb-54c0-0681-28bf-bddcc7bdb571","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0}},{"corner1":"4e3d65cb-54c0-0681-28bf-bddcc7bdb571","corner2":"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0}}],"wallTextures":[],"floorTextures":{},"newFloorTextures":{}},"items":[]}';
 
+  // Listen for floor data from parent window via postMessage
+  window.addEventListener('message', function(event) {
+    var data = event.data;
+    
+    if (data.type === 'LOAD_FLOOR_DATA' && data.floorData) {
+      try {
+        console.log('Received floor data via postMessage');
+        blueprint3d.model.loadSerialized(data.floorData);
+      } catch (err) {
+        console.error('Failed to load floor data from postMessage:', err);
+      }
+    }
+  });
+
   function loadSceneFromQuery() {
     var params = new URLSearchParams(window.location.search);
     var sceneUrl = params.get('scene');
+    var floorData = params.get('floorData');
     var readonly = params.get('readonly') === '1';
 
     if (readonly) {
@@ -602,21 +617,38 @@ $(document).ready(function() {
       $("#floorplanner, #add-items").hide();
     }
 
-    if (!sceneUrl) {
-      blueprint3d.model.loadSerialized(defaultScene);
+    // Priority: postMessage (handled above) > floorData from URL > scene URL > default
+    // If floorData comes via postMessage, it will override this
+    if (floorData) {
+      try {
+        var decodedData = decodeURIComponent(floorData);
+        // decodedData is already a JSON string, load it directly
+        blueprint3d.model.loadSerialized(decodedData);
+        return;
+      } catch (err) {
+        console.error('Failed to load floor data:', err);
+      }
+    }
+
+    if (sceneUrl) {
+      fetch(sceneUrl)
+        .then(function(res) { return res.text(); })
+        .then(function(data) {
+          blueprint3d.model.loadSerialized(data);
+        })
+        .catch(function(err) {
+          console.error('Failed to load scene from', sceneUrl, err);
+          blueprint3d.model.loadSerialized(defaultScene);
+        });
       return;
     }
 
-    fetch(sceneUrl)
-      .then(function(res) { return res.text(); })
-      .then(function(data) {
-        blueprint3d.model.loadSerialized(data);
-      })
-      .catch(function(err) {
-        console.error('Failed to load scene from', sceneUrl, err);
-        blueprint3d.model.loadSerialized(defaultScene);
-      });
+    // Fallback to default scene
+    blueprint3d.model.loadSerialized(defaultScene);
   }
 
   loadSceneFromQuery();
+
+  // Notify parent window that viewer is ready to receive data
+  window.parent.postMessage({ type: 'VIEWER_READY' }, '*');
 });
