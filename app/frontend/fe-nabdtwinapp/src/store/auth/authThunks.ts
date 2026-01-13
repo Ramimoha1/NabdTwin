@@ -1,5 +1,5 @@
 import {createAsyncThunk} from "@reduxjs/toolkit";
-import STRAPI_URL, {api} from "../../services/API/api.ts";
+import STRAPI_URL, {api} from "../../services/API/api";
 import type {NavigateFunction} from "react-router-dom";
 
 export const loginUser = createAsyncThunk( "authen/local" ,

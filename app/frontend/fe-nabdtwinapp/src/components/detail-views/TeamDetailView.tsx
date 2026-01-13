@@ -1,4 +1,4 @@
-import { Card } from '../../externaluicomponents/Card.tsx';
+import { Card } from '../../externaluicomponents/Card';
 import { Button } from '../../externaluicomponents/button';
 import { Progress } from '../../externaluicomponents/progress';
 import { useDetailViewNavigation } from '../../hooks/useDetailViewNavigation';
@@ -6,7 +6,7 @@ import {
     ArrowLeft,
     Briefcase
 } from 'lucide-react';
-import { type EmployeeDetail, type TeamData } from '../../services/API/detailsApi.ts';
+import { type EmployeeDetail, type TeamData } from '../../services/API/detailsApi';
 
 interface TeamDetailViewProps {
     team: TeamData;
@@ -18,7 +18,10 @@ export function TeamDetailView({
     employees
 }: TeamDetailViewProps) {
     const { back } = useDetailViewNavigation();
-    const teamMembers = employees.filter(e => team.members.includes(e.id));
+    console.log('Team Detail View - Team:', team);
+    console.log('Team Detail View - Employees:', employees);
+    const teamMembers = employees.filter(e => team.members.includes(String(e.id)));
+    console.log('Team Members:', teamMembers);
 
     return (
         <div>

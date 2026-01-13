@@ -188,3 +188,20 @@
 html {
     font-size: var(--font-size);
 }
+
+@layer utilities {
+    @keyframes panelFade {
+        from {
+            opacity: 0;
+            transform: translateY(8px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-panel {
+        animation: panelFade 180ms ease-out;
+    }
+}

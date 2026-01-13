@@ -1,4 +1,4 @@
-import { Card } from '../../externaluicomponents/Card.tsx';
+import { Card } from '../../externaluicomponents/Card';
 import { Button } from '../../externaluicomponents/button';
 import { Badge } from '../../externaluicomponents/badge';
 import { Progress } from '../../externaluicomponents/progress';
@@ -7,7 +7,7 @@ import {
     ArrowLeft,
     Building2
 } from 'lucide-react';
-import { type TeamData, type DepartmentData } from '../../services/API/detailsApi.ts';
+import { type TeamData, type DepartmentData } from '../../services/API/detailsApi';
 
 interface DepartmentDetailViewProps {
     department: DepartmentData;
