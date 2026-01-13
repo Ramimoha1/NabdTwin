@@ -12,7 +12,10 @@
     "start": "strapi start",
     "strapi": "strapi",
     "upgrade": "npx @strapi/upgrade latest",
-    "upgrade:dry": "npx @strapi/upgrade latest --dry"
+    "upgrade:dry": "npx @strapi/upgrade latest --dry",
+    "reset-db": "node truncate-db.js --yes",
+    "nuke-db": "node nuke-database.js",
+    "seed-db": "node populate.js"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

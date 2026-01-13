@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { Card } from '../externaluicomponents/Card.tsx';
+import { Card } from '../externaluicomponents/Card';
 import { Button } from '../externaluicomponents/button';
 import { Input } from '../externaluicomponents/input';
 import { Badge } from '../externaluicomponents/badge';
@@ -20,8 +20,8 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { EmployeeDetailView } from '../components/detail-views/EmployeeDetailView';
-import { TeamDetailView } from '../components/detail-views/TeamDetailView';
 import { DepartmentDetailView } from '../components/detail-views/DepartmentDetailView';
+import { TeamDetailView } from '../components/detail-views/TeamDetailView';
 import { useBranchData } from '../hooks/useBranchData';
 import {
     selectSelectedBranchId,
@@ -43,9 +43,6 @@ import {
     downloadAttendanceReport,
     downloadEmployeeReport
 } from '../services/API/detailsApi.ts';
-import EmployeeDetailView from "../components/EmployeeDetailView.tsx";
-import {DepartmentDetailView} from "../components/DepartmentDetailView.tsx";
-import TeamDetailView from "../components/TeamDetailView.tsx";
 
 export default function DetailPage() {
     const dispatch = useDispatch();

@@ -1,4 +1,4 @@
-import { Card } from '../../externaluicomponents/Card.tsx';
+import { Card } from '../../externaluicomponents/Card';
 import { Button } from '../../externaluicomponents/button';
 import { Badge } from '../../externaluicomponents/badge';
 import { Progress } from '../../externaluicomponents/progress';
@@ -16,8 +16,7 @@ import {
     FileText,
     Download
 } from 'lucide-react';
-import { type EmployeeDetail } from '../../services/API/detailsApi.ts';
-
+import type { EmployeeDetail } from '../../model/employee';
 interface EmployeeDetailViewProps {
     employee: EmployeeDetail;
     onDownloadAttendance: (id: string) => void;
