@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, useRef, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import {
@@ -128,6 +128,9 @@ export function VisualizationPage() {
       .catch((err) => setEmployeeError(err.message ?? 'Employee not found'));
   }, [selectedEmployeeId]);
 
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [iframeReady, setIframeReady] = useState(false);
+
   useEffect(() => {
     if (selectedEmployee) {
       setPanelNav({ history: [], current: { type: 'summary', employee: selectedEmployee } });
@@ -137,20 +140,29 @@ export function VisualizationPage() {
   }, [selectedEmployee]);
 
   const legacySceneUrl = useMemo(() => {
+    // Just return the viewer URL without data - data will be sent via postMessage
+    return `/legacy-viewer/index.html?readonly=1`;
+  }, []);
+
+  const currentFloorData = useMemo(() => {
     const target = displayFloors.find((f) => f.id === activeFloorId) ?? displayFloors[0];
-    if (!target || !target.floorData) return '';
-    
-    // Stringify the floor data object if it's not already a string, then encode
+    if (!target || !target.floorData) return null;
     const floorDataStr = typeof target.floorData === 'string' ? target.floorData : JSON.stringify(target.floorData);
-    const floorDataEncoded = encodeURIComponent(floorDataStr);
-    // Use same-origin absolute path so postMessage works without sandbox issues
-    return `/legacy-viewer/index.html?floorData=${floorDataEncoded}&readonly=1`;
+    return floorDataStr;
   }, [activeFloorId, displayFloors]);
 
+  // Reset iframe ready state when floor changes (iframe will reload)
+  useEffect(() => {
+    setIframeReady(false);
+  }, [activeFloorId]);
   useEffect(() => {
     function handleLegacyMessage(event: MessageEvent) {
       const data = event.data as { type?: string; employeeId?: string | null };
-      if (data?.type === 'bp3d-item-selected') {
+      
+      if (data?.type === 'VIEWER_READY') {
+        // Iframe is ready to receive data
+        setIframeReady(true);
+      } else if (data?.type === 'bp3d-item-selected') {
         console.log('bp3d message', data);
         setSelectedEmployeeId(data.employeeId ?? null);
       }
@@ -158,6 +170,20 @@ export function VisualizationPage() {
     window.addEventListener('message', handleLegacyMessage);
     return () => window.removeEventListener('message', handleLegacyMessage);
   }, []);
+
+  // Send floor data to iframe once it's ready
+  useEffect(() => {
+    if (!iframeRef.current || !currentFloorData || !iframeReady) return;
+
+    const iframe = iframeRef.current;
+    iframe.contentWindow?.postMessage(
+      {
+        type: 'LOAD_FLOOR_DATA',
+        floorData: currentFloorData,
+      },
+      '*'
+    );
+  }, [currentFloorData, iframeReady]);
 
   const goToView = (nextView: PanelView, options?: { resetHistory?: boolean }) => {
     setPanelNav((prev) => {
@@ -315,7 +341,8 @@ export function VisualizationPage() {
           </div>
 
           <iframe
-            key={legacySceneUrl}
+            ref={iframeRef}
+            key={activeFloorId}
             title="Legacy Blueprint3D"
             src={legacySceneUrl}
             className="h-[720px] w-full border-0"

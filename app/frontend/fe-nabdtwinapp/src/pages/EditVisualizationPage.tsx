@@ -79,21 +79,22 @@ export function EditVisualizationPage() {
     if (!newFloorName || !newFloorNumber || !selectedBranchId) return;
 
     try {
-      await createFloor({
+      const newFloor = await createFloor({
         name: newFloorName,
         floorNumber: parseInt(newFloorNumber),
         description: newFloorDescription,
         branch: selectedBranchId
       });
 
-      // Refresh floors list
+      // Add the new floor to the list
+      setFloors(prev => [...prev, newFloor]);
+
+      // Reset form and close dialog
       setIsCreateDialogOpen(false);
       setNewFloorName("");
       setNewFloorNumber("");
       setNewFloorDescription("");
       toast.success('Floor created successfully');
-      // Trigger reload
-      setSelectedBranchId(prev => prev); // Force re-fetch
     } catch (error) {
       console.error('Failed to create floor:', error);
       toast.error('Failed to create floor');
