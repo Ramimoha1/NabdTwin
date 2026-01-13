@@ -1,0 +1,53 @@
+{
+  "kind": "collectionType",
+  "collectionName": "report_templates",
+  "info": {
+    "singularName": "report-template",
+    "pluralName": "report-templates",
+    "displayName": "Report Template",
+    "description": "Saved report templates for Branch and Employee reports"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "Branch",
+        "Employee"
+      ],
+      "required": true
+    },
+    "metrics": {
+      "type": "json",
+      "required": false,
+      "default": []
+    },
+    "branches": {
+      "type": "json",
+      "required": false,
+      "default": []
+    },
+    "employees": {
+      "type": "json",
+      "required": false,
+      "default": []
+    },
+    "dateRange": {
+      "type": "string",
+      "required": true,
+      "default": "Last 30 days"
+    },
+    "createdDate": {
+      "type": "string",
+      "required": true
+    }
+  }
+}
