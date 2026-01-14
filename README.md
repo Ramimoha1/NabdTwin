@@ -26,7 +26,7 @@
 
 | Sprint  | Module Name | Frontend                                                            | Backend | Database |
 |---------|-------------|---------------------------------------------------------------------|---------|----------|
-| Sprint 1|Google Maps and Floor Visualization| [MapViewPage.tsx](/app/frontend/fe-nabdtwinapp/MapViewPage.tsx)          | -       | -        |
+| Sprint 1|Google Maps and Floor Visualization| [MapViewPage.tsx](/app/frontend/fe-nabdtwinapp/src/pages/MapViewPage.tsx)          | -       | -        |
 | Sprint 2|             | -                                                                   | -       | -        |
 | Sprint 3|             | -                                                                   | -       | -        |
 
