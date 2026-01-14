@@ -27,8 +27,8 @@
 | Sprint  | Module Name | Frontend                                                            | Backend | Database |
 |---------|-------------|---------------------------------------------------------------------|---------|----------|
 | Sprint 1|Google Maps and Floor Visualization| [MapViewPage.tsx](/app/frontend/fe-nabdtwinapp/src/pages/MapViewPage.tsx)          | -       | -        |
-| Sprint 2|             | -                                                                   | -       | -        |
-| Sprint 3|             | -                                                                   | -       | -        |
+| Sprint 2|Workplace & Employee KPI Popup             |[MapViewPage.tsx](/app/frontend/fe-nabdtwinapp/src/pages/MapViewPage.tsx)                                                                  | -       | -        |
+| Sprint 3|3D Floor Editor & Employee Management Interface             |[MapViewPage.tsx](/app/frontend/fe-nabdtwinapp/src/pages/MapViewPage.tsx)                                                                   | -       | -        |
 
 ---
 
