@@ -26,9 +26,9 @@
 
 | Sprint  | Module Name | Frontend                                                            | Backend | Database |
 |---------|-------------|---------------------------------------------------------------------|---------|----------|
-| Sprint 1|Google Maps and Floor Visualization| [MapViewPage.tsx](/app/frontend/fe-nabdtwinapp/src/pages/MapViewPage.tsx)          | -       | -        |
-| Sprint 2|Workplace & Employee KPI Popup             |[MapViewPage.tsx](/app/frontend/fe-nabdtwinapp/src/pages/MapViewPage.tsx)                                                                  | -       | -        |
-| Sprint 3|3D Floor Editor & Employee Management Interface             |[MapViewPage.tsx](/app/frontend/fe-nabdtwinapp/src/pages/MapViewPage.tsx)                                                                   | -       | -        |
+| Sprint 1|Google Maps and Floor Visualization| [MapViewPage.tsx](/app/frontend/fe-nabdtwinapp/src/pages/MapViewPage.tsx) & [EditVisualizationPage.tsx](/app/frontend/fe-nabdtwinapp/src/pages/EditVisualizationPage.tsx)          |[blueprint-editor](/app/frontend/fe-nabdtwinapp/public/blueprint-editor)       | -        |
+| Sprint 2|Workplace & Employee KPI Popup             |3D floor visualization frontend: [VisualizationPage.tsx](/app/frontend/fe-nabdtwinapp/src/pages/VisualizationPage.tsx) & [index.html](/app/frontend/fe-nabdtwinapp/public/blueprint-editor/index.html)                                                                  |3D floor visualization backend: [example.js](/app/frontend/fe-nabdtwinapp/public/blueprint-editor/js/example.js)       | -        |
+| Sprint 3|3D Floor Editor & Employee Management Interface             |[FloorPlanEditorPage.tsx](/app/frontend/fe-nabdtwinapp/src/pages/FloorPlanEditorPage.tsx)                                                                   |[employee.ts](/app/frontend/fe-nabdtwinapp/src/model/employee.ts)       | -        |
 
 ---
 
