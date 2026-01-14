@@ -47,5 +47,5 @@
 | Sprint  | Module Name | Frontend                                                      | Backend | Database |
 |---------|-------------|---------------------------------------------------------------|---------|----------|
 | Sprint 1|Dashboard Visualization Module| View: [InsightsPage.tsx](app/frontend/fe-nabdtwinapp/src/pages/InsightsPage.tsx)            | -       | -        |
-| Sprint 2|             | -                                                             | -       | -        |
+| Sprint 2|     Alert & Summary        | -                                                             | -       | -        |
 | Sprint 3|     Report Generation (PDF/CSV)        |              View: [ReportsPage.tsx](app/frontend/fe-nabdtwinapp/src/pages/ReportsPage.tsx)                                               | -       | -        |
