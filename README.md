@@ -6,7 +6,7 @@
 
 | Sprint  | Module Name | Frontend                                                      | Backend | Database |
 |---------|-------------|---------------------------------------------------------------|---------|----------|
-| Sprint 1|Data Schema Management|      | -       | - [Database Folder](/app/backend/be-nabdtwin-strapi/database)|
+| Sprint 1|Data Schema Management|   **interfaces folder :**<br>-[Model Folder](/app/frontend/fe-nabdtwinapp/src/model)<br>*(defines how data will be presented in the front end)* | - **Data Seeder:**<br> :[Populate.js](/app/backend/be-nabdtwin-strapi/populate.js)<br>*(A script or small App that is used to simulate incoming data from different data soucrs using our rest apis)*      | **Database Schema:**<br> : - [Database Folder](/app/backend/be-nabdtwin-strapi/database) <br>*(The whole Application Complex Data base Schema and rekationships defined )*|
 | Sprint 2|API points created| -                                                             | -  [Api implementation](/app/backend/be-nabdtwin-strapi/src/api)    | -        |
 | Sprint 3|API points Integeration| -[Api Integeration](/app/frontend/fe-nabdtwinapp/src/services/API) | -       | -        |
 
