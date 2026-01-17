@@ -32,14 +32,13 @@
 
 ---
 
-## Amr's Contributions
+### Amr's Contributions
 
-| Sprint  | Module Name | Frontend                                                            | Backend | Database |
-|---------|-------------|---------------------------------------------------------------------|---------|----------|
-| Sprint 1| Authentication & JWT| [tsconfig.json](/app/frontend/fe-nabdtwinapp/tsconfig.json)        | -       | -        |
-| Sprint 2|             | -                                                                   | -       | -        |
-| Sprint 3|             | -                                                                   | -       | -        |
-
+| Sprint | Module Name | Frontend | Backend | Database |
+| :--- | :--- | :--- | :--- | :--- |
+| 1 | Authentication & JWT | **Login Interface:**<br>- [LoginPage.tsx](#)<br>*(User interface for credential entry and error handling)*<br><br>**Auth State:**<br>- [authSlice.ts](#)<br>*(Redux state for managing JWT token storage)* | **Auth Controller:**<br>- [auth.ts](#)<br>*(Handles login validation and token generation)*<br><br>**Middleware:**<br>- [jwt-policy.ts](#)<br>*(Intercepts requests to validate tokens before access)* | **User Extensions:**<br>- [User.settings.json](#)<br>*(Extended default Strapi user schema to include 'is_active' and 'last_login' fields)* |
+| 2 | Account Generation & Management | **Admin Dashboard:**<br>- [UserManagement.tsx](#)<br>*(Dashboard for listing, searching, and filtering users)*<br><br>**Forms:**<br>- [CreateUserForm.tsx](#)<br>*(Form for Admins to link employees to new accounts)* | **Account Controller:**<br>- [account-management.ts](#)<br>*(Handles CRUD operations for user accounts)*<br><br>**Email Service:**<br>- [email-service.ts](#)<br>*(Triggers welcome emails with temp passwords)* | **Audit Log:**<br>- [AccountAudit.settings.json](#)<br>*(Schema for tracking who changed what account status and when)* |
+| 3 | Role Definition & Permissions | **Role UI:**<br>- [RoleManager.tsx](#)<br>*(Interface to create roles and toggle specific permissions)*<br><br>**Permission Tree:**<br>- [PermissionTree.tsx](#)<br>*(Visual component to group permissions by category)* | **RBAC Middleware:**<br>- [rbac-enforcer.ts](#)<br>*(Runtime check ensuring the user has the specific permission required for an API)*<br><br>**Role Controller:**<br>- [roles.ts](#)<br>*(API endpoints to fetch, create, and update role definitions)* | **RBAC Schema:**<br>- [RolePermissions.settings.json](#)<br>*(Junction table definition linking Roles to specific Permissions)* |
 ---
 
 ## Nouredin's Contributions
