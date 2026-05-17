@@ -50,6 +50,8 @@ yarn strapi deploy
 
 Feel free to check out the [Strapi GitHub repository](https://github.com/strapi/strapi). Your feedback and contributions are welcome!
 
+Project-specific docs and run instructions have been consolidated under `app/docs/backend/backend-env-and-run.md`.
+
 ## ✨ Community
 
 - [Discord](https://discord.strapi.io) - Come chat with the Strapi community including the core team.

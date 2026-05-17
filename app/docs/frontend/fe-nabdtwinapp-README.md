@@ -22,9 +22,10 @@ Modern React-based dashboard for organizational management and performance track
 # Install dependencies
 npm install
 
-# Configure environment
-cp .env.example .env
-# Edit .env with your API keys
+# Configure environment (use repo root `.env.example`)
+# From the repository root run:
+# cp .env.example .env
+# Edit `.env` with your API keys
 
 # Start development server
 npm run dev
@@ -55,7 +56,7 @@ src/
 - **Feature Permissions**: `viewReports`, `viewInsights`, `viewEmployees`
 - **Admin Role**: Full system access
 
-See [PERMISSIONS.md](./PERMISSIONS.md) for details.
+See `app/docs/frontend/PERMISSIONS.md` for details (if present).
 
 ## 🐛 Troubleshooting
 

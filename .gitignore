@@ -1,3 +1,35 @@
+.venv/
+.env
+.env.local
+.env.*.local
+.idea/
+node_modules/
+dist/
+build/
+.cache/
+.parcel-cache/
+/.turbo/
+coverage/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+/.DS_Store
+/.vscode/
+*.log
+*.sqlite
+*.sqlite3
+/.stryker-tmp
+.serverless/
+.parcel-cache/
+/.next/
+.turbo/
+/.pytest_cache/
+__pycache__/
+*.pyc
+
+# keep example env tracked
+!.env.example
 
 /app/backend/be-strapi-nabdtwin/node_modules
 

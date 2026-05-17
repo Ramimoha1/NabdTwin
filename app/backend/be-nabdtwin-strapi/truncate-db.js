@@ -8,9 +8,9 @@ const path = require('path');
 const readline = require('readline');
 const { Pool } = require('pg');
 
-// Load .env if present in the backend folder
+// Load repo-root .env to ensure consistent environment values
 try {
-  require('dotenv').config({ path: path.join(__dirname, '.env') });
+  require('dotenv').config({ path: path.join(__dirname, '..', '..', '..', '.env') });
 } catch (e) {
   // .env optional; rely on environment
 }
