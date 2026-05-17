@@ -1,0 +1,27 @@
+/**
+ * Employee Detail API Routes
+ * Provides transformed employee data for frontend consumption
+ */
+
+export default {
+  routes: [
+    {
+      method: 'GET',
+      path: '/employee/details/:id',
+      handler: 'employee-detail.getDetails',
+      config: {
+       auth: false,
+        policies: [],
+      },
+    },
+    {
+      method: 'GET',
+      path: '/employees/by-branch/:branchId',
+      handler: 'employee-detail.getEmployeesByBranch',
+      config: {
+        auth: false,
+        policies: [],
+      },
+    },
+  ],
+};
