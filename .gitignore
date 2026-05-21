@@ -35,3 +35,4 @@ __pycache__/
 
 blueprint3dorginal/
 3dblueprint/public/blueprint3d/
+.env

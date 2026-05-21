@@ -10,6 +10,7 @@ const { Pool } = require('pg');
 
 // Load repo-root .env to ensure consistent environment values
 try {
+  // Load repository root .env to stay consistent with frontend
   require('dotenv').config({ path: path.join(__dirname, '..', '..', '..', '.env') });
 } catch (e) {
   // .env optional; rely on environment

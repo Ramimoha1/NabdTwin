@@ -25,6 +25,8 @@ npm run develop
 
 Default backend URL: http://localhost:3001
 
+Note: If binding to port 1337 or `0.0.0.0` causes permission or port conflicts on your machine, set `HOST=127.0.0.1` and `PORT=3001` in the repo root `.env` before starting Strapi. This forces Strapi to bind to localhost only and avoids conflicts with system services (e.g., device SDKs).
+
 3) Email quick setup (development)
 - For Gmail: enable 2-Step Verification and create an App Password (https://myaccount.google.com/apppasswords)
 - Add SMTP values to `.env`:
@@ -39,12 +41,40 @@ SMTP_DEFAULT_REPLY_TO=support@example.com
 FRONTEND_URL=http://localhost:5174
 ```
 
-4) Populate sample employees (optional but useful for UI testing)
+4) Populate sample data (optional)
+
+There are several helper scripts in `app/backend/be-nabdtwin-strapi` to populate or wipe development data. Only run these on local or disposable environments.
+
+- Populate a small set of sample employees (safe for quick UI testing):
 
 ```bash
 cd app/backend/be-nabdtwin-strapi
 node populate-with-employees.js
 ```
+
+- Full populate: inserts more extensive seed data used for demos or manual testing:
+
+```bash
+cd app/backend/be-nabdtwin-strapi
+node populate.js
+```
+
+- Skip population: simply don't run the scripts — Strapi will start with an empty DB.
+
+- Nuke / truncate the database (destructive):
+
+```bash
+cd app/backend/be-nabdtwin-strapi
+# WARNING: removes development data. Use only on local/dev environments.
+node nuke-database.js
+# or use a lighter truncate option if available
+node truncate-db.js
+```
+
+Notes:
+- These scripts operate directly against the configured database. Back up any important data before running the nuke script.
+- If your `.env` points to a production database, DO NOT run the nuke or full populate scripts.
+
 
 5) Run basic API tests (optional)
 
